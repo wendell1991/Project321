@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progresslayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/tutorialBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/practiceBtn"
+        android:layout_alignRight="@+id/practiceBtn"
+        android:layout_below="@+id/practiceBtn"
+        android:text="@string/tutorial" />
+
+    <Button
+        android:id="@+id/practiceBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView1"
+        android:layout_centerHorizontal="true"
+        android:text="@string/practice" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/practiceBtn"
+        android:layout_alignTop="@+id/imageView2"
+        android:src="@drawable/blackstar" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView1"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@drawable/yellowstar"
+        android:src="@drawable/yellowstar" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/practiceBtn"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="42dp"
+        android:src="@drawable/yellowstar" />
+
+</RelativeLayout>
