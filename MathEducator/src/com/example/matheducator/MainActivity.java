@@ -1,11 +1,23 @@
 package com.example.matheducator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import database.JSONParser;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
@@ -29,6 +41,9 @@ import android.widget.ViewSwitcher.ViewFactory;
 
 public class MainActivity extends Activity implements ViewFactory, OnSeekBarChangeListener {
 	
+	// Progress Dialog
+    private ProgressDialog pDialog;
+    
 	// Topic selection widgets & attributes
 	private Context context = this;
 	private ImageSwitcher topicSwitch;
@@ -45,6 +60,8 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private Button loginPopUp;
 	private Button loginBtn;
 	private Button cancelBtn;
+	private Dialog loginDialog;
+	private static String LOGIN_URL = "http://10.0.2.2/TimeExplorer/login.php";
 
 	// Settings page widgets & attributes
 	private Switch effSwitch;
@@ -59,8 +76,11 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private int effVol = 0;
 	private int musicVol = 0;
 	
+	// JSON Response node names
+    private static String TAG_SUCCESS = "success";
+    
 	// Log tag
-	// private static final String TAG = "MainActivity";
+	private static final String LOG_TAG = "MainActivity";
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -115,7 +135,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private void callLoginDialog(Context context) {
 		
 		// Calls the login dialog box
-		final Dialog loginDialog = new Dialog(context);
+	    loginDialog = new Dialog(context);
 		loginDialog.setContentView(R.layout.activity_login);
 		
 		// Initialize the widgets
@@ -123,37 +143,21 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		pwd = (EditText) loginDialog.findViewById(R.id.pwdTxtField);
 		loginBtn = (Button) loginDialog.findViewById(R.id.loginBtn);
 		cancelBtn = (Button) loginDialog.findViewById(R.id.cancelBtn);
-	
+		
 		loginBtn.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
 				name = userName.getText().toString();
 				password = pwd.getText().toString();
-				
-				/* Checks the credentials
-				 * 1. If either the user-name or password field is empty
-				 * 2. If the inputs from user is correct
-				*/
 				if (name.isEmpty() == false && password.isEmpty() == false) {
-					
-					if (name.equals("Tom") && password.equals("abc")) {
-						Toast.makeText(getApplicationContext(), "Login successfully, Welcome Tom!",
-								Toast.LENGTH_SHORT).show();
-						loginDialog.dismiss();
-					} 
-					else {
-						Toast.makeText(getApplicationContext(),
-								"Login denied, either username or password is wrong.",
-								Toast.LENGTH_SHORT).show();
-					}
+					new authenticateUser().execute();
 				} 
 				else {
 					Toast.makeText(getApplicationContext(), "Username & Password must not be empty!",
 							Toast.LENGTH_SHORT).show();
-				}
+				}	
 			}
 		});
 		
@@ -309,6 +313,62 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		
 	}
 	
+	class authenticateUser extends AsyncTask<String, String, String> {
+		
+		JSONParser jsonParser = new JSONParser();
+		int success = 0;
+		
+		@Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Verifying user...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("username", name));
+            params.add(new BasicNameValuePair("password", password));
+            
+			JSONObject json = jsonParser.makeHttpRequest(LOGIN_URL, "POST", params);
+			Log.i(LOG_TAG, "json: "+json.toString());
+		    try {
+		    	success = json.getInt(TAG_SUCCESS);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		    return null;
+		}
+		
+		protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+            if (success == 1) {
+	        	MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this,"Login successfully, Welcome "+name+"!", 
+                        		Toast.LENGTH_SHORT).show();
+                    }
+                });
+	        	loginDialog.dismiss();
+			} else {
+				MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"Login denied, either username or password is wrong!",
+                        		Toast.LENGTH_SHORT).show();
+                    }
+                });
+			}
+        }
+	}
+
 	class MyGestureListener extends GestureDetector.SimpleOnGestureListener{
 
 		private static final int SWIPE_MIN_DISTANCE = 150;
