@@ -8,8 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".OptionActivity" >
 
-<FrameLayout android:layout_width="match_parent"
-    android:layout_height="match_parent" >
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
@@ -22,7 +20,5 @@
         android:layout_height="match_parent"
         android:visibility="invisible"
         android:src="@drawable/tutorial2" />
-
-</FrameLayout>
 
 </RelativeLayout>

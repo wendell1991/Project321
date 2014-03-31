@@ -1,26 +1,21 @@
 package com.example.matheducator;
 
-import android.os.Bundle;
+import games.XGame;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Point;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 public class OptionActivity extends Activity implements OnTouchListener {
 
@@ -29,11 +24,8 @@ public class OptionActivity extends Activity implements OnTouchListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_option);
-		final Context context = this;
-		android.util.Log.e("test", "test");
 		ImageView img = (ImageView) findViewById (R.id.imageView1);
 		img.setOnTouchListener(this);
-
 	}
 
 	@Override
@@ -48,17 +40,6 @@ public class OptionActivity extends Activity implements OnTouchListener {
 			break;
 		case MotionEvent.ACTION_UP :
 			int touchColor = getHotspotColor (R.id.imageView2, evX, evY);
-
-			//int rgb1 = Color.red(touchColor);
-			//int rgb2 = Color.green(touchColor);
-			//int rgb3 = Color.blue(touchColor);
-			//String rgb = rgb1+","+rgb2+","+rgb3;
-			android.util.Log.e("test", Integer.toString(touchColor));
-			// (3)
-			int tutorial = Color.rgb(0, 162, 232);
-			android.util.Log.e("test", Integer.toString(touchColor));
-			android.util.Log.e("test", Integer.toString(tutorial));
-
 			int tutorial1 = -16735512;
 			int tutorial2 = -3947581;
 			int tutorial3 = -20791;
@@ -91,7 +72,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent);
 			}
 			if(touchColor==game){
-				Intent intent = new Intent(context, GameActivity.class);
+				Intent intent = new Intent(context, XGame.class);
 				startActivity(intent);
 			}
 		}

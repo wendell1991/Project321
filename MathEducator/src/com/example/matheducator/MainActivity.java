@@ -55,23 +55,16 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	// Login form widgets & attributes
 	private String name = "";
 	private String password = "";
-	private EditText userName;
-	private EditText pwd;
-	private Button loginPopUp;
-	private Button loginBtn;
-	private Button cancelBtn;
+	private EditText userName, pwd;
+	private Button loginPopUp, loginBtn, cancelBtn;
 	private Dialog loginDialog;
 	private static String LOGIN_URL = "http://10.0.2.2/TimeExplorer/login.php";
 
 	// Settings page widgets & attributes
-	private Switch effSwitch;
-	private Switch musicSwitch;
-	private SeekBar effSeekBar;
-	private SeekBar musicSb;
+	private Switch effSwitch, musicSwitch;
+	private SeekBar effSeekBar, musicSb;
+	private Button creditsBtn, doneBtn, cancelBtn1;
 	private ImageButton settingsPopUp;
-	private Button creditsBtn;
-	private Button doneBtn;
-	private Button cancelBtn1;
 	private AudioManager am;
 	private int effVol = 0;
 	private int musicVol = 0;

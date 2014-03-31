@@ -36,7 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/imageView1"
         android:layout_centerHorizontal="true"
-        android:contentDescription="@drawable/yellowstar"
         android:src="@drawable/yellowstar" />
 
     <ImageView
