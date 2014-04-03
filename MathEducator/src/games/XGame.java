@@ -14,7 +14,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -25,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.matheducator.MainActivity;
-import com.example.matheducator.OptionActivity;
 import com.example.matheducator.R;
 
 public class XGame extends Activity {
@@ -58,7 +56,6 @@ public class XGame extends Activity {
 	
 	private int sixty = 60;
 	private static int VALUE_ZERO = 0;
-	private static final String LOG_TAG = "XGame";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -516,7 +513,7 @@ public class XGame extends Activity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			// we generate 90 questions assuming user cannot answer 90 in 30 seconds
-			for (int i = 0; i < 30; i++){
+			for (int i = 0; i < 90; i++){
 				NumberHandler nh = generateGameValues();
 				numList.add(nh);
 			}
@@ -599,8 +596,6 @@ public class XGame extends Activity {
 		@Override
         public void onFinish() {
 			timerText.setText(TIME_LEFT+TIME_FINISH);
-			Log.i(LOG_TAG, "Score result - Correct: "+scoreSheet.getCorrect() + " Wrong: " 
-					+ scoreSheet.getWrong() + " Total Qns: " +scoreSheet.getQnsAttempted());
 			callScoreSheetDialog();
         }
 
