@@ -36,7 +36,7 @@ public class CreditsActivity extends Activity {
 			creditsLayout.addView(nextImg);
 		}
 		
-		Animation scrollAnim = AnimationUtils.loadAnimation(this, R.anim.scroll_up);
+		Animation scrollAnim = AnimationUtils.loadAnimation(this, R.anim.scroll_down);
 	    creditsView.startAnimation(scrollAnim);
 	    tapView.setOnClickListener(new OnClickListener(){
 
@@ -47,12 +47,4 @@ public class CreditsActivity extends Activity {
 			}
 	    });
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.credits, menu);
-		return true;
-	}
-
 }

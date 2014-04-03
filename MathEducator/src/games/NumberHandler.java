@@ -6,8 +6,10 @@ public class NumberHandler {
 
 	private int firstNumber;
 	private int secondNumber;
+	private int result;
 	private int answer;
 	private int whichToHide;
+	private int ansPosition;
 	private ArrayList<Integer> options;
 
 	public int getFirstNumber() {
@@ -48,5 +50,21 @@ public class NumberHandler {
 
 	public void setOptions(ArrayList<Integer> options) {
 		this.options = options;
+	}
+
+	public int getAnsPosition() {
+		return ansPosition;
+	}
+
+	public void setAnsPosition(int ansPosition) {
+		this.ansPosition = ansPosition;
+	}
+
+	public int getResult() {
+		return result;
+	}
+
+	public void setResult(int result) {
+		this.result = result;
 	}
 }

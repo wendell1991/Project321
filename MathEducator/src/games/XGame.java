@@ -2,125 +2,352 @@ package games;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.matheducator.MainActivity;
+import com.example.matheducator.OptionActivity;
 import com.example.matheducator.R;
 
 public class XGame extends Activity {
 	
-	private TextView timerText;
-	private ImageView valueOne, valueTwo, valAnswer;
-	private ImageButton optionOne, optionTwo, optionThree, optionFour ,optionFive, optionSix;
+	private Dialog scoreSheetDialog, countDownDialog;
+	private ImageView valueOne, valueTwo, valAnswer, notifyView, countDownView;
+	private ImageButton optionOne, optionTwo, optionThree, optionFour ,optionFive, optionSix, tryAgainBtn, giveUpBtn;
+	private TextView timerText, totalQnTextView, numCorrectTextView, numWrongTextView, totalMarksTextView;
 	
-	private Random rand;
+	// Count-down configuration
+	private long COUNTDOWN_DURATION = 10000, COUNTDOWN_INTERVAL = 1000;
+	// Timer configuration
+	private long TIMER_DURATION = 30000, TIMER_INTERVAL = 10;
+	
 	private Context context = this;
-	private long millisInFuture = 30000, countDownInterval = 1000;
 	private ArrayList<ImageButton> optionArrayList;
+	private Random rand = new Random();
+	private XGameScoreHandler scoreSheet = new XGameScoreHandler();
+	private XGamePaintHandler paintHandler = new XGamePaintHandler(context);
+	private ArrayList<NumberHandler> numList = new ArrayList<NumberHandler>();
+	
+	// Tags to help determine user's choice
+	// Option 1 & 2 also help to display correct or wrong image
+	private static int OPTION_1 = 1; 
+	private static int OPTION_2 = 2;
+	private static int OPTION_3 = 3;
+	private static int OPTION_4 = 4;
+	private static int OPTION_5 = 5;
+	private static int OPTION_6 = 6;
+	
+	private int sixty = 60;
+	private static int VALUE_ZERO = 0;
+	private static final String LOG_TAG = "XGame";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_xgame);
+		setContentView(R.layout.xgame_main);
 		
 		// Initialize UIs (Only once)
 		init();
-		
-		// Create a count-down timer, starting number: 30000 milliseconds
-		CountDown count = new CountDown(millisInFuture, countDownInterval);
-		count.start();
-		
-		NumberHandler nh = generateGameValues();
-		initGameContent(nh);
+		new loadGameData().execute();
 		
 		optionOne.setOnTouchListener(new View.OnTouchListener() {
-			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				return false;
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						checkAnswer(OPTION_1);
+					}
+				}	
+				return true;
 			}
 		});
-		
 		optionTwo.setOnTouchListener(new View.OnTouchListener() {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				return false;
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						checkAnswer(OPTION_2);
+					}
+				}	
+				return true;
 			}
 		});
-		
 		optionThree.setOnTouchListener(new View.OnTouchListener() {
-			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				return false;
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						checkAnswer(OPTION_3);
+					}
+				}	
+				return true;
 			}
 		});
-		
 		optionFour.setOnTouchListener(new View.OnTouchListener() {
-			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				return false;
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						checkAnswer(OPTION_4);
+					}
+				}	
+				return true;
 			}
 		});
-		
 		optionFive.setOnTouchListener(new View.OnTouchListener() {
-			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				return false;
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						checkAnswer(OPTION_5);
+					}
+				}	
+				return true;
 			}
 		});
-		
 		optionSix.setOnTouchListener(new View.OnTouchListener() {
-			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				return false;
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						checkAnswer(OPTION_6);
+					}
+				}	
+				return true;
 			}
 		});
 	}
 
-	private void initGameContent(NumberHandler nh){
+	private void checkAnswer(int optionSelected){
+		int correct = scoreSheet.getCorrect();
+		int wrong = scoreSheet.getWrong();	
+		int qnsAttempted = scoreSheet.getQnsAttempted();
+		NumberHandler nh = numList.get(VALUE_ZERO);
+		
+		// Remove the current numberHandler from the list to retrieve the next object
+		numList.remove(VALUE_ZERO);
+		NumberHandler nextNh = numList.get(VALUE_ZERO);
+		
+		switch(optionSelected) {
+			case 1: {
+				if (optionOne.getId() == nh.getAnsPosition()) {
+					animateResult(OPTION_1);
+					genGameContent(nextNh);
+					correct++;
+				} else {	
+					animateResult(OPTION_2);
+					genGameContent(nextNh);
+					wrong++;
+				}
+				break;
+			}
+			case 2: {
+				if (optionTwo.getId() == nh.getAnsPosition()) {
+					animateResult(OPTION_1);
+					genGameContent(nextNh);
+					correct++;
+				} else {
+					animateResult(OPTION_2);
+					genGameContent(nextNh);
+					wrong++;
+				}
+				break;
+			}
+			case 3: {
+				if (optionThree.getId() == nh.getAnsPosition()) {
+					animateResult(OPTION_1);
+					genGameContent(nextNh);
+					correct++;
+				} else {
+					animateResult(OPTION_2);
+					genGameContent(nextNh);
+					wrong++;
+				}
+				break;
+			}
+			case 4: {
+				if (optionFour.getId() == nh.getAnsPosition()) {
+					animateResult(OPTION_1);
+					genGameContent(nextNh);
+					correct++;
+				} else {
+					animateResult(OPTION_2);
+					genGameContent(nextNh);
+					wrong++;
+				}
+				break;
+			}
+			case 5: {
+				if (optionFive.getId() == nh.getAnsPosition()) {
+					animateResult(OPTION_1);
+					genGameContent(nextNh);
+					correct++;
+				} else {
+					animateResult(OPTION_2);					
+					genGameContent(nextNh);
+					wrong++;
+				}
+				break;
+			}
+			case 6: {
+				if (optionSix.getId() == nh.getAnsPosition()) {
+					animateResult(OPTION_1);					
+					genGameContent(nextNh);
+					correct++;
+				} else {
+					animateResult(OPTION_2);
+					genGameContent(nextNh);
+					wrong++;
+				}
+				break;
+			}
+		}
+		qnsAttempted++;
+		
+		// Updates the score-sheet
+		scoreSheet.setCorrect(correct);
+		scoreSheet.setWrong(wrong);
+		scoreSheet.setQnsAttempted(qnsAttempted);
+	}
+	
+	private void animateResult(int rightOrWrong) {
+		if (rightOrWrong == 1) {
+			// Option 1 = Correct
+			notifyView.setImageResource(R.drawable.correct);
+		} else {
+			// Option 2 = Wrong
+			notifyView.setImageResource(R.drawable.wrong);
+		}
+		// Check if view is visible, set to visible if it is not
+		if (notifyView.getVisibility() == View.GONE) {
+			notifyView.setVisibility(View.VISIBLE);
+		}
+		notifyView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.blink));
+	}
+	
+	private void callScoreSheetDialog(){
+		
+		// Calls the score sheet dialog box
+		scoreSheetDialog = new Dialog(context, R.style.XGameScoreDialog);
+		scoreSheetDialog.setContentView(R.layout.xgame_scoresheet);
+		
+		// Initialize the widgets
+		totalQnTextView = (TextView) scoreSheetDialog.findViewById(R.id.totalQnTextView);
+		numCorrectTextView = (TextView) scoreSheetDialog.findViewById(R.id.numCorrectTextView);
+		numWrongTextView = (TextView) scoreSheetDialog.findViewById(R.id.numWrongTextView);
+		totalMarksTextView = (TextView) scoreSheetDialog.findViewById(R.id.totalMarksTextView);
+		tryAgainBtn = (ImageButton) scoreSheetDialog.findViewById(R.id.tryAgainBtn);
+		giveUpBtn = (ImageButton) scoreSheetDialog.findViewById(R.id.giveUpBtn);
+		 
+		// Display results
+		int qnsAttempted = scoreSheet.getQnsAttempted();
+		int correct= scoreSheet.getCorrect();
+		int wrong = scoreSheet.getWrong();
+		totalQnTextView.setText(String.valueOf(qnsAttempted));
+		numCorrectTextView.setText(String.valueOf(correct));
+		numWrongTextView.setText(String.valueOf(wrong));
+		
+		tryAgainBtn.setOnTouchListener(new View.OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						// User selected try again, reloads this activity
+						Intent intent = getIntent();
+						scoreSheetDialog.dismiss();
+						finish();
+						startActivity(intent);
+					}
+				}
+				return true;
+			}
+		});
+		
+		giveUpBtn.setOnTouchListener(new View.OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN :
+						break;
+					case MotionEvent.ACTION_UP : {
+						// User gives up, so returns to the main topic selection screen
+						Intent intent = new Intent(context, MainActivity.class);
+						scoreSheetDialog.dismiss();
+						startActivity(intent);
+					}
+				}
+				return true;
+			}
+		});
+		scoreSheetDialog.show();
+	}
+
+	private void genGameContent(NumberHandler nh){
+
 		int whichToHide = nh.getWhichToHide();
 		int firstNumber = nh.getFirstNumber();
 		int secondNumber = nh.getSecondNumber();
-		int answer = nh.getAnswer();
+		int result = nh.getResult();
 		
 		// Hide either firstNumber, secondNumber or result randomly and paint them
 		if (whichToHide == firstNumber) {
 			valueOne.setImageResource(R.drawable.qnmark);
-			paintImageView(valueTwo, secondNumber);
-			paintImageView(valAnswer, answer);
+			paintHandler.configureImage(secondNumber, valueTwo);
+			paintHandler.configureImage(result, valAnswer);
 		}
 		else if (whichToHide == secondNumber) {
 			valueTwo.setImageResource(R.drawable.qnmark);
-			paintImageView(valueOne, firstNumber);
-			paintImageView(valAnswer, answer);
+			paintHandler.configureImage(firstNumber, valueOne);
+			paintHandler.configureImage(result, valAnswer);
 		}
 		else {
 			valAnswer.setImageResource(R.drawable.qnmark);
-			paintImageView(valueOne, firstNumber);
-			paintImageView(valueTwo, secondNumber);
+			paintHandler.configureImage(firstNumber, valueOne);
+			paintHandler.configureImage(secondNumber, valueTwo);
 		}
 		
 		// Paint the option image buttons
@@ -130,250 +357,124 @@ public class XGame extends Activity {
 		rand = new Random();
 		int randomVal = 0;
 		int index = 6;
+		int curOptionVal;
+		
+		// Randomize positions of all the options
 		for (int i = 0; i < optionArrayList.size(); i++) {
 			curBtn = (ImageButton) optionArrayList.get(i);
 			randomVal = rand.nextInt(index);
-			paintImageButton(curBtn, (Integer) optionList.get(randomVal));
+			curOptionVal = (Integer) optionList.get(randomVal);
+			// Saves the position which the answer is located
+			if (curOptionVal == nh.getAnswer()) {
+				nh.setAnsPosition(curBtn.getId());
+				// Save the changes
+				numList.set(VALUE_ZERO, nh);
+			}
+			paintHandler.configureImage(curOptionVal, curBtn);
 			optionList.remove(randomVal);
 			index--;
 		}
 	}
-	
-	private void paintImageView(ImageView view, int value){
-		int firstImg = 0;
-		int secondImg = 0;
-		boolean isTwoDigits = false;
-		int firstDigit = Integer.parseInt(String.valueOf(value).substring(0, 1));
-		Log.i("XGame", "Button to be paint: " + view);
-		Log.i("XGame", "Value: " + value);
-		// Check value of first digit and set image resource 
-		switch(firstDigit){
-		case 1: 
-			firstImg = R.drawable.testone;
-			break;
-		case 2: 
-			firstImg = R.drawable.testtwo;
-			break;
-		case 3: 
-			firstImg = R.drawable.testthree;
-			break;
-		case 4: 
-			firstImg = R.drawable.testfour;
-			break;
-		case 5: 
-			firstImg = R.drawable.testfive;
-			break;
-		case 6: 
-			firstImg = R.drawable.testsix;
-			break;
-		case 7: 
-			firstImg = R.drawable.testseven;
-			break;
-		case 8:
-			firstImg = R.drawable.testeight;
-			break;
-		case 9: 
-			firstImg = R.drawable.testnine;
-			break;
-		default:
-			firstImg = R.drawable.testzero;
-		}
-		
-		// Checks if value is two digits
-		if (String.valueOf(value).length() == 2) {
-			int secondDigit = Integer.parseInt(String.valueOf(value).substring(1, 2));
-			isTwoDigits = true;
-			// Check value of second digit and set image resource 
-			switch(secondDigit){
-			case 1: 
-				secondImg = R.drawable.testone;
-				break;
-			case 2: 
-				secondImg = R.drawable.testtwo;
-				break;
-			case 3: 
-				secondImg = R.drawable.testthree;
-				break;
-			case 4: 
-				secondImg = R.drawable.testfour;
-				break;
-			case 5:
-				secondImg = R.drawable.testfive;
-				break;
-			case 6: 
-				secondImg = R.drawable.testsix;
-				break;
-			case 7: 
-				secondImg = R.drawable.testseven;
-				break;
-			case 8: 
-				secondImg = R.drawable.testeight;
-				break;
-			case 9: 
-				secondImg = R.drawable.testnine;
-				break;
-			default:
-				secondImg = R.drawable.testzero;
-			}
-		}
-		
-		Log.i("XGame", "firstImg: " + firstImg + " SecondImg: " +secondImg);
-		if (isTwoDigits == true) {
-			Bitmap firstBit = BitmapFactory.decodeResource(context.getResources(), firstImg);
-			Bitmap secondBit = BitmapFactory.decodeResource(context.getResources(), secondImg);
-			// Create the combined image
-			Bitmap result =  Bitmap.createBitmap(firstBit.getWidth() + secondBit.getWidth(), 
-					firstBit.getHeight(), Bitmap.Config.ARGB_8888);
-		    Canvas combinedImage = new Canvas(result); 
-			combinedImage.drawBitmap(firstBit, 0f, 0f, null); 
-			combinedImage.drawBitmap(secondBit, firstBit.getWidth(), 0f, null); 
-			view.setImageBitmap(result);
-		} else {
-			view.setImageResource(firstImg);
-		}
-	}
-	
-	private void paintImageButton(ImageButton btn, int value){
-		int firstImg = 0;
-		int secondImg = 0;
-		boolean isTwoDigits = false;
-		int firstDigit = Integer.parseInt(String.valueOf(value).substring(0, 1));
-		Log.i("XGame", "Button to be paint: " + btn);
-		Log.i("XGame", "Value: " + value);
-		// Check value of first digit and set image resource 
-		switch(firstDigit){
-		case 1: 
-			firstImg = R.drawable.testone;
-			break;
-		case 2: 
-			firstImg = R.drawable.testtwo;
-			break;
-		case 3: 
-			firstImg = R.drawable.testthree;
-			break;
-		case 4: 
-			firstImg = R.drawable.testfour;
-			break;
-		case 5: 
-			firstImg = R.drawable.testfive;
-			break;
-		case 6: 
-			firstImg = R.drawable.testsix;
-			break;
-		case 7: 
-			firstImg = R.drawable.testseven;
-			break;
-		case 8:
-			firstImg = R.drawable.testeight;
-			break;
-		case 9: 
-			firstImg = R.drawable.testnine;
-			break;
-		default:
-			firstImg = R.drawable.testzero;
-		}
-		
-		// Checks if value is two digits
-		if (String.valueOf(value).length() == 2) {
-			int secondDigit = Integer.parseInt(String.valueOf(value).substring(1, 2));
-			isTwoDigits = true;
-			// Check value of second digit and set image resource 
-			switch(secondDigit){
-			case 1: 
-				secondImg = R.drawable.testone;
-				break;
-			case 2: 
-				secondImg = R.drawable.testtwo;
-				break;
-			case 3: 
-				secondImg = R.drawable.testthree;
-				break;
-			case 4: 
-				secondImg = R.drawable.testfour;
-				break;
-			case 5:
-				secondImg = R.drawable.testfive;
-				break;
-			case 6: 
-				secondImg = R.drawable.testsix;
-				break;
-			case 7: 
-				secondImg = R.drawable.testseven;
-				break;
-			case 8: 
-				secondImg = R.drawable.testeight;
-				break;
-			case 9: 
-				secondImg = R.drawable.testnine;
-				break;
-			default:
-				secondImg = R.drawable.testzero;
-			}
-		}
-		
-		Log.i("XGame", "firstImg: " + firstImg + " SecondImg: " +secondImg);
-		if (isTwoDigits == true) {
-			Bitmap firstBit = BitmapFactory.decodeResource(context.getResources(), firstImg);
-			Bitmap secondBit = BitmapFactory.decodeResource(context.getResources(), secondImg);
-			// Create the combined image
-			Bitmap result =  Bitmap.createBitmap(firstBit.getWidth() + secondBit.getWidth(), 
-					firstBit.getHeight(), Bitmap.Config.ARGB_8888);
-		    Canvas combinedImage = new Canvas(result); 
-			combinedImage.drawBitmap(firstBit, 0f, 0f, null); 
-			combinedImage.drawBitmap(secondBit, firstBit.getWidth(), 0f, null); 
-			btn.setImageBitmap(result);
-		} else {
-			btn.setImageResource(firstImg);
-		}
-	}
-	
-	
+
 	private NumberHandler generateGameValues() {
 		NumberHandler nh = new NumberHandler();
 		ArrayList<Integer> itemToHide = new ArrayList<Integer>();
-		rand = new Random();
+
+		int firstNumber = 0;
+		int secondNumber = 0;
+		while (true) {
+			// Ensure that firstNumber and SecondNumber cannot be both be 0
+			if (firstNumber == 0 && secondNumber == 0){
+				// Generate values ranging 0 - 12
+				firstNumber = rand.nextInt(13);
+				secondNumber = rand.nextInt(13);
+			} else {
+				break;
+			}
+		}
 		
-		// Generate values ranging 0 - 12
-		int firstNumber = rand.nextInt(13);
-		int secondNumber = rand.nextInt(13);
+		// Compute result of firstNumber * secondNumber
 		int result = firstNumber * secondNumber;
+		nh.setFirstNumber(firstNumber);
+		nh.setSecondNumber(secondNumber);
+		nh.setResult(result);
 		
 		// Determines which to hide. 
 		int whichToHide = rand.nextInt(3);
 		itemToHide.add(firstNumber);
 		itemToHide.add(secondNumber);
 		itemToHide.add(result);
-		nh.setWhichToHide(itemToHide.get(whichToHide));
-		nh.setFirstNumber(firstNumber);
-		nh.setSecondNumber(secondNumber);
-		nh.setAnswer(result);
+		whichToHide = itemToHide.get(whichToHide);
 		
-		/* Generation scheme:
-		 * Generate 2 options close to the answer 
-		 * Generate 3 random options ranging from 0 - 100
-		*/
+		/* Game Logic:  
+		 * - We do not want both displayed value to be 0, e.g what multiplies by 0 = 0
+		 * - If the above example is generated, all 6 buttons will be the correct answer
+		 * - We only want 1 out of 6 of the buttons to be the correct answer
+		 * - Therefore, we need to ensure maximum only one displayed value is 0
+		 */
+		if (whichToHide != 0 && result == 0) {
+			// Hide the result since result is 0
+			nh.setWhichToHide(result);
+		} else {
+			nh.setWhichToHide(whichToHide);
+		}
+		
 		ArrayList<Integer> optionList = new ArrayList<Integer>();
-		optionList.add(result);
-		optionList.add(result + 1);
-		optionList.add(result - 1);
 		
-		// Makes sure value of the random options are not repeated
-		int prevVal = -1;
+		/*
+		 * 0 Timetable is special, e.g x divide 0 will cause arithmetic exception
+		 * If result is 0, either firstNumber or secondNumber is 0 
+		 * Generation scheme: -Produce 2 options close to the answer
+		 * 					  -Produce 3 randomly generated options
+		*/
+		if (result == 0) {
+			// Anything multiplies by 0 will be 0
+			nh.setAnswer(VALUE_ZERO);
+			// Statically put 0, (0 + 1), (0 + 2) as the options
+			optionList.add(VALUE_ZERO);
+			optionList.add(result + 1);
+			optionList.add(result + 2);
+		} else {
+			// Determines the answer, depending on which value to hide
+			int tempResult = 0;
+			if (whichToHide == firstNumber) {
+				tempResult = result / secondNumber;
+			} else if (whichToHide == secondNumber) {
+				tempResult = result / firstNumber;
+			} else {
+				tempResult = result;
+			}
+			nh.setAnswer(tempResult);
+			optionList.add(tempResult);
+			// Produce two values close to the answer
+			optionList.add(tempResult + 1);
+			optionList.add(tempResult - 1);
+		}
+		
+		/* 
+		 * Makes sure value of the random options are not repeated
+		 * Generate options ranging from 0-100, exit loop when we have 3 options
+		 */
+		int prevVal = 101;
 		int curVal = 0;
-		for (int i = 0; i < 3; i++) {
+		while (true) {
 			curVal = rand.nextInt(101);
 			if (curVal != prevVal) {
 				optionList.add(curVal);
+				prevVal = curVal;
 			}
-			prevVal = curVal;
+			// Already should contain 3 items, 6 - 3 = 3
+			if (optionList.size() == 6) {
+				break;
+			}
 		}
-		
 		nh.setOptions(optionList);
 		return nh;
 	}
 	
-	private void init(){
+	private void init() {
 		timerText = (TextView) findViewById(R.id.timerText);
+		notifyView = (ImageView) findViewById(R.id.notifyView);
 		valueOne = (ImageView) findViewById(R.id.valueOne);
 		valueTwo = (ImageView) findViewById(R.id.valueTwo);
 		valAnswer = (ImageView) findViewById(R.id.valAnswer);
@@ -394,7 +495,101 @@ public class XGame extends Activity {
 		optionArrayList.add(optionSix);
 	}
 	
+	class loadGameData extends AsyncTask<String, String, String> {
+		
+		private ProgressDialog pDialog;
+		private static final String DIALOG_TITLE = "Game Loading...";
+		private static final String DIALOG_MESSAGE = "Please wait.";
+		
+		@Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(XGame.this);
+            pDialog.setTitle(DIALOG_TITLE);
+            pDialog.setMessage(DIALOG_MESSAGE);
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+		
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			// we generate 90 questions assuming user cannot answer 90 in 30 seconds
+			for (int i = 0; i < 30; i++){
+				NumberHandler nh = generateGameValues();
+				numList.add(nh);
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String file_url) {
+			// Pull the first question out create the contents
+			genGameContent(numList.get(VALUE_ZERO));
+			pDialog.dismiss();
+			GameStartTimer gst = new GameStartTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL);
+			gst.start();
+		}
+	}
+	
+	class GameStartTimer extends CountDownTimer {
+
+		public GameStartTimer(long millisInFuture, long countDownInterval) {
+			super(millisInFuture, countDownInterval);
+			// TODO Auto-generated constructor stub
+			countDownDialog = new Dialog(context);	
+			countDownDialog.setContentView(R.layout.dialog_timer);
+		    final Window window = countDownDialog.getWindow();
+		    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+		    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+			countDownView = (ImageView) countDownDialog.findViewById(R.id.countDownView);
+			countDownDialog.show();
+		}
+
+		@Override
+		public void onTick(long millisUntilFinished) {
+			// TODO Auto-generated method stub
+			long seconds = (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)) % sixty;
+			/*
+			 * When seconds = 5, display ready?
+			 * When seconds = 4, display 3
+			 * When seconds = 3, display 2
+			 * when seconds = 2, display 1
+			 * When seconds = 1, display start
+			*/
+			if (seconds == 8) {
+				countDownView.setImageResource(R.drawable.timethree);
+				countDownView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
+			} else if (seconds == 6) {
+				countDownView.setImageResource(R.drawable.timetwo);
+				countDownView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
+			} else if (seconds == 4) {
+				countDownView.setImageResource(R.drawable.timeone);
+				countDownView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
+			} else if (seconds == 2) {
+				countDownView.setImageResource(R.drawable.gamestart);
+				countDownView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
+			}
+		}
+
+		@Override
+		public void onFinish() {
+			// TODO Auto-generated method stub
+			countDownView.setVisibility(View.GONE);
+			countDownDialog.dismiss();
+			// Create a count-down timer, starting number: 30 seconds
+			CountDown count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
+			count.start();
+		}
+	}
+	
 	class CountDown extends CountDownTimer {
+		private String TAG_ZERO = "0";
+		private String TIME_FINISH = "00:00";
+		private String TIME_LEFT = "Time left: ";
+		private String STRING_COLON = ":";
 
 		public CountDown(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
@@ -403,11 +598,34 @@ public class XGame extends Activity {
 		
 		@Override
         public void onFinish() {
+			timerText.setText(TIME_LEFT+TIME_FINISH);
+			Log.i(LOG_TAG, "Score result - Correct: "+scoreSheet.getCorrect() + " Wrong: " 
+					+ scoreSheet.getWrong() + " Total Qns: " +scoreSheet.getQnsAttempted());
+			callScoreSheetDialog();
         }
 
         @Override
         public void onTick(long millisUntilFinished) {
-        	timerText.setText(String.valueOf(millisUntilFinished / 1000));
+        	String currentSeconds = "";
+        	long milliseconds = (TimeUnit.MILLISECONDS.toMillis((millisUntilFinished)) % sixty);
+        	long seconds = (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)) % sixty;
+        	
+        	// If time left is less than 10 seconds
+        	if (seconds < 10) {
+        		timerText.setTextColor(Color.RED);
+        	}
+        	
+        	// Format seconds and milliseconds, ensure both is two digits
+        	if (String.valueOf(seconds).length() == 2) {
+        		currentSeconds = String.valueOf(seconds);
+        	} else {
+        		currentSeconds = TAG_ZERO + seconds;
+        	}
+        	if (String.valueOf(milliseconds).length() == 2) {
+        		timerText.setText(TIME_LEFT+currentSeconds+STRING_COLON+milliseconds);
+        	} else {
+        		timerText.setText(TIME_LEFT+currentSeconds+STRING_COLON+TAG_ZERO+milliseconds);
+        	}
         }
 	}
 }

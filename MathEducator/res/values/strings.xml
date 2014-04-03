@@ -31,5 +31,7 @@
     <string name="music">Music</string>
     <string name="start">Start</string>
     <string name="tapReturn">Tap Here To Return</string>
-    
+    <string name="timeLeft">Time Left: 00:00</string>
+    <string name="scoreResult">00</string>
+        
 </resources>

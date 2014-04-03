@@ -7,20 +7,19 @@
 
     <EditText
         android:id="@+id/usrTxtField"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="26dp"
         android:ems="10"
         android:hint="@string/userName" >
-
         <requestFocus />
     </EditText>
 
     <EditText
         android:id="@+id/pwdTxtField"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/usrTxtField"
         android:layout_centerHorizontal="true"
@@ -32,17 +31,17 @@
         android:id="@+id/cancelBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/pwdTxtField"
-        android:layout_marginRight="94dp"
+        android:layout_alignBaseline="@+id/loginBtn"
+        android:layout_alignBottom="@+id/loginBtn"
+        android:layout_alignRight="@+id/usrTxtField"
         android:text="@string/cancel" />
 
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/cancelBtn"
-        android:layout_alignBottom="@+id/cancelBtn"
+        android:layout_below="@+id/pwdTxtField"
+        android:layout_marginRight="18dp"
         android:layout_toLeftOf="@+id/cancelBtn"
         android:text="@string/login" />
 

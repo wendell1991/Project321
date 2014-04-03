@@ -2,10 +2,9 @@ package com.example.matheducator;
 
 import java.util.Random;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -18,8 +17,6 @@ public class QuizActivity extends Activity {
 	private RadioButton optionB;
 	private RadioButton optionC;
 	private RadioButton optionD;
-	private Button nextQn;
-	private Button prevQn;
 	
 	private String[] randArith = {" subtracted by ", " added by "};
 	private static String SUBTRACTION = " subtracted by ";
@@ -35,13 +32,6 @@ public class QuizActivity extends Activity {
 		setContentView(R.layout.activity_quiz);
 		init();
 		initQuestions();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.quiz, menu);
-		return true;
 	}
 	
 	private void initQuestions() {
@@ -105,8 +95,5 @@ public class QuizActivity extends Activity {
 		optionB = (RadioButton) findViewById(R.id.optionB);
 		optionC = (RadioButton) findViewById(R.id.optionC);
 		optionD = (RadioButton) findViewById(R.id.optionD);
-		
-		nextQn = (Button) findViewById(R.id.nxtQnBtn);
-		prevQn = (Button) findViewById(R.id.prevQnBtn);
 	}
 }

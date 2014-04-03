@@ -2,7 +2,6 @@ package com.example.matheducator;
 
 import games.XGame;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,7 +23,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_option);
-		ImageView img = (ImageView) findViewById (R.id.imageView1);
+		ImageView img = (ImageView) findViewById (R.id.countDownView);
 		img.setOnTouchListener(this);
 	}
 
@@ -85,38 +84,6 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache()); 
 		img.setDrawingCacheEnabled(false);
 		return hotspots.getPixel(x, y);
-	}
-
-	private void callProgressDialog(Context cx, Intent in) {
-		
-		final Context context = cx;
-		final Intent intent = in;
-		final Dialog progressDialog = new Dialog(context);
-		progressDialog.setContentView(R.layout.activity_progress);
-
-		Button practiceBtn = (Button) progressDialog.findViewById(R.id.practiceBtn);
-		Button tutorialBtn = (Button) progressDialog.findViewById(R.id.tutorialBtn);
-
-
-		practiceBtn.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Intent intent2 = new Intent(context, QuizActivity.class);
-				startActivity(intent2);
-			}
-		});
-
-		tutorialBtn.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				startActivity(intent);
-			}
-		});
-		// returns to main-page
-
-		progressDialog.show();
 	}
 
 	private void callProgressWindow(Context cx, Intent in, int evX, int evY) {

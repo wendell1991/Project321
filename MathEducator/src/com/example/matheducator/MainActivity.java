@@ -8,18 +8,16 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import database.JSONParser;
-import android.media.AudioManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,33 +36,26 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ViewSwitcher.ViewFactory;
+import database.JSONParser;
 
 public class MainActivity extends Activity implements ViewFactory, OnSeekBarChangeListener {
 	
-	// Progress Dialog
-    private ProgressDialog pDialog;
-    
-	// Topic selection widgets & attributes
-	private Context context = this;
+	// Main Page
 	private ImageSwitcher topicSwitch;
-	private GestureDetector gesturedetector;
-	private int[] imageIndex = {R.drawable.arithmetic, R.drawable.fraction, R.drawable.money, R.drawable.time, R.drawable.ranking};
-	private int currentIndex = 0;
-	private int imgTracker = imageIndex.length - 1;
+	private ImageButton settingsPopUp, loginPopUp;
 	
-	// Login form widgets & attributes
+	// Login Dialog
 	private String name = "";
 	private String password = "";
 	private EditText userName, pwd;
-	private Button loginPopUp, loginBtn, cancelBtn;
+	private Button loginBtn, cancelBtn;
 	private Dialog loginDialog;
 	private static String LOGIN_URL = "http://10.0.2.2/TimeExplorer/login.php";
 
-	// Settings page widgets & attributes
+	// Settings Dialog 
 	private Switch effSwitch, musicSwitch;
 	private SeekBar effSeekBar, musicSb;
 	private Button creditsBtn, doneBtn, cancelBtn1;
-	private ImageButton settingsPopUp;
 	private AudioManager am;
 	private int effVol = 0;
 	private int musicVol = 0;
@@ -75,13 +66,18 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	// Log tag
 	private static final String LOG_TAG = "MainActivity";
 	
+	private GestureDetector gesturedetector;
+	private int[] imageIndex = {R.drawable.arithmetic, R.drawable.fraction, R.drawable.money, R.drawable.time, R.drawable.ranking};
+	private int currentIndex = 0;
+	private int imgTracker = imageIndex.length - 1;
+	private Context context = this;
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		final Context context = this;
 
 		gesturedetector = new GestureDetector(new MyGestureListener());
 		topicSwitch = (ImageSwitcher) findViewById(R.id.topicSwitcher);
@@ -96,13 +92,13 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 			}
 		});
 		
-		loginPopUp = (Button) findViewById(R.id.loginPopUp);
+		loginPopUp = (ImageButton) findViewById(R.id.loginPopUp);
 		// Upon clicking, calls the login dialog box
 		loginPopUp.setOnClickListener(new OnClickListener() {
 			 
 			  @Override
 			  public void onClick(View v) {
-				  callLoginDialog(context);
+				  callLoginDialog();
 			  }
 		});
 		
@@ -113,19 +109,12 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				callSettingsDialog(context);
+				callSettingsDialog();
 			}
 		});
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 	
-	private void callLoginDialog(Context context) {
+	private void callLoginDialog() {
 		
 		// Calls the login dialog box
 	    loginDialog = new Dialog(context);
@@ -167,7 +156,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		loginDialog.show();
 	}
 	
-	private void callSettingsDialog(final Context context){
+	private void callSettingsDialog(){
 		
 		// Calls the settings dialog box
 		final Dialog settingsDialog = new Dialog(context);
@@ -308,16 +297,20 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	
 	class authenticateUser extends AsyncTask<String, String, String> {
 		
-		JSONParser jsonParser = new JSONParser();
-		int success = 0;
+		private int success = 0;
+		private static final String DIALOG_TITLE = "Verifying user...";
+		private static final String DIALOG_MESSAGE = "Please wait.";
+		private ProgressDialog pDialog;
+		private JSONParser jsonParser = new JSONParser();
 		
 		@Override
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Verifying user...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
+            pDialog.setTitle(DIALOG_TITLE);
+            pDialog.setMessage(DIALOG_MESSAGE);
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
             pDialog.show();
         }
 		
@@ -338,6 +331,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		    return null;
 		}
 		
+		@Override
 		protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();

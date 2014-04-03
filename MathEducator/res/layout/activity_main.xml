@@ -17,20 +17,20 @@
         android:layout_centerVertical="true" >
     </ImageSwitcher>
 
-    <Button
+    <ImageButton
         android:id="@+id/loginPopUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="@string/login" />
+        android:src="@drawable/loginbutton" />
 
     <ImageButton
         android:id="@+id/setBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/loginPopUp"
-        android:src="@android:drawable/ic_menu_manage" />
+        android:layout_marginBottom="17dp"
+        android:src="@drawable/setbutton" />
 
 </RelativeLayout>
