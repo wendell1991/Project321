@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.matheducator.LoadAppActivity"
+            android:name="activities.LoadAppActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
             <intent-filter>
@@ -26,36 +26,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.matheducator.MainActivity"
+            android:name="activities.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.matheducator.OptionActivity"
+            android:name="activities.OptionActivity"
             android:label="@string/title_activity_option" >
         </activity>
         <activity
-            android:name="com.example.matheducator.QuizActivity"
+            android:name="activities.QuizActivity"
             android:label="@string/title_activity_quiz" >
         </activity>
         <activity
-            android:name="com.example.matheducator.CreditsActivity"
+            android:name="activities.CreditsActivity"
             android:label="@string/title_activity_credits" >
         </activity>
         <activity
-            android:name="com.example.matheducator.TutorialActivity"
+            android:name="activities.TutorialActivity"
             android:label="@string/title_activity_tutorial" >
         </activity>
         <activity
-            android:name="com.example.matheducator.GameActivity"
+            android:name="activities.GameActivity"
             android:label="@string/title_activity_game" >
         </activity>
+        
+        <activity android:name="activities.RankingTab"/>
+        
         <activity
-            android:name="com.example.matheducator.RankingActivity"
-            android:label="@string/title_activity_ranking">
+            android:name="activities.RankingTabHost"
+            android:label="@string/title_ranking_tabhost">
         </activity>
+        
         <activity
             android:name="games.XGame"
             android:label="@string/title_xgame">
+        </activity>
+        <activity
+            android:name="games.CardGuessGame"
+            android:label="@string/title_cardguess_game">
         </activity>
     </application>
 	

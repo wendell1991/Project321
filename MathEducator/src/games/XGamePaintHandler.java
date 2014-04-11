@@ -88,34 +88,34 @@ public class XGamePaintHandler {
 		int result = 0;
 		switch(input){
 		case 1: 
-			result = R.drawable.testone;
+			result = R.drawable.xgameone;
 			break;
 		case 2: 
-			result = R.drawable.testtwo;
+			result = R.drawable.xgametwo;
 			break;
 		case 3: 
-			result = R.drawable.testthree;
+			result = R.drawable.xgamethree;
 			break;
 		case 4: 
-			result = R.drawable.testfour;
+			result = R.drawable.xgamefour;
 			break;
 		case 5: 
-			result = R.drawable.testfive;
+			result = R.drawable.xgamefive;
 			break;
 		case 6: 
-			result = R.drawable.testsix;
+			result = R.drawable.xgamesix;
 			break;
 		case 7: 
-			result = R.drawable.testseven;
+			result = R.drawable.xgameseven;
 			break;
 		case 8:
-			result = R.drawable.testeight;
+			result = R.drawable.xgameeight;
 			break;
 		case 9: 
-			result = R.drawable.testnine;
+			result = R.drawable.xgamenine;
 			break;
 		default:
-			result = R.drawable.testzero;
+			result = R.drawable.xgamezero;
 		}
 		return result;
 	}

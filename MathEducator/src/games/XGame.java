@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import activities.MainActivity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -11,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -23,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.matheducator.MainActivity;
 import com.example.matheducator.R;
 
 public class XGame extends Activity {
@@ -39,6 +41,7 @@ public class XGame extends Activity {
 	private long TIMER_DURATION = 30000, TIMER_INTERVAL = 10;
 	
 	private Context context = this;
+	private MediaPlayer bkgrdMusic;
 	private ArrayList<ImageButton> optionArrayList;
 	private Random rand = new Random();
 	private XGameScoreHandler scoreSheet = new XGameScoreHandler();
@@ -64,7 +67,7 @@ public class XGame extends Activity {
 		
 		// Initialize UIs (Only once)
 		init();
-		new loadGameData().execute();
+		new LoadGameData().execute();
 		
 		optionOne.setOnTouchListener(new View.OnTouchListener() {
 			@Override
@@ -246,13 +249,28 @@ public class XGame extends Activity {
 	}
 	
 	private void animateResult(int rightOrWrong) {
+		final MediaPlayer soundEff;
 		if (rightOrWrong == 1) {
 			// Option 1 = Correct
 			notifyView.setImageResource(R.drawable.correct);
+			soundEff = MediaPlayer.create(XGame.this, R.raw.xgamecorrect);
 		} else {
 			// Option 2 = Wrong
 			notifyView.setImageResource(R.drawable.wrong);
+			soundEff = MediaPlayer.create(XGame.this, R.raw.xgamewrong);
 		}
+		
+		soundEff.setOnCompletionListener(new OnCompletionListener() {
+
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				// TODO Auto-generated method stub
+				soundEff.release();
+			}
+		});
+		
+		soundEff.start();
+		
 		// Check if view is visible, set to visible if it is not
 		if (notifyView.getVisibility() == View.GONE) {
 			notifyView.setVisibility(View.VISIBLE);
@@ -263,8 +281,9 @@ public class XGame extends Activity {
 	private void callScoreSheetDialog(){
 		
 		// Calls the score sheet dialog box
-		scoreSheetDialog = new Dialog(context, R.style.XGameScoreDialog);
+		scoreSheetDialog = new Dialog(context);
 		scoreSheetDialog.setContentView(R.layout.xgame_scoresheet);
+		scoreSheetDialog.getWindow().setWindowAnimations(R.style.XGameScoreDialogAnimation);
 		
 		// Initialize the widgets
 		totalQnTextView = (TextView) scoreSheetDialog.findViewById(R.id.totalQnTextView);
@@ -492,7 +511,7 @@ public class XGame extends Activity {
 		optionArrayList.add(optionSix);
 	}
 	
-	class loadGameData extends AsyncTask<String, String, String> {
+	class LoadGameData extends AsyncTask<String, String, String> {
 		
 		private ProgressDialog pDialog;
 		private static final String DIALOG_TITLE = "Game Loading...";
@@ -536,11 +555,14 @@ public class XGame extends Activity {
 			super(millisInFuture, countDownInterval);
 			// TODO Auto-generated constructor stub
 			countDownDialog = new Dialog(context);	
+			countDownDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			countDownDialog.setContentView(R.layout.dialog_timer);
+			
 		    final Window window = countDownDialog.getWindow();
 		    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		    
 			countDownView = (ImageView) countDownDialog.findViewById(R.id.countDownView);
 			countDownDialog.show();
 		}
@@ -576,6 +598,11 @@ public class XGame extends Activity {
 			// TODO Auto-generated method stub
 			countDownView.setVisibility(View.GONE);
 			countDownDialog.dismiss();
+			
+			// Start background music
+			bkgrdMusic = MediaPlayer.create(XGame.this, R.raw.xgamemusic);
+			bkgrdMusic.start();
+			
 			// Create a count-down timer, starting number: 30 seconds
 			CountDown count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
 			count.start();
@@ -596,6 +623,9 @@ public class XGame extends Activity {
 		@Override
         public void onFinish() {
 			timerText.setText(TIME_LEFT+TIME_FINISH);
+			if (bkgrdMusic.isPlaying()) {
+				bkgrdMusic.release();
+			}
 			callScoreSheetDialog();
         }
 

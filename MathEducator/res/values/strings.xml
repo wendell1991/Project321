@@ -9,14 +9,18 @@
     <string name="title_activity_credits">CreditsActivity</string>
     <string name="title_activity_tutorial">Tutorial</string>
     <string name="title_activity_game">Game</string>
-    <string name="title_activity_ranking">RankingActivity</string>
+    <string name="title_ranking_tabhost">Ranking_TabHost</string>
+    <string name="title_cardguess_game">CardGuessingGame</string>
     <string name="title_xgame">XGame</string>
+    <string name="name">Name</string>
     <string name="login">Login</string>
     <string name="cancel">Cancel</string>
+    <string name="topic">Topic</string>
     <string name="numbers">Numbers</string>
     <string name="money">Money</string>
     <string name="time">Time</string>
     <string name="fraction">Fraction</string>
+    <string name="rank">Rank</string>
     <string name="practice">Practice Set</string>
     <string name="tutorial">Tutorial</string>
     <string name="games">Games</string>
@@ -32,6 +36,15 @@
     <string name="start">Start</string>
     <string name="tapReturn">Tap Here To Return</string>
     <string name="timeLeft">Time Left: 00:00</string>
-    <string name="scoreResult">00</string>
-        
+    <string name="scoreResult">00</string> 
+    <string name="result">Result</string>
+    <string name="quiz_prompt">Select a quiz</string>
+    <string name="topic_prompt">Select a topic</string>
+    
+    <string-array name="topic_arrays">
+        <item>Arithmetic</item>
+        <item>Time</item>
+        <item>Fraction</item>
+        <item>Money</item>
+    </string-array>
 </resources>

@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
  
+
+import objects.Constants;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,18 +22,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
  
+
 import android.util.Log;
  
 public class JSONParser {
- 
-    static InputStream is = null;
-    static JSONObject jObj = null;
-    static String json = "";
+	
+    private static InputStream is = null;
+    private static JSONObject jObj = null;
+    private static String json = "";
  
     // constructor
-    public JSONParser() {
- 
-    }
+    public JSONParser() {}
  
     // function get json from url
     // by making HTTP POST or GET mehtod
@@ -82,18 +84,17 @@ public class JSONParser {
             is.close();
             json = sb.toString();
         } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
+            Log.e(Constants.LOG_JSONPARSER, "Error converting result " + e.toString());
         }
  
         // try parse the string to a JSON object
         try {
             jObj = new JSONObject(json);
         } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+            Log.e(Constants.LOG_JSONPARSER, "Error parsing data " + e.toString());
         }
  
         // return JSON String
         return jObj;
- 
     }
 }

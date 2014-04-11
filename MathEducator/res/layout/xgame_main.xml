@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    android:background="@drawable/xgamebkgrd" >
 
     <ImageButton
         android:id="@+id/optionFour"
@@ -10,7 +11,7 @@
         android:layout_alignLeft="@+id/optionOne"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="45dp"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageButton
         android:id="@+id/optionFive"
@@ -18,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/optionTwo"
         android:layout_alignTop="@+id/optionFour"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageButton
         android:id="@+id/optionSix"
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/optionThree"
         android:layout_alignTop="@+id/optionFive"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageButton
         android:id="@+id/optionOne"
@@ -36,7 +37,7 @@
         android:layout_alignRight="@+id/countDownView"
         android:layout_marginBottom="17dp"
         android:layout_marginRight="28dp"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageView
         android:id="@+id/notifyView"
@@ -68,7 +69,7 @@
         android:layout_marginRight="35dp"
         android:layout_marginTop="48dp"
         android:layout_toLeftOf="@+id/countDownView"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageView
         android:id="@+id/countDownView"
@@ -87,7 +88,7 @@
         android:layout_alignTop="@+id/valueOne"
         android:layout_marginRight="26dp"
         android:layout_toLeftOf="@+id/imageView2"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -104,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/valueTwo"
         android:layout_alignTop="@+id/optionOne"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageButton
         android:id="@+id/optionThree"
@@ -112,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/optionTwo"
         android:layout_toRightOf="@+id/valueTwo"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
     <ImageView
         android:id="@+id/valAnswer"
@@ -120,6 +121,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/valueTwo"
         android:layout_toRightOf="@+id/optionThree"
-        android:src="@drawable/testone" />
+        android:src="@drawable/xgameone" />
 
 </RelativeLayout>
