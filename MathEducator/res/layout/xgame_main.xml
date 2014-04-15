@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/optionFour"
-        android:layout_alignRight="@+id/countDownView"
+        android:layout_alignRight="@+id/xgameTimesUp"
         android:layout_marginBottom="17dp"
         android:layout_marginRight="28dp"
         android:src="@drawable/xgameone" />
@@ -43,61 +43,11 @@
         android:id="@+id/notifyView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/countDownView"
+        android:layout_below="@+id/xgameTimesUp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:visibility="gone"
         android:src="@drawable/correct" />
-
-    <TextView
-        android:id="@+id/timerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="351dp"
-        android:layout_marginTop="38dp"
-        android:text="@string/timeLeft"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="36sp" />
-
-    <ImageView
-        android:id="@+id/valueOne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/timerText"
-        android:layout_marginRight="35dp"
-        android:layout_marginTop="48dp"
-        android:layout_toLeftOf="@+id/countDownView"
-        android:src="@drawable/xgameone" />
-
-    <ImageView
-        android:id="@+id/countDownView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/valueTwo"
-        android:layout_marginRight="29dp"
-        android:layout_marginTop="12dp"
-        android:layout_toLeftOf="@+id/valueTwo"
-        android:src="@drawable/testmulti" />
-
-    <ImageView
-        android:id="@+id/valueTwo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/valueOne"
-        android:layout_marginRight="26dp"
-        android:layout_toLeftOf="@+id/imageView2"
-        android:src="@drawable/xgameone" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/timerText"
-        android:layout_alignTop="@+id/countDownView"
-        android:layout_marginRight="37dp"
-        android:src="@drawable/testequals" />
 
     <ImageButton
         android:id="@+id/optionTwo"
@@ -107,20 +57,70 @@
         android:layout_alignTop="@+id/optionOne"
         android:src="@drawable/xgameone" />
 
+    <ImageView
+        android:id="@+id/xgameTimesUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/valueOne"
+        android:layout_alignLeft="@+id/timerText"
+        android:layout_marginBottom="33dp"
+        android:layout_marginLeft="33dp"
+        android:src="@drawable/xgame_multi" />
+
+    <ImageView
+        android:id="@+id/valueOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/optionOne"
+        android:layout_marginBottom="20dp"
+        android:layout_toLeftOf="@+id/xgameTimesUp"
+        android:src="@drawable/xgameone" />
+
+    <ImageView
+        android:id="@+id/valueTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/valueOne"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/xgameTimesUp"
+        android:src="@drawable/xgameone" />
+
     <ImageButton
         android:id="@+id/optionThree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/timerText"
         android:layout_alignTop="@+id/optionTwo"
-        android:layout_toRightOf="@+id/valueTwo"
+        android:layout_marginRight="16dp"
         android:src="@drawable/xgameone" />
+
+    <ImageView
+        android:id="@+id/cardBackTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/optionThree"
+        android:layout_alignTop="@+id/xgameTimesUp"
+        android:layout_marginLeft="14dp"
+        android:src="@drawable/xgame_equal" />
 
     <ImageView
         android:id="@+id/valAnswer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/valueTwo"
-        android:layout_toRightOf="@+id/optionThree"
+        android:layout_marginLeft="22dp"
+        android:layout_toRightOf="@+id/cardBackTwo"
         android:src="@drawable/xgameone" />
+
+    <TextView
+        android:id="@+id/timerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/valueOne"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="19dp"
+        android:text="@string/timeLeft"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="36sp" />
 
 </RelativeLayout>

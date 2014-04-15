@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"  
+    android:background="@drawable/coincoinbkgrd" >
+
+    <ImageView
+        android:id="@+id/cardFaceOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="26dp"
+        android:background="@drawable/cardfront"
+        android:padding="5dp" />
+
+    <TextView
+        android:id="@+id/coinCoinStory"
+        style="@style/CoinCoinTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cardFaceOne"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="53dp"
+        android:layout_marginTop="39dp"
+        android:text="Medium Text"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/coinCoinQn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/coinCoinStory"
+        android:layout_below="@+id/coinCoinStory"
+        android:layout_marginTop="21dp"
+        android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/cardFaceTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/cardFaceOne"
+        android:layout_marginLeft="24dp"
+        android:layout_toRightOf="@+id/cardFaceOne"
+        android:src="@drawable/cardfront" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/coinCoinStory"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="31dp"
+        android:text="Button" />
+
+    <ImageView
+        android:id="@+id/lessonView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cardFaceOne"
+        android:layout_toLeftOf="@+id/cardFaceTwo"
+        android:src="@drawable/cardfront" />
+
+    <ImageView
+        android:id="@+id/starTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cardFaceTwo"
+        android:layout_alignLeft="@+id/cardFaceTwo"
+        android:src="@drawable/cardfront" />
+
+    <ImageView
+        android:id="@+id/cardFaceThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/cardFaceTwo"
+        android:layout_marginLeft="24dp"
+        android:layout_toRightOf="@+id/cardFaceTwo"
+        android:src="@drawable/cardfront" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cardFaceThree"
+        android:layout_alignLeft="@+id/cardFaceThree"
+        android:src="@drawable/cardfront" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView4"
+        android:layout_marginLeft="28dp"
+        android:layout_toRightOf="@+id/cardFaceThree"
+        android:src="@drawable/cardfront" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView5"
+        android:layout_alignTop="@+id/imageView4"
+        android:src="@drawable/cardfront" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView6"
+        android:layout_marginLeft="26dp"
+        android:layout_toRightOf="@+id/imageView5"
+        android:src="@drawable/cardfront" />
+
+</RelativeLayout>

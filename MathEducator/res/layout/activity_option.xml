@@ -9,13 +9,13 @@
     tools:context=".OptionActivity" >
 
     <ImageView
-        android:id="@+id/countDownView"
+        android:id="@+id/xgameTimesUp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/tutorial" />
     
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/cardBackTwo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"

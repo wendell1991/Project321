@@ -1,101 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/xgamebkgrd" >
 
     <ImageView
-        android:id="@+id/countDownView"
+        android:id="@+id/xgameTimesUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/timesup" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView5"
-        android:layout_below="@+id/imageView5"
-        android:src="@drawable/wrongnum" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/imageView6"
-        android:layout_below="@+id/imageView6"
-        android:src="@drawable/totalmarks" />
+        android:layout_marginTop="30dp"
+        android:src="@drawable/xgame_timesup" />
 
     <TextView
-        android:id="@+id/totalQnTextView"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView2"
-        android:layout_alignLeft="@+id/numCorrectTextView"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/numCorrectTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView5"
-        android:layout_alignLeft="@+id/numWrongTextView"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/totalMarksTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView7"
-        android:layout_marginLeft="20dp"
-        android:layout_toRightOf="@+id/imageView7"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/numWrongTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/imageView7"
-        android:layout_alignLeft="@+id/totalMarksTextView"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/imageView2"
-        android:layout_below="@+id/imageView2"
-        android:src="@drawable/correctnum" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/countDownView"
-        android:layout_below="@+id/countDownView"
-        android:layout_marginRight="56dp"
-        android:src="@drawable/totalqns" />
-
-    <ImageButton
-        android:id="@+id/tryAgainBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView2"
-        android:layout_below="@+id/imageView7"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_below="@+id/textView1"
         android:layout_marginTop="14dp"
-        android:src="@drawable/tryagain" />
+        android:text="@string/qnsCorrect"
+        style="@style/XGameScoreTextStyle"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <ImageButton
-        android:id="@+id/giveUpBtn"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tryAgainBtn"
-        android:layout_toRightOf="@+id/imageView7"
-        android:src="@drawable/giveup" />
+        android:layout_alignRight="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="18dp"
+        android:text="@string/qnsWrong"
+        style="@style/XGameScoreTextStyle"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="14dp"
+        android:text="@string/totalScore"
+        style="@style/XGameScoreTextStyle"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/xgameTryAgain"
+        android:layout_below="@+id/xgameTimesUp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/qnsAttempted"
+        style="@style/XGameScoreTextStyle"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/xgameQnsAttempted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_toRightOf="@+id/textView1"
+        android:text="@string/scoreResult"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/xgameQnsCorrect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_toRightOf="@+id/textView1"
+        android:text="@string/scoreResult"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/xgameQnsWrong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignLeft="@+id/xgameQnsCorrect"
+        android:text="@string/scoreResult"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/xgameTotalScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignRight="@+id/xgameQnsWrong"
+        android:text="@string/scoreResult"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageButton
+        android:id="@+id/xgameGiveUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/xgameTryAgain"
+        android:layout_marginRight="93dp"
+        android:background="@null"
+        android:src="@drawable/xgame_quit" />
+
+    <ImageButton
+        android:id="@+id/xgameTryAgain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        android:layout_toLeftOf="@+id/xgameGiveUp"
+        android:background="@null"
+        android:src="@drawable/xgame_try_again" />
 
 </RelativeLayout>
