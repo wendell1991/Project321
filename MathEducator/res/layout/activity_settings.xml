@@ -8,23 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SettingsActivity" >
 
-    <Button
-        android:id="@+id/cancelBtn1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/musicSb"
-        android:text="@string/cancel" />
-
-    <Button
-        android:id="@+id/doneBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/cancelBtn1"
-        android:layout_alignBottom="@+id/cancelBtn1"
-        android:layout_toLeftOf="@+id/cancelBtn1"
-        android:text="@string/done" />
-
     <Switch
         android:id="@+id/effSwitch"
         android:layout_width="wrap_content"
@@ -33,14 +16,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="35dp"
         android:text="@string/soundEff" />
-
-    <Button
-        android:id="@+id/creditsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/credits" />
 
     <Switch
         android:id="@+id/musicSwitch"
@@ -63,5 +38,33 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/effSwitch"
         android:layout_below="@+id/effSwitch" />
+
+    <Button
+        android:id="@+id/creditsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/musicSb"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/credits" />
+
+    <Button
+        android:id="@+id/doneBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/creditsBtn"
+        android:layout_alignBottom="@+id/creditsBtn"
+        android:layout_toLeftOf="@+id/cancelBtn1"
+        android:text="@string/done" />
+
+    <Button
+        android:id="@+id/cancelBtn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/doneBtn"
+        android:layout_alignBottom="@+id/doneBtn"
+        android:layout_alignRight="@+id/musicSb"
+        android:text="@string/cancel" />
 
 </RelativeLayout>

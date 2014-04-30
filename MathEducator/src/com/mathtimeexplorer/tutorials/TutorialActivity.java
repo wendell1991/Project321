@@ -63,7 +63,7 @@ public class TutorialActivity extends Activity {
 	    
 		private TutorialBaseAdapter(Context context) {
 		      inflater = LayoutInflater.from(context);
-		      imageList = new ArrayList<Integer>(Arithmetic.imageList);
+		      imageList = new ArrayList<Integer>(Arithmetic.additionList);
 		}
 		
 		@Override

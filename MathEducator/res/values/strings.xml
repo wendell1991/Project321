@@ -3,23 +3,23 @@
 
     <string name="app_name">Math:Time Explorer</string>
     
-    <string name="name">Name</string>
+    <string name="start">Start</string>
+    
     <string name="login">Login</string>
     <string name="cancel">Cancel</string>
+    
+    <string name="soundEff">Sound Effects</string>
+    <string name="music">Music</string>
+    <string name="credits">Credits</string>
+    <string name="done">Done</string>
     
     <string name="practice">Practice Set</string>
     <string name="tutorial">Tutorial</string>
     <string name="games">Games</string>
     <string name="quiz">Quiz</string>
+    
     <string name="userName">Username</string>
     <string name="pwdWord">Password</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-    <string name="credits">Credits</string>
-    <string name="done">Done</string>
-    <string name="soundEff">Sound Effects</string>
-    <string name="music">Music</string>
-    <string name="start">Start</string>
     
     <string name="tapReturn">Tap Here To Return</string>
     
@@ -33,6 +33,7 @@
     <string name="quiz_prompt">Select a quiz</string>
     <string name="topic_prompt">Select a topic</string>
     <string name="topic">Topic</string>
+    <string name="name">Name</string>
     <string name="rank">Rank</string>
     <string name="result">Result</string>
     <string-array name="topic_arrays">
@@ -42,4 +43,13 @@
         <item>Money</item>
     </string-array>
     
+    <string name="find">Find:</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+     <string name="Back">Back</string>
+    <string name="Easy">Easy</string>
+    <string name="Normal">Normal</string>
+    <string name="Hard">Hard</string>
+    <string name="obtainablestars">Obtainable Stars:</string>
+    <string name="previousscore">Previous best score:</string>
 </resources>
