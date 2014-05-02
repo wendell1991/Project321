@@ -3,7 +3,6 @@ package com.mathtimeexplorer.xgame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -20,24 +19,29 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.matheducator.R;
 import com.mathtimeexplorer.main.MainActivity;
-import com.mathtimeexplorer.misc.Constants;
+import com.mathtimeexplorer.utils.Constants;
 
 public class XGame extends Activity {
 	
-	private Dialog scoreSheetDialog, countDownDialog;
+	private Dialog countDownDialog;
+	private PopupWindow scoreSheetPopUp;
 	
 	private ImageView valueOne, valueTwo, valAnswer, optionOne, optionTwo, optionThree, 
 					  optionFour, optionFive, optionSix, correctGreen, wrongRed, countDownView;
@@ -50,19 +54,23 @@ public class XGame extends Activity {
 	// Timer configuration
 	private long TIMER_DURATION = 30000, TIMER_INTERVAL = 10;
 	
-	private Context context = this;
-	private MediaPlayer bkgrdMusic;
-	private ArrayList<ImageView> optionArrayList;
-	private ArrayList<XGameNumbers> numList = new ArrayList<XGameNumbers>();
-	
 	private int sixty = 60;
 	private static int INDEX_ZERO = 0;
 	private static int OPTION_CORRECT = 1; 
 	private static int OPTION_WRONG = 2;
 	
+	private Context context = this;
+	private CountDown count;
+	private MediaPlayer bkgrdMusic = null;
+	private ArrayList<ImageView> optionArrayList;
+	private ArrayList<XGameNumbers> numList = new ArrayList<XGameNumbers>();
+	
 	// Keep track of number of corrects & wrong
 	private int correct = 0;
 	private int wrong = 0;
+	
+	// Check the state of the game
+	private boolean isGameStarted = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +81,39 @@ public class XGame extends Activity {
 		init();
 		new LoadGameData().execute();
 	}
-
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (isGameStarted == true) {
+			// Resumes the count-down & background music
+			long timeLeft = count.getTimeLeft();
+			count = new CountDown(timeLeft, TIMER_INTERVAL);
+			count.start();
+			bkgrdMusic.start();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Back button is pressed
+		if (this.isFinishing()) {
+			if (bkgrdMusic != null) {
+				//bkgrdMusic.reset();
+				bkgrdMusic.release();
+			}
+			count.cancel();
+			count = null;
+		}
+		// User exits the app
+		else {
+			if (bkgrdMusic != null) {
+				bkgrdMusic.pause();
+			}
+			count.cancel();
+		}
+	}
 	
 	// onClick Handler to check user's input
 	public void checkAnswer(View view){
@@ -130,20 +170,22 @@ public class XGame extends Activity {
 	}
 	
 	private void callScoreSheetDialog(){
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService
+				(Context.LAYOUT_INFLATER_SERVICE);
 		
-		// Calls the score sheet dialog box
-		scoreSheetDialog = new Dialog(context);
-		scoreSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		scoreSheetDialog.setContentView(R.layout.xgame_scoresheet);
-	    scoreSheetDialog.getWindow().setWindowAnimations(R.style.XGameScoreDialogAnimation);
+		View layout = inflater.inflate(R.layout.xgame_scoresheet, 
+				(ViewGroup) findViewById(R.id.xgame_scoresheet));
+		
+		scoreSheetPopUp = new PopupWindow(layout, 1200, 650, true);
+		scoreSheetPopUp.setAnimationStyle(R.style.Animation_Bounce);
 		
 		// Initialize the widgets
-		totalQns = (TextView) scoreSheetDialog.findViewById(R.id.xgameQnsAttempted);
-		numCorrect = (TextView) scoreSheetDialog.findViewById(R.id.xgameQnsCorrect);
-		numWrong = (TextView) scoreSheetDialog.findViewById(R.id.xgameQnsWrong);
-		totalMarks = (TextView) scoreSheetDialog.findViewById(R.id.xgameTotalScore);
-		tryAgainBtn = (ImageButton) scoreSheetDialog.findViewById(R.id.xgameTryAgain);
-		giveUpBtn = (ImageButton) scoreSheetDialog.findViewById(R.id.xgameGiveUp);
+		totalQns = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsAttempted);
+		numCorrect = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsCorrect);
+		numWrong = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsWrong);
+		totalMarks = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTotalScore);
+		tryAgainBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTryAgain);
+		giveUpBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameGiveUp);
 		 
 		// Display results
 		totalQns.setText(String.valueOf(correct + wrong));
@@ -167,7 +209,7 @@ public class XGame extends Activity {
 					case MotionEvent.ACTION_UP : {
 						// User selected try again, reloads this activity
 						Intent intent = getIntent();
-						scoreSheetDialog.dismiss();
+						scoreSheetPopUp.dismiss();
 						finish();
 						startActivity(intent);
 					}
@@ -187,18 +229,17 @@ public class XGame extends Activity {
 					case MotionEvent.ACTION_UP : {
 						// User gives up, so returns to the main topic selection screen
 						Intent intent = new Intent(context, MainActivity.class);
-						scoreSheetDialog.dismiss();
+						scoreSheetPopUp.dismiss();
 						startActivity(intent);
 					}
 				}
 				return true;
 			}
 		});
-		scoreSheetDialog.show();
+		scoreSheetPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
 	}
 
 	private void genGameContent(XGameNumbers nh){
-		Log.i("XGame", "----------- GENERATING GAME CONTENT ---------------- ");
 		int whichToHide = nh.getWhichToHide();
 		int firstNo = nh.getFirstNo();
 		int secondNo = nh.getSecondNo();
@@ -234,7 +275,6 @@ public class XGame extends Activity {
 	    for (Object obj: keys) {
 	    	curVal = (Integer) obj;
 	    	curValResId = optionsMap.get(obj);
-	    	Log.i("XGame", "curVal: "+curVal+" curValResId: "+curValResId);
 	    	curBtn = (ImageView) optionArrayList.get(currentIndex);
 	    	curBtn.setTag(curVal);
 	    	curBtn.setImageResource(curValResId);
@@ -243,7 +283,6 @@ public class XGame extends Activity {
 	}
 
 	private XGameNumbers generateGameValues() {
-		Log.i("XGame", "----------- GENERATING GAME VALUES ---------------- ");
 		XGameNumbers nh = new XGameNumbers();
 		Random rand = new Random();
 		ArrayList<Integer> itemToHide = new ArrayList<Integer>();
@@ -341,14 +380,6 @@ public class XGame extends Activity {
 			}
 		}
 		nh.setOptionsMap(optionsMap);
-		
-		Log.i("XGame", nh.toString());
-		Iterator<Integer> keySetIterator = optionsMap.keySet().iterator();
-		while (keySetIterator.hasNext()) {
-			Log.i("XGame", "Value: "+keySetIterator.next());
-			Log.i("XGame", "ValueId: "+optionsMap.get(keySetIterator.next()));
-		}
-		
 		return nh;
 	}
 	
@@ -421,8 +452,8 @@ public class XGame extends Activity {
 			countDownDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			countDownDialog.setContentView(R.layout.dialog_timer);
 			
+			// Makes the count-down dialog-box transparent
 		    final Window window = countDownDialog.getWindow();
-		    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		    
@@ -456,17 +487,19 @@ public class XGame extends Activity {
 			bkgrdMusic = MediaPlayer.create(XGame.this, R.raw.xgamemusic);
 			bkgrdMusic.start();
 			
-			// Create a count-down timer, starting number: 30 seconds
-			CountDown count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
+			// Create a 30 seconds count-down timer 
+			count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
 			count.start();
+			isGameStarted = true;
 		}
 	}
 	
 	class CountDown extends CountDownTimer {
-		private String TAG_ZERO = "0";
-		private String TIME_FINISH = "00:00";
-		private String TIME_LEFT = "Time left: ";
-		private String STRING_COLON = ":";
+		
+		private static final String TIME_FINISH = "00:00";
+		private static final String TIME_LEFT = "Time left: ";
+		private static final String STRING_COLON = ":";
+		private long timeLeft = 0;
 
 		public CountDown(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
@@ -476,7 +509,8 @@ public class XGame extends Activity {
 		@Override
         public void onFinish() {
 			timerText.setText(TIME_LEFT+TIME_FINISH);
-			if (bkgrdMusic.isPlaying()) {
+			if (bkgrdMusic.isPlaying() == true) {
+				bkgrdMusic.reset();
 				bkgrdMusic.release();
 			}
 			callScoreSheetDialog();
@@ -484,7 +518,6 @@ public class XGame extends Activity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-        	String currentSeconds = "";
         	long milliseconds = (TimeUnit.MILLISECONDS.toMillis((millisUntilFinished)) % sixty);
         	long seconds = (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)) % sixty;
         	
@@ -493,18 +526,21 @@ public class XGame extends Activity {
         		timerText.setTextColor(Color.RED);
         	}
         	
-        	// Format seconds and milliseconds, ensure both is two digits
-        	if (String.valueOf(seconds).length() == 2) {
-        		currentSeconds = String.valueOf(seconds);
-        	} else {
-        		currentSeconds = TAG_ZERO + seconds;
-        	}
-        	if (String.valueOf(milliseconds).length() == 2) {
-        		timerText.setText(TIME_LEFT+currentSeconds+STRING_COLON+milliseconds);
-        	} else {
-        		timerText.setText(TIME_LEFT+currentSeconds+STRING_COLON+TAG_ZERO+milliseconds);
-        	}
+        	// Format seconds and milliseconds to 2 digits
+        	timerText.setText(TIME_LEFT
+        			+ String.format("%02d", seconds) + STRING_COLON 
+					+ String.format("%02d", milliseconds));;
+					
+        	setTimeLeft(millisUntilFinished);
         }
+
+		public long getTimeLeft() {
+			return timeLeft;
+		}
+
+		public void setTimeLeft(long timeLeft) {
+			this.timeLeft = timeLeft;
+		}
 	}
 	
 	private int findImageResourceId(int value) {

@@ -7,26 +7,30 @@
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="18" />
+    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/appicon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
         <activity
-            android:name="com.mathtimeexplorer.misc.LoadAppActivity" 
+            android:name="com.mathtimeexplorer.main.LoadAppActivity" 
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity android:name="com.mathtimeexplorer.main.MainActivity"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.main.OptionActivity"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.worksheets.QuizActivity"  android:screenOrientation="landscape"/>
-        <activity android:name="com.mathtimeexplorer.misc.CreditsActivity"  android:screenOrientation="landscape"/>
+        <activity android:name="com.mathtimeexplorer.main.CreditsActivity"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.tutorials.TutorialActivity"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.ranking.RankingTab"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.ranking.RankingTabHost"  android:screenOrientation="landscape"/>

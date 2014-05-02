@@ -9,20 +9,9 @@
     tools:context=".SettingsActivity" >
 
     <Switch
-        android:id="@+id/effSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="35dp"
-        android:text="@string/soundEff" />
-
-    <Switch
         android:id="@+id/musicSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/effSeekBar"
-        android:layout_below="@+id/effSeekBar"
         android:text="@string/music" />
 
     <SeekBar
@@ -31,23 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/musicSwitch"
         android:layout_below="@+id/musicSwitch" />
-
-    <SeekBar
-        android:id="@+id/effSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/effSwitch"
-        android:layout_below="@+id/effSwitch" />
-
-    <Button
-        android:id="@+id/creditsBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/musicSb"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="18dp"
-        android:text="@string/credits" />
 
     <Button
         android:id="@+id/doneBtn"
@@ -66,5 +38,14 @@
         android:layout_alignBottom="@+id/doneBtn"
         android:layout_alignRight="@+id/musicSb"
         android:text="@string/cancel" />
+
+    <Button
+        android:id="@+id/creditsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/musicSb"
+        android:layout_below="@+id/musicSb"
+        android:layout_marginTop="21dp"
+        android:text="@string/credits" />
 
 </RelativeLayout>

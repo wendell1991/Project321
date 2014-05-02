@@ -5,10 +5,10 @@
     android:layout_height="match_parent" >
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/pracset_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignBottom="@+id/pracset_prevbest"
         android:layout_alignLeft="@+id/difficulty"
         android:layout_marginLeft="28dp" />
 
@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/textView3"
+        android:layout_alignRight="@+id/pracset_title"
         android:layout_marginBottom="24dp"
         android:text="@string/Back" />
 
@@ -35,7 +35,7 @@
         android:id="@+id/difficulty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignLeft="@+id/pracset_starsobtain"
         android:layout_centerVertical="true"
         android:layout_marginLeft="44dp"
         android:orientation="horizontal" >
@@ -61,7 +61,7 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/pracset_starsobtain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/difficulty"
@@ -71,11 +71,11 @@
         android:text="@string/obtainablestars" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/pracset_prevbest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView2"
-        android:layout_alignRight="@+id/textView2"
+        android:layout_above="@+id/pracset_starsobtain"
+        android:layout_alignRight="@+id/pracset_starsobtain"
         android:layout_marginBottom="15dp"
         android:text="@string/previousscore" />
 
@@ -85,15 +85,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="18dp"
-        android:layout_toRightOf="@+id/textView1"
+        android:layout_toRightOf="@+id/pracset_prevbest"
         android:text="TextView" />
 
     <LinearLayout
         android:id="@+id/starslayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_toRightOf="@+id/textView2"
+        android:layout_alignBottom="@+id/pracset_starsobtain"
+        android:layout_toRightOf="@+id/pracset_starsobtain"
         android:orientation="horizontal" >
 
     </LinearLayout>

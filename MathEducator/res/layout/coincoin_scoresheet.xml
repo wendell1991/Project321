@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coincoin_scoresheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@drawable/coincoin_score_bkgrd">
+
+    <TextView
+        android:id="@+id/coincoin_timetaken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/scoreResult" />
+
+    <TextView
+        android:id="@+id/coincoin_nooftries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/coincoin_timetaken_textview"
+        android:layout_alignLeft="@+id/coincoin_timetaken"
+        android:layout_marginBottom="29dp"
+        android:text="@string/scoreResult" />
+
+    <TextView
+        android:id="@+id/coincoin_timesup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/coincoin_timesup"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/coincoin_nooftries_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/coincoin_timesup"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/coincoin_nooftries"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/coincoin_timetaken_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/coincoin_timetaken"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp"
+        android:text="@string/coincoin_timetaken"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/coincoin_tryagain"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/coincoin_giveup"
+        android:layout_alignBottom="@+id/coincoin_giveup"
+        android:layout_toLeftOf="@+id/coincoin_timetaken"
+        android:text="@string/tryAgain" />
+
+    <Button
+        android:id="@+id/coincoin_giveup"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        android:layout_toRightOf="@+id/coincoin_timetaken"
+        android:text="@string/giveUp" />
+
+</RelativeLayout>

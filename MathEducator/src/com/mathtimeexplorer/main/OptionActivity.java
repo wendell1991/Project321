@@ -1,21 +1,11 @@
 package com.mathtimeexplorer.main;
 
-import com.example.matheducator.R;
-import com.mathtimeexplorer.coincoin.CoinCoin;
-import com.mathtimeexplorer.misc.Constants;
-import com.mathtimeexplorer.tutorials.TutorialActivity;
-import com.mathtimeexplorer.worksheets.QuizActivity;
-import com.mathtimeexplorer.xgame.XGame;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -23,7 +13,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
+
+import com.example.matheducator.R;
+import com.mathtimeexplorer.coincoin.CoinCoin;
+import com.mathtimeexplorer.tutorials.TutorialActivity;
+import com.mathtimeexplorer.utils.Constants;
+import com.mathtimeexplorer.worksheets.QuizActivity;
+import com.mathtimeexplorer.xgame.XGame;
 
 public class OptionActivity extends Activity implements OnTouchListener {
 	
@@ -34,25 +30,24 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_option);
 		Bundle extras = getIntent().getExtras();
-				if (extras != null) {
-				   topic = extras.getInt(Constants.TOPIC);
-				   Log.e("topic",Integer.toString(topic));
-				}
-				ImageView img = (ImageView) findViewById (R.id.optionsBkGrd);
-				ImageView img2 = (ImageView) findViewById (R.id.optionsHotSpot);
-				img.setOnTouchListener(this);
-				if(topic == R.drawable.arithmetic){
-					img.setImageResource(R.drawable.arithmetictopic);
-					img2.setImageResource(R.drawable.arithmetictopicmask);
-					img.setTag(R.drawable.arithmetictopic);
-					img2.setTag(R.drawable.arithmetictopicmask);
-				}
-				else if(topic == R.drawable.fraction){
-					img.setImageResource(R.drawable.fractiontopic);
-					img2.setImageResource(R.drawable.fractiontopicmask);
-					img.setTag(R.drawable.fractiontopic);
-					img2.setTag(R.drawable.fractiontopicmask);
-				}
+		if (extras != null) {
+		   topic = extras.getInt(Constants.TOPIC);
+		}
+		ImageView img = (ImageView) findViewById (R.id.optionsBkGrd);
+		ImageView img2 = (ImageView) findViewById (R.id.optionsHotSpot);
+		img.setOnTouchListener(this);
+		if(topic == R.drawable.arithmetic){
+			img.setImageResource(R.drawable.arithmetictopic);
+			img2.setImageResource(R.drawable.arithmetictopicmask);
+			img.setTag(R.drawable.arithmetictopic);
+			img2.setTag(R.drawable.arithmetictopicmask);
+		}
+		else if(topic == R.drawable.fraction){
+			img.setImageResource(R.drawable.fractiontopic);
+			img2.setImageResource(R.drawable.fractiontopicmask);
+			img.setTag(R.drawable.fractiontopic);
+			img2.setTag(R.drawable.fractiontopicmask);
+		}
 	}
 
 	@Override
@@ -81,7 +76,6 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		img.setDrawingCacheEnabled(true); 
 		Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache()); 
 		img.setDrawingCacheEnabled(false);
-		Log.e("test",Integer.toString(hotspots.getPixel(x, y)));
 		return hotspots.getPixel(x, y);
 	}
 

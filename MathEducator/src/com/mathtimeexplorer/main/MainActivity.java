@@ -40,9 +40,8 @@ import android.widget.ViewSwitcher.ViewFactory;
 import com.example.matheducator.R;
 import com.mathtimeexplorer.database.DBAdapter;
 import com.mathtimeexplorer.database.JSONParser;
-import com.mathtimeexplorer.misc.Constants;
-import com.mathtimeexplorer.misc.CreditsActivity;
 import com.mathtimeexplorer.ranking.RankingTabHost;
+import com.mathtimeexplorer.utils.Constants;
 
 public class MainActivity extends Activity implements ViewFactory, OnSeekBarChangeListener {
 	
@@ -59,12 +58,11 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private Button loginBtn, cancelBtn;
 
 	// Settings Dialog 
-	private Switch effSwitch, musicSwitch;
-	private SeekBar effSeekBar, musicSb;
+	private Switch musicSwitch;
+	private SeekBar musicSb;
 	private Button creditsBtn, doneBtn, cancelBtn1;
 	private Dialog settingsDialog;
 	private AudioManager am;
-	private int effVol = 0;
 	private int musicVol = 0;
 	
 	private Context context = this;
@@ -178,39 +176,18 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		// Calls the settings dialog box
 		settingsDialog = new Dialog(context);
 		settingsDialog.setContentView(R.layout.activity_settings);
+		
 		initSettings();
+		
 		am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		int maxEffVol = am.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-        int curEffVol = am.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		int maxMusicVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int curMusicVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        effSwitch.setChecked(true);
+        
         musicSwitch.setChecked(true);
-        effSeekBar.setMax(maxEffVol);
-        effSeekBar.setProgress(curEffVol);
         musicSb.setMax(maxMusicVol);
         musicSb.setProgress(curMusicVol);
         
-        // Set event listeners
-        effSeekBar.setOnSeekBarChangeListener(this);
         musicSb.setOnSeekBarChangeListener(this);
-        
-        effSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				if (isChecked == true) {					
-					// Switch is on, get the value of seek-bar and set it as the current value
-					effVol = effSeekBar.getProgress();
-					effSeekBar.setEnabled(true);
-				} else {
-					// Since switch is Off, set volume as 0 and disable the seek-bar
-					effVol = 0;
-					effSeekBar.setEnabled(false);
-				}
-			}
-		});
 		
 		musicSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
@@ -244,7 +221,6 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				am.setStreamVolume(AudioManager.STREAM_SYSTEM, effVol, 0);
 				am.setStreamVolume(AudioManager.STREAM_MUSIC, musicVol, 0);
 				settingsDialog.dismiss();
 			}
@@ -272,17 +248,9 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	}
 
 	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress,
-			boolean fromUser) {
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		// TODO Auto-generated method stub
-		
-		// Checks which seek-bar is adjusted by user.
-		if (seekBar.getId() ==  R.id.effSeekBar) {
-			// Set the appropriate current values
-			effVol = progress;
-		} else if (seekBar.getId() == R.id.musicSb){
-			musicVol = progress;
-		}
+	    musicVol = progress;
 	}
 
 	@Override
@@ -328,9 +296,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	
 	// Initialize Settings Dialog UIs
 	private void initSettings() {
-		effSwitch = (Switch) settingsDialog.findViewById(R.id.effSwitch);
 		musicSwitch = (Switch) settingsDialog.findViewById(R.id.musicSwitch);
-		effSeekBar = (SeekBar) settingsDialog.findViewById(R.id.effSeekBar);
 		musicSb = (SeekBar) settingsDialog.findViewById(R.id.musicSb);
 		creditsBtn = (Button) settingsDialog.findViewById(R.id.creditsBtn);
 		doneBtn = (Button) settingsDialog.findViewById(R.id.doneBtn);
