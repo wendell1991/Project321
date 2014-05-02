@@ -8,9 +8,11 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -86,11 +88,40 @@ public class XGame extends Activity {
 	public void onResume() {
 		super.onResume();
 		if (isGameStarted == true) {
-			// Resumes the count-down & background music
-			long timeLeft = count.getTimeLeft();
-			count = new CountDown(timeLeft, TIMER_INTERVAL);
-			count.start();
-			bkgrdMusic.start();
+			// Display dialog, prompts user whether he wants to resume or quit game
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			
+			builder
+				.setCancelable(false)
+				.setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						
+						// User quits the game, returns to previous activity
+						dialog.cancel();
+						finish();						
+					}
+				})
+				
+				.setNegativeButton(R.string.resume, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						
+						// Resumes the count-down & background music
+						long timeLeft = count.getTimeLeft();
+						count = new CountDown(timeLeft, TIMER_INTERVAL);
+						count.start();
+						bkgrdMusic.start();
+					}
+				});
+			
+			// Creates the dialog
+			AlertDialog dialog = builder.create();
+			dialog.show();
 		}
 	}
 	
@@ -227,10 +258,9 @@ public class XGame extends Activity {
 					case MotionEvent.ACTION_DOWN :
 						break;
 					case MotionEvent.ACTION_UP : {
-						// User gives up, so returns to the main topic selection screen
-						Intent intent = new Intent(context, MainActivity.class);
+						// User gives up, returns to previous activity
 						scoreSheetPopUp.dismiss();
-						startActivity(intent);
+						finish();
 					}
 				}
 				return true;

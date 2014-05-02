@@ -140,7 +140,10 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		// Calls the login dialog box
 	    loginDialog = new Dialog(context);
 		loginDialog.setContentView(R.layout.activity_login);
+		loginDialog.setCancelable(false);
+		
 		initLogin();
+		
 		loginBtn.setOnClickListener(new View.OnClickListener() {
 		
 			@Override
@@ -176,6 +179,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		// Calls the settings dialog box
 		settingsDialog = new Dialog(context);
 		settingsDialog.setContentView(R.layout.activity_settings);
+		settingsDialog.setCancelable(false);
 		
 		initSettings();
 		

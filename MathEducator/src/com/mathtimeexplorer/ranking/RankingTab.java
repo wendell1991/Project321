@@ -130,6 +130,7 @@ public class RankingTab extends Activity {
 		private int classId;
 		private int schoolId;
 		private int quizId;
+		private int success;
 		private ArrayList<Ranking> rankingList;
 		
 		public RetrieveResults(int userId, int classId, int schoolId, int quizId) {
@@ -160,7 +161,7 @@ public class RankingTab extends Activity {
             
             try{
 				// Get success tag and checks whether it is 1
-				int success = json.getInt(TAG_SUCCESS);
+				success = json.getInt(TAG_SUCCESS);
 				if (success == 1) {
 					rankingList = new ArrayList<Ranking>();
 					resultList = json.getJSONArray(TAG_RESULTS);
@@ -189,42 +190,53 @@ public class RankingTab extends Activity {
 		
 		@Override
 		protected void onPostExecute(String file_url) {
-			TableRow row;
-			TextView view;
-			Ranking rank;
-			String spacing = "";
-			int rankIndex = 0;
+			// No results
+			if (success == 0) {
+				TextView resultView = (TextView) findViewById(R.id.rankThreeName);
+				resultView.setText(R.string.noResult);
+			} else {
+				TableRow row;
+				Ranking rank;
+				String spacing = "";
+				int rankIndex = 0;
+					
+				// Static positions of each Views at each rows
+				int rankViewIndex = 0;
+				int nameViewIndex = 1;
+				int resultViewIndex = 2;
 				
-			// Static positions of each Views at each rows
-			int rankViewIndex = 0;
-			int nameViewIndex = 1;
-			int resultViewIndex = 2;
-			
-            // Populates the ranking result on the table
-            for (int i = 1; i <= 5; i++) {
-            	row = (TableRow) rankTable.getChildAt(i);              		
-            	if (rankingList.size() >= rankIndex) {
-            		rank = (Ranking) rankingList.get(rankIndex);
-            		
-            		//Log.i(Constants.LOG_RANKING, "RANK: " + rank.getRank());
-            		//Log.i(Constants.LOG_RANKING, "FIRST_NAME: " + rank.getFirst_name());
-            		//Log.i(Constants.LOG_RANKING, "LAST_NAME: " + rank.getLast_name());
-            		//Log.i(Constants.LOG_RANKING, "RESULT: " + rank.getResult());
-            		
-            		view = (TextView) row.getChildAt(rankViewIndex);
-            		view.setText(String.valueOf(rank.getRank()));
-                		
-            		view = (TextView) row.getChildAt(nameViewIndex);
-            		view.setText(String.valueOf(rank.getFirst_name() 
-            				+ spacing + rank.getLast_name()));
-                		
-            		view = (TextView) row.getChildAt(resultViewIndex);
-            		view.setText(String.valueOf(rank.getResult()));
-            	} else {
-            		break;
-            	}
-                rankIndex++;
-           }
+	            // Populates the ranking result on the table
+	            for (int i = 1; i <= 5; i++) {
+	            	row = (TableRow) rankTable.getChildAt(i);              		
+	            	if (rankingList.size() >= rankIndex) {
+	            		rank = (Ranking) rankingList.get(rankIndex);
+	            		
+	            		//Log.i(Constants.LOG_RANKING, "RANK: " + rank.getRank());
+	            		//Log.i(Constants.LOG_RANKING, "FIRST_NAME: " + rank.getFirst_name());
+	            		//Log.i(Constants.LOG_RANKING, "LAST_NAME: " + rank.getLast_name());
+	            		//Log.i(Constants.LOG_RANKING, "RESULT: " + rank.getResult());
+	            		
+	            		configureResultView(String.valueOf(rank.getRank()), 
+	            				(TextView) row.getChildAt(rankViewIndex));
+	            		
+	            		configureResultView(String.valueOf(rank.getFirst_name() + spacing
+	            				+ rank.getLast_name()), (TextView) row.getChildAt(nameViewIndex));
+	            		
+	            		configureResultView(String.valueOf(rank.getResult()), 
+	            				(TextView) row.getChildAt(resultViewIndex));
+	            	} else {
+	            		break;
+	            	}
+	                rankIndex++;
+	           }
+			}		
+		}
+		
+		private void configureResultView(String value, TextView view) {
+			view.setText(value);
+			if (view.getVisibility() == View.INVISIBLE) {
+				view.setVisibility(View.VISIBLE);
+			}			
 		}
 	}
 	
@@ -246,6 +258,10 @@ public class RankingTab extends Activity {
             
 			JSONObject json = jsonParser.makeHttpRequest(URL_QUIZZES, "POST", params);
 			try{
+				// Create a new set of Quiz names				
+				quizNames = new ArrayList<String>(); 
+				quizNames.add(tmpQuizName);
+				
 				// Get success tag and checks whether it is 1
 				int success = json.getInt(TAG_SUCCESS);
 				if (success == 1) {			
@@ -253,13 +269,8 @@ public class RankingTab extends Activity {
 					JSONObject obj;
 					String quizName = "";
 					
-					// Clear previous & creates new quizList, quizNameList
 					quizList = new ArrayList<Quiz>();
-					quizNames = new ArrayList<String>();
 					resultList = json.getJSONArray(TAG_QUIZ);
-					
-					// Add the option <-- Select a quiz --> first 
-					quizNames.add(tmpQuizName);
 					
 					// Loops the results and saves the result into Quiz class 
 					for (int i = 0; i < resultList.length(); i++) {

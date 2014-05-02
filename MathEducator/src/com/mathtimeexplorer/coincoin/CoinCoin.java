@@ -203,6 +203,11 @@ public class CoinCoin extends Activity {
 	}
 	
 	private void callScoreSheetPopUp() {
+		
+		// Stops the timer first
+		timeSwapBuff += timeInMilliseconds;
+		customHandler.removeCallbacks(updateTimerThread);
+		
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService
 				(Context.LAYOUT_INFLATER_SERVICE);
 		
@@ -252,10 +257,9 @@ public class CoinCoin extends Activity {
 					case MotionEvent.ACTION_DOWN :
 						break;
 					case MotionEvent.ACTION_UP : {
-						// User gives up, so returns to the main topic selection screen
-						Intent intent = new Intent(context, MainActivity.class);
+						// User gives up, returns to previous activity
 						scoreSheetPopUp.dismiss();
-						startActivity(intent);
+						finish();
 					}
 				}
 				return true;
