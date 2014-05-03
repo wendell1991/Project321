@@ -79,4 +79,5 @@
     <string name="obtainablestars">Obtainable Stars:</string>
     <string name="previousscore">Previous best score:</string>
     <string name="selectquiz">Select Quiz</string>
+    <string name="finish">Finish</string>
 </resources>
