@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".QuizActivity" >
+<<<<<<< HEAD
 
     <FrameLayout
     android:id="@+id/fragment_container"
@@ -13,7 +14,14 @@
     
     <Button
         android:id="@+id/prevQnBtn"
+=======
+	
+    <fragment
+        android:name="com.mathtimeexplorer.worksheets.QuizFragment"
+        android:id="@+id/fragment_quiz_container"
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:layout_width="wrap_content"
+<<<<<<< HEAD
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -32,11 +40,34 @@
     
      <Button
         android:id="@+id/finishQnBtn"
+=======
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/prevQnBtn"
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:layout_alignBottom="@+id/prevQnBtn"
         android:layout_marginLeft="250dp"
         android:layout_toRightOf="@+id/nxtQnBtn"
         android:text="@string/finish" />
+=======
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="22dp"
+        android:layout_marginLeft="39dp"
+        android:text="@string/previous" />
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
+
+    <Button
+        android:id="@+id/nxtQnBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/prevQnBtn"
+        android:layout_marginLeft="22dp"
+        android:layout_toRightOf="@+id/prevQnBtn"
+        android:text="@string/next" />
 
 </RelativeLayout>

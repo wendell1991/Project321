@@ -1,5 +1,6 @@
 package com.mathtimeexplorer.main;
 
+<<<<<<< HEAD
 import com.example.matheducator.R;
 import com.mathtimeexplorer.coincoin.CoinCoin;
 import com.mathtimeexplorer.misc.Constants;
@@ -8,6 +9,8 @@ import com.mathtimeexplorer.worksheets.QuizActivity;
 import com.mathtimeexplorer.worksheets.SelectQuizActivity;
 import com.mathtimeexplorer.xgame.XGame;
 
+=======
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +19,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -24,7 +26,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
+
+import com.example.matheducator.R;
+import com.mathtimeexplorer.coincoin.CoinCoin;
+import com.mathtimeexplorer.tutorials.TutorialActivity;
+import com.mathtimeexplorer.utils.Constants;
+import com.mathtimeexplorer.worksheets.QuizActivity;
+import com.mathtimeexplorer.xgame.XGame;
 
 public class OptionActivity extends Activity implements OnTouchListener {
 
@@ -36,8 +44,12 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		setContentView(R.layout.activity_option);
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
+<<<<<<< HEAD
 			topic = extras.getInt(Constants.TOPIC);
 			Log.e("topic",Integer.toString(topic));
+=======
+		   topic = extras.getInt(Constants.TOPIC);
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 		}
 		ImageView img = (ImageView) findViewById (R.id.optionsBkGrd);
 		ImageView img2 = (ImageView) findViewById (R.id.optionsHotSpot);
@@ -172,6 +184,88 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		}
 	}
 
+	private void arithmeticLayout(int touchColor, int evX, int evY, Context context){
+		int tutorial1 = -16711681;
+		int tutorial2 = -65281;
+		int tutorial3 = -256;
+		int tutorial4 = -10092544;
+		int tutorial5 = -26368;
+		int quiz = -16711936;
+		int game = -52480;
+
+		if(touchColor==tutorial1){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial2){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial3){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial4){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial5){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==quiz){
+			Intent intent = new Intent(context, QuizActivity.class);
+			startActivity(intent);
+		}
+		if(touchColor==game){
+			Intent intent = new Intent(context, XGame.class);
+			startActivity(intent);
+		}
+	}
+	
+	private void fractionLayout(int touchColor, int evX, int evY, Context context){
+		int tutorial1 = -16711681;
+		int tutorial2 = -65281;
+		int tutorial3 = -256;
+		int tutorial4 = -26368;
+		int quiz = -10092544;
+		int game = -52480;
+
+		if(touchColor==tutorial1){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial2){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial3){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==tutorial4){
+			Intent intent = new Intent(context, TutorialActivity.class);
+			intent.putExtra(Constants.TOPIC, topic);
+			callProgressWindow(context, intent, evX, evY);
+		}
+		if(touchColor==quiz){
+			Intent intent = new Intent(context, QuizActivity.class);
+			startActivity(intent);
+		}
+		if(touchColor==game){
+			Intent intent = new Intent(context, CoinCoin.class);
+			startActivity(intent);
+		}
+	}
+	
 	private void callProgressWindow(Context cx, Intent in, int evX, int evY) {
 
 		final Intent intent = in;
@@ -206,7 +300,11 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		practiceBtn.setTextSize(8);
 		practiceBtn.setLayoutParams(new LinearLayout.LayoutParams(200,50));
 		tutorialBtn.setLayoutParams(new LinearLayout.LayoutParams(200,50));
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 		practiceBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -214,6 +312,47 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				Intent intent2 = new Intent(context, SelectPracticeSetActivity.class);
 				intent2.putExtra("Subject", intent.getExtras().getString("Tutorial"));
 				startActivity(intent2);
+<<<<<<< HEAD
+=======
+			}
+		});
+		
+		tutorialBtn.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				startActivity(intent);
+			}
+		});
+		
+		
+		ll2.addView(ll);
+		ll2.addView(tutorialBtn);
+		ll2.addView(practiceBtn);
+		ll2.setBackgroundResource(R.drawable.cardbackground);
+		/*
+		// Inflate the popup_layout.xml
+		RelativeLayout viewGroup = (RelativeLayout) ((Activity) context).findViewById(R.id.progresslayout);
+		LayoutInflater layoutInflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = layoutInflater.inflate(R.layout.activity_progress, viewGroup);
+
+		Button practiceBtn = (Button) layout.findViewById(R.id.practiceBtn);
+		Button tutorialBtn = (Button) layout.findViewById(R.id.tutorialBtn);
+		 */
+		progressWindow.setContentView(ll2);
+		progressWindow.setWidth(400);
+		progressWindow.setHeight(200);
+		progressWindow.setFocusable(true);
+		progressWindow.showAtLocation(ll, Gravity.NO_GRAVITY, evX+40, evY+100);
+		
+		/*practiceBtn.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent2 = new Intent(context, SelectPracticeSetActivity.class);
+				startActivity(intent2);
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 			}
 		});
 
@@ -224,6 +363,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent);
 			}
 		});
+<<<<<<< HEAD
 
 
 		ll2.addView(ll);
@@ -263,6 +403,9 @@ public class OptionActivity extends Activity implements OnTouchListener {
 			}
 		});
 		 */
+=======
+		*/
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	}
 
 }

@@ -1,7 +1,20 @@
 package com.mathtimeexplorer.worksheets;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
+=======
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
+import com.example.matheducator.R;
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
+
+<<<<<<< HEAD
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -24,7 +37,10 @@ import com.mathtimeexplorer.misc.Constants;
 import com.mathtimeexplorer.main.OptionActivity;
 import com.mathtimeexplorer.main.User;
 
+=======
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 public class QuizActivity extends Activity {
+<<<<<<< HEAD
 
 	Fragment previousFrag;
 	int questionNo = 0;
@@ -32,10 +48,16 @@ public class QuizActivity extends Activity {
 	ArrayList<Question> questionList;
 	int[] answers;
 
+=======
+	
+	Fragment previousFrag;
+	
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_quiz);
+<<<<<<< HEAD
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -188,5 +210,33 @@ public class QuizActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		Toast.makeText(getApplicationContext(), "Back is disabled.",Toast.LENGTH_SHORT).show();
+=======
+		
+		Button nextBtn = (Button) findViewById(R.id.nxtQnBtn);
+		Button prevBtn = (Button) findViewById(R.id.prevQnBtn);
+	
+		nextBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Fragment quizFrag = new QuizFragment();			
+				FragmentManager fm = getFragmentManager();
+				FragmentTransaction fragmentTransaction = fm.beginTransaction();	
+				fragmentTransaction.replace(R.id.fragment_quiz_container, quizFrag);
+				fragmentTransaction.addToBackStack(null);
+				fragmentTransaction.commit();
+			}
+		});
+		
+		prevBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+			    getFragmentManager().popBackStack();
+			}
+		});
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	}
 }

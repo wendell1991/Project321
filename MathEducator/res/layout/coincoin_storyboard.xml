@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coincoin_popup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.mathtimeexplorer.utils.CustomTextView
+        android:id="@+id/coincoin_storyboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="114dp"
+        android:background="@drawable/coincoin_textbkgrd"
+        android:text="@string/coincoin_storyboard" />
+
+    <TextView
+        android:id="@+id/coincoin_tapStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/coincoin_storyboard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:textStyle="bold"
+        android:text="@string/tapStart" />
+
+</RelativeLayout>

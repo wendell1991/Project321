@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.mathtimeexplorer.main.User;
-import com.mathtimeexplorer.misc.Constants;
+import com.mathtimeexplorer.utils.Constants;
 
 import android.content.ContentValues;
 import android.content.Context;

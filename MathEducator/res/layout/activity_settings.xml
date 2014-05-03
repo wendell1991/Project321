@@ -8,6 +8,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SettingsActivity" >
 
+<<<<<<< HEAD
     <Switch
         android:id="@+id/effSwitch"
         android:layout_width="wrap_content"
@@ -17,12 +18,12 @@
         android:layout_marginLeft="35dp"
         android:text="@string/soundEff" />
 
+=======
+>>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
     <Switch
         android:id="@+id/musicSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/effSeekBar"
-        android:layout_below="@+id/effSeekBar"
         android:text="@string/music" />
 
     <SeekBar
@@ -32,12 +33,32 @@
         android:layout_alignLeft="@+id/musicSwitch"
         android:layout_below="@+id/musicSwitch" />
 
-    <SeekBar
-        android:id="@+id/effSeekBar"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/doneBtn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/effSwitch"
-        android:layout_below="@+id/effSwitch" />
+        android:layout_alignBaseline="@+id/creditsBtn"
+        android:layout_alignBottom="@+id/creditsBtn"
+        android:layout_toLeftOf="@+id/cancelBtn1"
+        android:text="@string/done" />
+
+    <Button
+        android:id="@+id/cancelBtn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/doneBtn"
+        android:layout_alignBottom="@+id/doneBtn"
+        android:layout_alignRight="@+id/musicSb"
+        android:text="@string/cancel" />
+
+    <Button
+        android:id="@+id/creditsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/musicSb"
+        android:layout_below="@+id/musicSb"
+        android:layout_marginTop="21dp"
+        android:text="@string/credits" />
 
     <Button
         android:id="@+id/creditsBtn"
