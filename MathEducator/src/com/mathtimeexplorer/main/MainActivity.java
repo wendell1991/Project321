@@ -102,7 +102,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 					case MotionEvent.ACTION_UP : {
 						// Checks whether status is logged in or out
 						Object tag = loginPopUp.getTag();
-						int id = tag == null ? -1 : (int) tag;
+						int id = tag == null ? -1 : (Integer) tag;
 						if (id == R.drawable.loginbutton) {
 							// Calls the login dialog box and authenticates the user
 							callLoginDialog();

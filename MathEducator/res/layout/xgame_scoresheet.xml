@@ -4,57 +4,36 @@
     android:layout_height="match_parent"
     android:background="@drawable/xgamebkgrd" >
 
-    <ImageView
-        android:id="@+id/xgameTimesUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/xgame_timesup" />
-
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/xgame_qns_correct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignRight="@+id/xgame_qns_attempted"
+        android:layout_below="@+id/xgame_qns_attempted"
         android:layout_marginTop="14dp"
         android:text="@string/qnsCorrect"
         style="@style/XGameScoreTextStyle"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/xgame_qns_wrong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_below="@+id/textView2"
+        android:layout_alignRight="@+id/xgame_qns_correct"
+        android:layout_below="@+id/xgame_qns_correct"
         android:layout_marginTop="18dp"
         android:text="@string/qnsWrong"
         style="@style/XGameScoreTextStyle"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/xgame_totalscore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView3"
-        android:layout_below="@+id/textView3"
+        android:layout_alignRight="@+id/xgame_qns_wrong"
+        android:layout_below="@+id/xgame_qns_wrong"
         android:layout_marginTop="14dp"
         android:text="@string/totalScore"
-        style="@style/XGameScoreTextStyle"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/xgameTryAgain"
-        android:layout_below="@+id/xgameTimesUp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/qnsAttempted"
         style="@style/XGameScoreTextStyle"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -62,8 +41,8 @@
         android:id="@+id/xgameQnsAttempted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_toRightOf="@+id/textView1"
+        android:layout_alignBottom="@+id/xgame_qns_attempted"
+        android:layout_toRightOf="@+id/xgame_qns_attempted"
         android:text="@string/scoreResult"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -71,8 +50,8 @@
         android:id="@+id/xgameQnsCorrect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_toRightOf="@+id/textView1"
+        android:layout_alignBottom="@+id/xgame_qns_correct"
+        android:layout_toRightOf="@+id/xgame_qns_attempted"
         android:text="@string/scoreResult"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -80,17 +59,8 @@
         android:id="@+id/xgameQnsWrong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignBottom="@+id/xgame_qns_wrong"
         android:layout_alignLeft="@+id/xgameQnsCorrect"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgameTotalScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView4"
-        android:layout_alignRight="@+id/xgameQnsWrong"
         android:text="@string/scoreResult"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -98,20 +68,51 @@
         android:id="@+id/xgameGiveUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignLeft="@+id/optionsBkGrd"
         android:layout_alignTop="@+id/xgameTryAgain"
-        android:layout_marginRight="93dp"
+        android:layout_marginLeft="117dp"
         android:background="@null"
         android:src="@drawable/xgame_quit" />
+
+    <TextView
+        android:id="@+id/xgame_qns_attempted"
+        style="@style/XGameScoreTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/xgameTryAgain"
+        android:layout_below="@+id/optionsBkGrd"
+        android:layout_marginRight="19dp"
+        android:layout_marginTop="33dp"
+        android:text="@string/qnsAttempted"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/xgameTotalScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/xgame_totalscore"
+        android:layout_alignBottom="@+id/xgame_totalscore"
+        android:layout_toRightOf="@+id/xgameTryAgain"
+        android:text="@string/scoreResult" />
 
     <ImageButton
         android:id="@+id/xgameTryAgain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="24dp"
-        android:layout_toLeftOf="@+id/xgameGiveUp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/xgame_totalscore"
+        android:layout_marginLeft="143dp"
+        android:layout_marginTop="20dp"
         android:background="@null"
         android:src="@drawable/xgame_try_again" />
+
+    <ImageView
+        android:id="@+id/optionsBkGrd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/xgame_qns_wrong"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="68dp"
+        android:src="@drawable/xgame_timesup" />
 
 </RelativeLayout>

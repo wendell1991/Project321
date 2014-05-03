@@ -1,126 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
+    android:layout_height="match_parent"
     android:background="@drawable/xgamebkgrd" >
 
-    <ImageButton
-        android:id="@+id/optionFour"
+    <TextView
+        android:id="@+id/timerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/optionOne"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="45dp"
-        android:src="@drawable/xgameone" />
-
-    <ImageButton
-        android:id="@+id/optionFive"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/optionTwo"
-        android:layout_alignTop="@+id/optionFour"
-        android:src="@drawable/xgameone" />
-
-    <ImageButton
-        android:id="@+id/optionSix"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/optionThree"
-        android:layout_alignTop="@+id/optionFive"
-        android:src="@drawable/xgameone" />
-
-    <ImageButton
-        android:id="@+id/optionOne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/optionFour"
-        android:layout_alignRight="@+id/xgameTimesUp"
-        android:layout_marginBottom="17dp"
-        android:layout_marginRight="28dp"
-        android:src="@drawable/xgameone" />
-
-    <ImageView
-        android:id="@+id/notifyView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/xgameTimesUp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:visibility="gone"
-        android:src="@drawable/correct" />
-
-    <ImageButton
-        android:id="@+id/optionTwo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/valueTwo"
-        android:layout_alignTop="@+id/optionOne"
-        android:src="@drawable/xgameone" />
-
-    <ImageView
-        android:id="@+id/xgameTimesUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/valueOne"
-        android:layout_alignLeft="@+id/timerText"
-        android:layout_marginBottom="33dp"
-        android:layout_marginLeft="33dp"
-        android:src="@drawable/xgame_multi" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="254dp"
+        android:layout_marginTop="47dp"
+        android:text="@string/timeLeft" />
 
     <ImageView
         android:id="@+id/valueOne"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/optionOne"
-        android:layout_marginBottom="20dp"
-        android:layout_toLeftOf="@+id/xgameTimesUp"
-        android:src="@drawable/xgameone" />
-
-    <ImageView
-        android:id="@+id/valueTwo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/valueOne"
-        android:layout_marginLeft="20dp"
-        android:layout_toRightOf="@+id/xgameTimesUp"
-        android:src="@drawable/xgameone" />
-
-    <ImageButton
-        android:id="@+id/optionThree"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignRight="@+id/timerText"
-        android:layout_alignTop="@+id/optionTwo"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/xgameone" />
+        android:layout_below="@+id/timerText"
+        android:layout_marginRight="110dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/xgame0" />
 
     <ImageView
-        android:id="@+id/cardBackTwo"
+        android:id="@+id/correctCover"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/optionThree"
-        android:layout_alignTop="@+id/xgameTimesUp"
-        android:layout_marginLeft="14dp"
-        android:src="@drawable/xgame_equal" />
+        android:layout_below="@+id/valueOne"
+        android:layout_marginRight="35dp"
+        android:layout_toLeftOf="@+id/valueOne"
+        android:src="@drawable/correct_black" />
+
+    <ImageView
+        android:id="@+id/correctGreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/correctCover"
+        android:layout_below="@+id/valueOne"
+        android:visibility="invisible"
+        android:src="@drawable/correct_green" />
+
+    <ImageView
+        android:id="@+id/wrongCover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/valAnswer"
+        android:layout_marginLeft="32dp"
+        android:layout_toRightOf="@+id/valAnswer"
+        android:src="@drawable/wrong_black" />
+
+    <ImageView
+        android:id="@+id/optionFour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/optionOne"
+        android:layout_below="@+id/optionOne"
+        android:onClick="checkAnswer"
+        android:src="@drawable/xgame0" />
 
     <ImageView
         android:id="@+id/valAnswer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/valueTwo"
-        android:layout_marginLeft="22dp"
-        android:layout_toRightOf="@+id/cardBackTwo"
-        android:src="@drawable/xgameone" />
+        android:layout_marginLeft="11dp"
+        android:layout_toRightOf="@+id/xgame_equal"
+        android:src="@drawable/xgame0" />
 
-    <TextView
-        android:id="@+id/timerText"
+    <ImageView
+        android:id="@+id/xgame_equal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/valueOne"
+        android:layout_alignTop="@+id/xgame_multi"
+        android:layout_toRightOf="@+id/valueOne"
+        android:src="@drawable/xgame_equal" />
+
+    <ImageView
+        android:id="@+id/valueTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/correctCover"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="19dp"
-        android:text="@string/timeLeft"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="36sp" />
+        android:src="@drawable/xgame0" />
+
+    <ImageView
+        android:id="@+id/xgame_multi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/valueOne"
+        android:layout_marginBottom="12dp"
+        android:layout_toLeftOf="@+id/valueTwo"
+        android:src="@drawable/xgame_multi" />
+
+    <ImageView
+        android:id="@+id/optionOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/correctCover"
+        android:layout_alignRight="@+id/xgame_multi"
+        android:layout_marginBottom="17dp"
+        android:layout_marginRight="15dp"
+        android:onClick="checkAnswer"
+        android:src="@drawable/xgame0" />
+
+    <ImageView
+        android:id="@+id/optionThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/optionTwo"
+        android:layout_toRightOf="@+id/xgame_equal"
+        android:onClick="checkAnswer"
+        android:src="@drawable/xgame0" />
+
+    <ImageView
+        android:id="@+id/optionTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/optionOne"
+        android:layout_toLeftOf="@+id/xgame_equal"
+        android:onClick="checkAnswer"
+        android:src="@drawable/xgame0" />
+
+    <ImageView
+        android:id="@+id/optionFive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/optionFour"
+        android:layout_toLeftOf="@+id/xgame_equal"
+        android:onClick="checkAnswer"
+        android:src="@drawable/xgame0" />
+
+    <ImageView
+        android:id="@+id/optionSix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/optionThree"
+        android:layout_below="@+id/wrongCover"
+        android:onClick="checkAnswer"
+        android:src="@drawable/xgame0" />
+
+    <ImageView
+        android:id="@+id/wrongRed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/optionSix"
+        android:layout_alignLeft="@+id/wrongCover"
+        android:visibility="invisible"
+        android:src="@drawable/wrong_red" />
 
 </RelativeLayout>

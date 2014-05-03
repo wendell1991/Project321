@@ -37,6 +37,10 @@ public final class Constants {
 	public static final String TAB_CLASS = "Class";
 	public static final String TAB_SCHOOL = "School";
 	
+	// Progress dialog values
+	public static final String DIALOG_TITLE = "Game Loading...";
+	public static final String DIALOG_MESSAGE = "Please wait.";
+	
 	// All the Logging tags
 	public static final String LOG_LOADAPP = "LoadAppActivity";
 	public static final String LOG_MAIN = "MainActivity";

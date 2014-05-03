@@ -8,6 +8,7 @@ import com.mathtimeexplorer.main.MainActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +24,13 @@ public class LoadAppActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_load_app);
-		
+		Log.e("packagename",getApplicationContext().getPackageName());
+		try {
+			Log.e("test",getPackageManager().getPackageInfo(getPackageName(), 0).packageName);
+		} catch (NameNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		startBtn = (ImageButton) findViewById(R.id.startBtn);
 		startBtn.setOnClickListener(new OnClickListener(){
 

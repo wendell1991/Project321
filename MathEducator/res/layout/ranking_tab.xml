@@ -20,17 +20,6 @@
         android:text="@string/quiz"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <TextView
-        android:id="@+id/topicLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="164dp"
-        android:layout_marginTop="70dp"
-        android:text="@string/topic"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
     <Spinner
         android:id="@+id/topicSpinner"
         android:layout_width="wrap_content"
@@ -191,5 +180,16 @@
         		android:text="TextView" />
         </TableRow> 
     </TableLayout>
+
+    <TextView
+        android:id="@+id/topicLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="167dp"
+        android:layout_marginTop="36dp"
+        android:text="@string/topic"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>
