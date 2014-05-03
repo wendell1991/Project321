@@ -9,7 +9,6 @@ import java.util.List;
  
 
 
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -24,8 +23,7 @@ import org.json.JSONObject;
  
 
 
-
-import com.mathtimeexplorer.utils.Constants;
+import com.mathtimeexplorer.misc.Constants;
 
 import android.util.Log;
  

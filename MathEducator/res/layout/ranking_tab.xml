@@ -4,7 +4,6 @@
     android:layout_height="match_parent" >
 
     <Spinner
-<<<<<<< HEAD
         android:id="@+id/quizSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,35 +21,25 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <Spinner
-=======
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:id="@+id/topicSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
-
-    <Spinner
-        android:id="@+id/quizSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/topicSpinner" />
+        android:layout_alignBottom="@+id/topicLabel"
+        android:layout_marginLeft="36dp"
+        android:layout_toRightOf="@+id/topicLabel" />
 
     <TableLayout
         android:id="@+id/rankTable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/quizSpinner"
-        android:layout_marginLeft="162dp"
-        android:layout_marginTop="30dp" >
+        android:layout_alignLeft="@+id/quizLabel"
+        android:layout_centerVertical="true" >
 
         <TableRow
             android:id="@+id/tableRow1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
+            
             <TextView
                 android:id="@+id/rankView"
                 android:layout_width="80dp"
@@ -62,60 +51,61 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="@string/name" />
-
+          
             <TextView
                 android:id="@+id/resultView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/result" />
+
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
+            
             <TextView
                 android:id="@+id/rankOne"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/rankOneName"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:visibility="invisible" />
-
+                android:text="TextView" />
+          
             <TextView
-                android:id="@+id/firstResult"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible" />
+        		android:id="@+id/firstResult"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="TextView" />
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
+            
             <TextView
                 android:id="@+id/rankTwo"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/rankTwoName"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:visibility="invisible" />
-
+                android:text="TextView" />
+          
             <TextView
-                android:id="@+id/secondResult"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible" />
+        		android:id="@+id/secondResult"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="TextView" />
         </TableRow>
 
         <TableRow
@@ -124,26 +114,26 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/rankThree"
+                android:id="@+id/rankFour"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/rankThreeName"
                 android:layout_width="150dp"
                 android:layout_height="20dp"
-                android:text="@string/noResult" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/thirdResult"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
         </TableRow>
-
+        
         <TableRow
-            android:id="@+id/tableRow5"
+            android:id="@+id/tableRow4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
@@ -151,44 +141,44 @@
                 android:id="@+id/rankFour"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/rankFourName"
                 android:layout_width="150dp"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/fourthResult"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:visibility="invisible" />
+                android:text="TextView" />
         </TableRow>
-
+        
         <TableRow
-            android:id="@+id/tableRow6"
+            android:id="@+id/tableRow4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
+            
             <TextView
                 android:id="@+id/rankFive"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
-                android:visibility="invisible" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/rankFiveName"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:visibility="invisible" />
-
+                android:text="TextView" />
+          
             <TextView
-                android:id="@+id/fifthResult"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible" />
-        </TableRow>
+        		android:id="@+id/fifthResult"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="TextView" />
+        </TableRow> 
     </TableLayout>
 
     <TextView

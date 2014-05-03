@@ -3,20 +3,15 @@ package com.mathtimeexplorer.xgame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-<<<<<<< HEAD
 import java.util.Iterator;
-=======
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,41 +20,24 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-<<<<<<< HEAD
 import android.util.Log;
-=======
-import android.view.Gravity;
-import android.view.LayoutInflater;
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.matheducator.R;
 import com.mathtimeexplorer.main.MainActivity;
-<<<<<<< HEAD
 import com.mathtimeexplorer.misc.Constants;
-=======
-import com.mathtimeexplorer.utils.Constants;
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 
 public class XGame extends Activity {
 	
-<<<<<<< HEAD
 	private Dialog scoreSheetDialog, countDownDialog;
-=======
-	private Dialog countDownDialog;
-	private PopupWindow scoreSheetPopUp;
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	
 	private ImageView valueOne, valueTwo, valAnswer, optionOne, optionTwo, optionThree, 
 					  optionFour, optionFive, optionSix, correctGreen, wrongRed, countDownView;
@@ -72,22 +50,11 @@ public class XGame extends Activity {
 	// Timer configuration
 	private long TIMER_DURATION = 30000, TIMER_INTERVAL = 10;
 	
-	private int sixty = 60;
-	private static int INDEX_ZERO = 0;
-	private static int OPTION_CORRECT = 1; 
-	private static int OPTION_WRONG = 2;
-	
 	private Context context = this;
-<<<<<<< HEAD
 	private MediaPlayer bkgrdMusic;
-=======
-	private CountDown count;
-	private MediaPlayer bkgrdMusic = null;
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	private ArrayList<ImageView> optionArrayList;
 	private ArrayList<XGameNumbers> numList = new ArrayList<XGameNumbers>();
 	
-<<<<<<< HEAD
 	private int sixty = 60;
 	private static int INDEX_ZERO = 0;
 	private static int OPTION_CORRECT = 1; 
@@ -96,14 +63,6 @@ public class XGame extends Activity {
 	// Keep track of number of corrects & wrong
 	private int correct = 0;
 	private int wrong = 0;
-=======
-	// Keep track of number of corrects & wrong
-	private int correct = 0;
-	private int wrong = 0;
-	
-	// Check the state of the game
-	private boolean isGameStarted = false;
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +72,6 @@ public class XGame extends Activity {
 		// Initialize UIs (Only once)
 		init();
 		new LoadGameData().execute();
-<<<<<<< HEAD
 	}
 
 	
@@ -137,97 +95,8 @@ public class XGame extends Activity {
 			genGameContent(nextNh);
 			wrong++;
 		}
-=======
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	}
 	
-<<<<<<< HEAD
-=======
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (isGameStarted == true) {
-			// Display dialog, prompts user whether he wants to resume or quit game
-			AlertDialog.Builder builder = new AlertDialog.Builder(context);
-			
-			builder
-				.setCancelable(false)
-				.setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						
-						// User quits the game, returns to previous activity
-						dialog.cancel();
-						finish();						
-					}
-				})
-				
-				.setNegativeButton(R.string.resume, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						
-						// Resumes the count-down & background music
-						long timeLeft = count.getTimeLeft();
-						count = new CountDown(timeLeft, TIMER_INTERVAL);
-						count.start();
-						bkgrdMusic.start();
-					}
-				});
-			
-			// Creates the dialog
-			AlertDialog dialog = builder.create();
-			dialog.show();
-		}
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		// Back button is pressed
-		if (this.isFinishing()) {
-			if (bkgrdMusic != null) {
-				//bkgrdMusic.reset();
-				bkgrdMusic.release();
-			}
-			count.cancel();
-			count = null;
-		}
-		// User exits the app
-		else {
-			if (bkgrdMusic != null) {
-				bkgrdMusic.pause();
-			}
-			count.cancel();
-		}
-	}
-	
-	// onClick Handler to check user's input
-	public void checkAnswer(View view){
-		Object tag = view.getTag();
-		int selectedValue = tag == null ? -1 : (Integer) tag;
-		
-		XGameNumbers nh = numList.get(INDEX_ZERO);
-		
-		// Remove the current nh to get nextNh
-		numList.remove(INDEX_ZERO);
-		XGameNumbers nextNh = numList.get(INDEX_ZERO);
-		
-		if (nh.getAnswer() == selectedValue) {
-			animateResult(OPTION_CORRECT);
-			genGameContent(nextNh);
-			correct++;
-		} else {
-			animateResult(OPTION_WRONG);
-			genGameContent(nextNh);
-			wrong++;
-		}
-	}
-	
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	private void animateResult(int option) {
 		final MediaPlayer soundEff;
 		Animation blink = AnimationUtils.loadAnimation(context, R.anim.blink);
@@ -261,30 +130,20 @@ public class XGame extends Activity {
 	}
 	
 	private void callScoreSheetDialog(){
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService
-				(Context.LAYOUT_INFLATER_SERVICE);
 		
-<<<<<<< HEAD
 		// Calls the score sheet dialog box
 		scoreSheetDialog = new Dialog(context);
 		scoreSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		scoreSheetDialog.setContentView(R.layout.xgame_scoresheet);
 	    scoreSheetDialog.getWindow().setWindowAnimations(R.style.XGameScoreDialogAnimation);
-=======
-		View layout = inflater.inflate(R.layout.xgame_scoresheet, 
-				(ViewGroup) findViewById(R.id.xgame_scoresheet));
-		
-		scoreSheetPopUp = new PopupWindow(layout, 1200, 650, true);
-		scoreSheetPopUp.setAnimationStyle(R.style.Animation_Bounce);
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 		
 		// Initialize the widgets
-		totalQns = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsAttempted);
-		numCorrect = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsCorrect);
-		numWrong = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsWrong);
-		totalMarks = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTotalScore);
-		tryAgainBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTryAgain);
-		giveUpBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameGiveUp);
+		totalQns = (TextView) scoreSheetDialog.findViewById(R.id.xgameQnsAttempted);
+		numCorrect = (TextView) scoreSheetDialog.findViewById(R.id.xgameQnsCorrect);
+		numWrong = (TextView) scoreSheetDialog.findViewById(R.id.xgameQnsWrong);
+		totalMarks = (TextView) scoreSheetDialog.findViewById(R.id.xgameTotalScore);
+		tryAgainBtn = (ImageButton) scoreSheetDialog.findViewById(R.id.xgameTryAgain);
+		giveUpBtn = (ImageButton) scoreSheetDialog.findViewById(R.id.xgameGiveUp);
 		 
 		// Display results
 		totalQns.setText(String.valueOf(correct + wrong));
@@ -308,7 +167,7 @@ public class XGame extends Activity {
 					case MotionEvent.ACTION_UP : {
 						// User selected try again, reloads this activity
 						Intent intent = getIntent();
-						scoreSheetPopUp.dismiss();
+						scoreSheetDialog.dismiss();
 						finish();
 						startActivity(intent);
 					}
@@ -326,22 +185,20 @@ public class XGame extends Activity {
 					case MotionEvent.ACTION_DOWN :
 						break;
 					case MotionEvent.ACTION_UP : {
-						// User gives up, returns to previous activity
-						scoreSheetPopUp.dismiss();
-						finish();
+						// User gives up, so returns to the main topic selection screen
+						Intent intent = new Intent(context, MainActivity.class);
+						scoreSheetDialog.dismiss();
+						startActivity(intent);
 					}
 				}
 				return true;
 			}
 		});
-		scoreSheetPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		scoreSheetDialog.show();
 	}
 
 	private void genGameContent(XGameNumbers nh){
-<<<<<<< HEAD
 		Log.i("XGame", "----------- GENERATING GAME CONTENT ---------------- ");
-=======
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 		int whichToHide = nh.getWhichToHide();
 		int firstNo = nh.getFirstNo();
 		int secondNo = nh.getSecondNo();
@@ -377,10 +234,7 @@ public class XGame extends Activity {
 	    for (Object obj: keys) {
 	    	curVal = (Integer) obj;
 	    	curValResId = optionsMap.get(obj);
-<<<<<<< HEAD
 	    	Log.i("XGame", "curVal: "+curVal+" curValResId: "+curValResId);
-=======
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 	    	curBtn = (ImageView) optionArrayList.get(currentIndex);
 	    	curBtn.setTag(curVal);
 	    	curBtn.setImageResource(curValResId);
@@ -487,7 +341,6 @@ public class XGame extends Activity {
 			}
 		}
 		nh.setOptionsMap(optionsMap);
-<<<<<<< HEAD
 		
 		Log.i("XGame", nh.toString());
 		Iterator<Integer> keySetIterator = optionsMap.keySet().iterator();
@@ -496,8 +349,6 @@ public class XGame extends Activity {
 			Log.i("XGame", "ValueId: "+optionsMap.get(keySetIterator.next()));
 		}
 		
-=======
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
 		return nh;
 	}
 	
@@ -570,8 +421,8 @@ public class XGame extends Activity {
 			countDownDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			countDownDialog.setContentView(R.layout.dialog_timer);
 			
-			// Makes the count-down dialog-box transparent
 		    final Window window = countDownDialog.getWindow();
+		    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		    
@@ -605,19 +456,17 @@ public class XGame extends Activity {
 			bkgrdMusic = MediaPlayer.create(XGame.this, R.raw.xgamemusic);
 			bkgrdMusic.start();
 			
-			// Create a 30 seconds count-down timer 
-			count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
+			// Create a count-down timer, starting number: 30 seconds
+			CountDown count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
 			count.start();
-			isGameStarted = true;
 		}
 	}
 	
 	class CountDown extends CountDownTimer {
-		
-		private static final String TIME_FINISH = "00:00";
-		private static final String TIME_LEFT = "Time left: ";
-		private static final String STRING_COLON = ":";
-		private long timeLeft = 0;
+		private String TAG_ZERO = "0";
+		private String TIME_FINISH = "00:00";
+		private String TIME_LEFT = "Time left: ";
+		private String STRING_COLON = ":";
 
 		public CountDown(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
@@ -627,8 +476,7 @@ public class XGame extends Activity {
 		@Override
         public void onFinish() {
 			timerText.setText(TIME_LEFT+TIME_FINISH);
-			if (bkgrdMusic.isPlaying() == true) {
-				bkgrdMusic.reset();
+			if (bkgrdMusic.isPlaying()) {
 				bkgrdMusic.release();
 			}
 			callScoreSheetDialog();
@@ -636,6 +484,7 @@ public class XGame extends Activity {
 
         @Override
         public void onTick(long millisUntilFinished) {
+        	String currentSeconds = "";
         	long milliseconds = (TimeUnit.MILLISECONDS.toMillis((millisUntilFinished)) % sixty);
         	long seconds = (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)) % sixty;
         	
@@ -644,21 +493,18 @@ public class XGame extends Activity {
         		timerText.setTextColor(Color.RED);
         	}
         	
-        	// Format seconds and milliseconds to 2 digits
-        	timerText.setText(TIME_LEFT
-        			+ String.format("%02d", seconds) + STRING_COLON 
-					+ String.format("%02d", milliseconds));;
-					
-        	setTimeLeft(millisUntilFinished);
+        	// Format seconds and milliseconds, ensure both is two digits
+        	if (String.valueOf(seconds).length() == 2) {
+        		currentSeconds = String.valueOf(seconds);
+        	} else {
+        		currentSeconds = TAG_ZERO + seconds;
+        	}
+        	if (String.valueOf(milliseconds).length() == 2) {
+        		timerText.setText(TIME_LEFT+currentSeconds+STRING_COLON+milliseconds);
+        	} else {
+        		timerText.setText(TIME_LEFT+currentSeconds+STRING_COLON+TAG_ZERO+milliseconds);
+        	}
         }
-
-		public long getTimeLeft() {
-			return timeLeft;
-		}
-
-		public void setTimeLeft(long timeLeft) {
-			this.timeLeft = timeLeft;
-		}
 	}
 	
 	private int findImageResourceId(int value) {
@@ -1102,8 +948,4 @@ public class XGame extends Activity {
 		}
 		return resourceId;
 	}
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321

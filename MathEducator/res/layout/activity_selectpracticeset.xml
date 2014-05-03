@@ -5,7 +5,6 @@
     android:layout_height="match_parent" >
 
     <TextView
-<<<<<<< HEAD
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -95,97 +94,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView2"
         android:layout_toRightOf="@+id/textView2"
-=======
-        android:id="@+id/pracset_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/pracset_prevbest"
-        android:layout_alignLeft="@+id/difficulty"
-        android:layout_marginLeft="28dp" />
-
-    <Button
-        android:id="@+id/practiceback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/pracset_title"
-        android:layout_marginBottom="24dp"
-        android:text="@string/Back" />
-
-    <Button
-        android:id="@+id/practicestart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/practiceback"
-        android:layout_alignBottom="@+id/practiceback"
-        android:layout_marginLeft="29dp"
-        android:layout_toRightOf="@+id/difficulty"
-        android:text="@string/start" />
-
-    <RadioGroup
-        android:id="@+id/difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/pracset_starsobtain"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="44dp"
-        android:orientation="horizontal" >
-
-        <RadioButton
-            android:id="@+id/radioeasy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/Easy" />
-
-        <RadioButton
-            android:id="@+id/radionormal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Normal" />
-
-        <RadioButton
-            android:id="@+id/radiohard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Hard" />
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/pracset_starsobtain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/difficulty"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="25dp"
-        android:layout_marginLeft="143dp"
-        android:text="@string/obtainablestars" />
-
-    <TextView
-        android:id="@+id/pracset_prevbest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/pracset_starsobtain"
-        android:layout_alignRight="@+id/pracset_starsobtain"
-        android:layout_marginBottom="15dp"
-        android:text="@string/previousscore" />
-
-    <TextView
-        android:id="@+id/practicesetsubject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="18dp"
-        android:layout_toRightOf="@+id/pracset_prevbest"
-        android:text="TextView" />
-
-    <LinearLayout
-        android:id="@+id/starslayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/pracset_starsobtain"
-        android:layout_toRightOf="@+id/pracset_starsobtain"
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:orientation="horizontal" >
 
     </LinearLayout>

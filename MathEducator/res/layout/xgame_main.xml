@@ -12,10 +12,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="254dp"
         android:layout_marginTop="47dp"
-<<<<<<< HEAD
-=======
-        android:textStyle="bold"
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:text="@string/timeLeft" />
 
     <ImageView

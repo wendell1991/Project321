@@ -6,11 +6,10 @@ import java.util.List;
 import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.UI;
 import com.example.matheducator.R;
-import com.mathtimeexplorer.utils.Constants;
+import com.mathtimeexplorer.misc.Constants;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -98,39 +97,9 @@ public class TutorialActivity extends Activity {
 		    
 		    UI
 		      .<ImageView>findViewById(layout, R.id.lessonView)
-		      .setImageBitmap(decodeSampledBitmapFromResource
-		    		  (inflater.getContext().getResources(), image, layout.getWidth(), layout.getHeight()));
+		      .setImageBitmap(BitmapFactory.decodeResource(inflater.getContext().getResources(), image));
 		    
 			return layout;
-		}
-		
-		private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-
-			final int height = options.outHeight;
-			final int width = options.outWidth;
-			int inSampleSize = 1;
-
-			if (height > reqHeight || width > reqWidth) {
-
-				final int heightRatio = Math.round((float) height / (float) reqHeight);
-				final int widthRatio = Math.round((float) width / (float) reqWidth);
-
-				inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-			}
-			return inSampleSize;
-		}
-		
-		private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-		        int reqWidth, int reqHeight) {
-
-		    final BitmapFactory.Options options = new BitmapFactory.Options();
-		    options.inJustDecodeBounds = true;
-		    BitmapFactory.decodeResource(res, resId, options);
-
-		    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		    options.inJustDecodeBounds = false;
-		    return BitmapFactory.decodeResource(res, resId, options);
 		}
 	}
 }

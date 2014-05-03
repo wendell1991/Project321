@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/xgame_scoresheet"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/xgamebkgrd" >
@@ -70,11 +68,7 @@
         android:id="@+id/xgameGiveUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
         android:layout_alignLeft="@+id/optionsBkGrd"
-=======
-        android:layout_alignLeft="@+id/xgame_timesup"
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:layout_alignTop="@+id/xgameTryAgain"
         android:layout_marginLeft="117dp"
         android:background="@null"
@@ -86,11 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/xgameTryAgain"
-<<<<<<< HEAD
         android:layout_below="@+id/optionsBkGrd"
-=======
-        android:layout_below="@+id/xgame_timesup"
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:layout_marginRight="19dp"
         android:layout_marginTop="33dp"
         android:text="@string/qnsAttempted"
@@ -117,21 +107,12 @@
         android:src="@drawable/xgame_try_again" />
 
     <ImageView
-<<<<<<< HEAD
         android:id="@+id/optionsBkGrd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/xgame_qns_wrong"
         android:layout_alignParentTop="true"
         android:layout_marginTop="68dp"
-=======
-        android:id="@+id/xgame_timesup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/xgame_qns_wrong"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="46dp"
->>>>>>> branch 'master' of ssh://git@github.com/wendell1991/Project321
         android:src="@drawable/xgame_timesup" />
 
 </RelativeLayout>
