@@ -472,6 +472,7 @@ public final class R {
         public static final int app_name=0x7f080000;
         public static final int cancel=0x7f080003;
         public static final int credits=0x7f080006;
+        public static final int date=0x7f080026;
         public static final int done=0x7f080007;
         public static final int find=0x7f08001b;
         public static final int finish=0x7f080024;
