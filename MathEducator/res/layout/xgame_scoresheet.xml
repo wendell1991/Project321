@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/xgame_scoresheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/xgamebkgrd" >
@@ -68,7 +70,7 @@
         android:id="@+id/xgameGiveUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/optionsBkGrd"
+        android:layout_alignLeft="@+id/xgame_timesup"
         android:layout_alignTop="@+id/xgameTryAgain"
         android:layout_marginLeft="117dp"
         android:background="@null"
@@ -80,7 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/xgameTryAgain"
-        android:layout_below="@+id/optionsBkGrd"
+        android:layout_below="@+id/xgame_timesup"
         android:layout_marginRight="19dp"
         android:layout_marginTop="33dp"
         android:text="@string/qnsAttempted"
@@ -107,12 +109,12 @@
         android:src="@drawable/xgame_try_again" />
 
     <ImageView
-        android:id="@+id/optionsBkGrd"
+        android:id="@+id/xgame_timesup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/xgame_qns_wrong"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="46dp"
         android:src="@drawable/xgame_timesup" />
 
 </RelativeLayout>

@@ -15,16 +15,6 @@
         android:visibility="invisible"
         android:src="@drawable/cents_100" />
 
-    <TextView
-        android:id="@+id/coinCoinStory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/backViewOne"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="14dp"
-        style="@style/CoinCoinTextStyle"
-        android:text="TextView" />
-
     <ImageView
         android:id="@+id/backViewTwo"
         android:layout_width="wrap_content"
@@ -233,12 +223,23 @@
         android:src="@drawable/cardfront" />
 
     <TextView
-        android:id="@+id/coinCoinQn"
+        android:id="@+id/coincoin_qn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/coinCoinStory"
+        android:layout_above="@+id/backViewEight"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="11dp"
-        android:text="TextView" />
+        android:layout_marginBottom="11dp"
+        android:text="@string/coincoin_qn"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/coincoin_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:textStyle="bold"
+        android:text="@string/timeTaken" />
 
 </RelativeLayout>

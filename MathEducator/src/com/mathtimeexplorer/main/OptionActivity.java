@@ -1,22 +1,11 @@
 package com.mathtimeexplorer.main;
 
-import com.example.matheducator.R;
-import com.mathtimeexplorer.coincoin.CoinCoin;
-import com.mathtimeexplorer.misc.Constants;
-import com.mathtimeexplorer.tutorials.TutorialActivity;
-import com.mathtimeexplorer.worksheets.QuizActivity;
-import com.mathtimeexplorer.worksheets.SelectQuizActivity;
-import com.mathtimeexplorer.xgame.XGame;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -24,10 +13,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
+
+import com.example.matheducator.R;
+import com.mathtimeexplorer.coincoin.CoinCoin;
+import com.mathtimeexplorer.tutorials.TutorialActivity;
+import com.mathtimeexplorer.utils.Constants;
+import com.mathtimeexplorer.worksheets.QuizActivity;
+import com.mathtimeexplorer.xgame.XGame;
 
 public class OptionActivity extends Activity implements OnTouchListener {
-
+	
 	int topic = 0;
 
 	@Override
@@ -36,8 +31,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		setContentView(R.layout.activity_option);
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			topic = extras.getInt(Constants.TOPIC);
-			Log.e("topic",Integer.toString(topic));
+		   topic = extras.getInt(Constants.TOPIC);
 		}
 		ImageView img = (ImageView) findViewById (R.id.optionsBkGrd);
 		ImageView img2 = (ImageView) findViewById (R.id.optionsHotSpot);
@@ -82,7 +76,6 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		img.setDrawingCacheEnabled(true); 
 		Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache()); 
 		img.setDrawingCacheEnabled(false);
-		Log.e("test",Integer.toString(hotspots.getPixel(x, y)));
 		return hotspots.getPixel(x, y);
 	}
 
@@ -121,11 +114,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 			callProgressWindow(context, intent, evX, evY);
 		}
 		if(touchColor==quiz){
-			Intent intent = new Intent(context, SelectQuizActivity.class);
-			Bundle extras = getIntent().getExtras();
-			//User user  = extras.getParcelable(Constants.USER);
-			//Log.e("Edulevel",Integer.toString(user.getEduLevel()));
-			intent.putExtras(extras);
+			Intent intent = new Intent(context, QuizActivity.class);
 			startActivity(intent);
 		}
 		if(touchColor==game){
@@ -133,7 +122,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 			startActivity(intent);
 		}
 	}
-
+	
 	private void fractionLayout(int touchColor, int evX, int evY, Context context){
 		int tutorial1 = -16711681;
 		int tutorial2 = -65281;
@@ -171,7 +160,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 			startActivity(intent);
 		}
 	}
-
+	
 	private void callProgressWindow(Context cx, Intent in, int evX, int evY) {
 
 		final Intent intent = in;
@@ -206,7 +195,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		practiceBtn.setTextSize(8);
 		practiceBtn.setLayoutParams(new LinearLayout.LayoutParams(200,50));
 		tutorialBtn.setLayoutParams(new LinearLayout.LayoutParams(200,50));
-
+		
 		practiceBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -216,7 +205,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent2);
 			}
 		});
-
+		
 		tutorialBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -224,8 +213,8 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent);
 			}
 		});
-
-
+		
+		
 		ll2.addView(ll);
 		ll2.addView(tutorialBtn);
 		ll2.addView(practiceBtn);
@@ -245,7 +234,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		progressWindow.setHeight(200);
 		progressWindow.setFocusable(true);
 		progressWindow.showAtLocation(ll, Gravity.NO_GRAVITY, evX+40, evY+100);
-
+		
 		/*practiceBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -262,7 +251,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent);
 			}
 		});
-		 */
+		*/
 	}
 
 }

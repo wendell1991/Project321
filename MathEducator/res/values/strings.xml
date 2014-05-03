@@ -1,49 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Math:Time Explorer</string>
     
+    <!-- Loading -->
     <string name="start">Start</string>
     
+    <!-- Credits -->
+    <string name="tapReturn">TAP HERE TO RETURN</string>
+        
+    <!-- Login -->
     <string name="login">Login</string>
     <string name="cancel">Cancel</string>
+    <string name="userName">Username</string>
+    <string name="pwdWord">Password</string>
     
+    <!-- Settings -->
     <string name="soundEff">Sound Effects</string>
     <string name="music">Music</string>
     <string name="credits">Credits</string>
     <string name="done">Done</string>
     
+    <!-- Sub-topic selection -->
     <string name="practice">Practice Set</string>
     <string name="tutorial">Tutorial</string>
-    <string name="games">Games</string>
-    <string name="quiz">Quiz</string>
     
-    <string name="userName">Username</string>
-    <string name="pwdWord">Password</string>
-    
-    <string name="tapReturn">Tap Here To Return</string>
-    
+    <!-- XGame -->
     <string name="timeLeft">Time Left: 00:00</string>
     <string name="qnsAttempted">Questions Attempted:</string>
     <string name="qnsCorrect">Questions Correct:</string>
     <string name="qnsWrong">Questions Wrong:</string>
     <string name="totalScore">Total Score:</string>
     <string name="scoreResult">00</string>
+    <string name="resume">Resume</string>
+    <string name="quit">Quit</string>
     
+    <!-- Ranking -->
+    <string name="quiz">Quiz</string>
     <string name="quiz_prompt">Select a quiz</string>
     <string name="topic_prompt">Select a topic</string>
     <string name="topic">Topic</string>
     <string name="name">Name</string>
     <string name="rank">Rank</string>
     <string name="result">Result</string>
+    <string name="noResult">No Result</string>
+    
     <string-array name="topic_arrays">
+        <item>-- Select a topic --</item>
         <item>Arithmetic</item>
         <item>Time</item>
         <item>Fraction</item>
         <item>Money</item>
     </string-array>
     
-    <string name="find">Find:</string>
+    <!-- CoinCoin -->
+    <string name="coincoin_storyboard">
+        Your Mum hides the pocket money of different values under a set of cards. \n
+    	She wants you to be familiar with your coins and money, therefore she \n
+    	wants you to match the correct values with 2 cards. If you can match the \n
+    	value, the pocket money belongs to you. You only have 5 minutes. Good luck!!!
+    </string>
+    
+    <string name="timeTaken">TIME TAKEN:</string>
+    <string name="tapStart">TAP HERE TO START THE GAME</string>
+    <string name="tryAgain">Try Again</string>
+    <string name="giveUp">Give Up</string>
+    <string name="coincoin_qn">YOUR MUM WANTS YOU TO FIND: ?</string>
+    <string name="coincoin_timesup">SORRY!! TIMES UP!!!</string>
+    <string name="coincoin_timetaken">Time taken:</string>
+    <string name="coincoin_nooftries">Number of tries:</string>
+    
+    
     <string name="next">Next</string>
     <string name="previous">Previous</string>
      <string name="Back">Back</string>
@@ -52,6 +78,5 @@
     <string name="Hard">Hard</string>
     <string name="obtainablestars">Obtainable Stars:</string>
     <string name="previousscore">Previous best score:</string>
-    <string name="finish">Finish</string>
     <string name="selectquiz">Select Quiz</string>
 </resources>
