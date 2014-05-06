@@ -1,56 +1,71 @@
 package com.mathtimeexplorer.coincoin;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.example.matheducator.R;
-import com.mathtimeexplorer.main.MainActivity;
+import com.mathtimeexplorer.database.JSONParser;
+import com.mathtimeexplorer.main.User;
+import com.mathtimeexplorer.ranking.RankingResult;
 import com.mathtimeexplorer.utils.Constants;
 
 public class CoinCoin extends Activity {
 	
+	private RelativeLayout coincoin_layout;
+	private TableLayout rankTable;
 	private PopupWindow storyPopUp, scoreSheetPopUp;
-	private TextView question, coincoin_tapStart, timeTaken, score_timetaken, score_nooftries;
-	private Button tryAgainBtn, giveUpBtn;
+	private TextView question, coincoin_tapStart, timeTaken, score_timeTaken, score_noofflips;
+	private ImageButton tryAgainBtn, giveUpBtn;
 	
 	private ImageView 
 			frontViewOne, backViewOne, frontViewTwo, backViewTwo, frontViewThree, backViewThree, 
 			frontViewFour, backViewFour, frontViewFive, backViewFive, frontViewSix, backViewSix, 
 			frontViewSeven, backViewSeven, frontViewEight, backViewEight, frontViewNine, backViewNine,
-			frontViewTen, backViewTen, frontViewEleven, backViewEleven, frontViewTwelve, backViewTwelve;
+			frontViewTen, backViewTen, frontViewEleven, backViewEleven, frontViewTwelve, backViewTwelve,
+			coincoin_highscore;
 	
 	// TIMER
 	private int sixty = 60;
@@ -65,18 +80,27 @@ public class CoinCoin extends Activity {
 	// Keep tracks of the number of flips
 	private int flipTries = 0;
 	
+	// Check the state of the game
+	private boolean isGameStarted = false;
+	
 	private int questionIndex = 0;
 	private static final int flipFront = 1;
 	private static final int flipBack = 2;
-	private static final String TAG_QUESTION = "YOUR MUM WANTS YOU TO FIND:";
+	private static final String TAG_CENTS = " cents";
+	private static final String TAG_QUESTION = "YOUR MUM WANTS YOU TO FIND: ";
 	
+	private int[] cardFrontList = {R.drawable.cardfront_orange, 
+			R.drawable.cardfront_purple, R.drawable.cardfront_blue}; 
+	
+	private User user;
 	private Context context = this;
 	private AnimatorSet flip_left_in; 
 	private AnimatorSet flip_right_in;
-	private Animation fade;
+	private Animation fadeOut;
+	private MediaPlayer bkgrdMusic = null;
 	private ArrayList<Integer> questionList;
 	private ArrayList<Integer> valueList;
-	private ArrayList<ImageView> backViewList;
+	private Drawable coincoin_bkgrd;
 	
 	// Keep track of the number of cards the user flips
 	private ArrayList<ImageView> flipList;
@@ -86,21 +110,120 @@ public class CoinCoin extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.coincoin_main);
 		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			user = extras.getParcelable(Constants.USER);
+		}
+		
 		initMain();
+		
+		coincoin_bkgrd = getResources().getDrawable(R.drawable.coincoinbkgrd);
 		
 		flipList = new ArrayList<ImageView>();
 		
 		flip_left_in = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.card_flip_left_in);
 		flip_right_in = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.card_flip_right_in);
-		fade = AnimationUtils.loadAnimation(context, R.anim.fade);
+		fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+		
+		// Checks if time exceeds 5mins, end the game
+		timeTaken.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				// TODO Auto-generated method stub
+				String timeResult = timeTaken.getText().toString();
+				timeResult = timeResult.substring(timeResult.indexOf(":") + 1).trim();
+				String[] formatString = timeResult.split(STRING_COLON);
+				
+				// If over 5mins call score-sheet pop-up
+				if (formatString[0].equals("05")) {
+					callScoreSheetPopUp(R.drawable.game_timesup);
+				}
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 		new LoadGameData().execute();
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (isGameStarted == true) {
+			// Display dialog, prompts user whether he wants to resume or quit game
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			
+			builder
+				.setCancelable(false)
+				.setTitle(R.string.resumeGameTitle)
+				.setMessage(R.string.resumeGameMsg)
+				.setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub					
+						// User quits the game, returns to previous activity
+						dialog.cancel();
+						finish();						
+					}
+				})
+				
+				.setNegativeButton(R.string.resume, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub						
+						// Resumes the timer & background music
+						startTime = SystemClock.uptimeMillis();
+						customHandler.postDelayed(updateTimerThread, 0);
+						bkgrdMusic.start();
+					}
+				});
+			
+			// Creates the dialog
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Back button is pressed
+		if (this.isFinishing()) {
+			if (bkgrdMusic != null) {
+				bkgrdMusic.release();
+				bkgrdMusic = null;
+			}
+		}
+		// User exits the application
+		else {
+			if (bkgrdMusic != null) {
+				// Pause both timer and background music
+				timeSwapBuff += timeInMilliseconds;
+				customHandler.removeCallbacks(updateTimerThread);				
+				bkgrdMusic.pause();
+			}
+		}
+	}
+	
 	private void processFlip(ImageView backView) {
-		Log.i("CoinCoin", "---------------Processing flip------------------");
+		Log.i(Constants.LOG_COINCOIN, "---------------Processing flip------------------");
 		flipList.add(backView);
-		Log.i("CoinCoin", "FlipList Size: "+flipList.size());
+		Log.i(Constants.LOG_COINCOIN, "FlipList Size: "+flipList.size());
 		if (flipList.size() == 2) {
 			
 			flipTries++;
@@ -108,43 +231,71 @@ public class CoinCoin extends Activity {
 			final ImageView backViewOne = (ImageView) flipList.get(0);
 			final ImageView backViewTwo = (ImageView) flipList.get(1);
 			
-			Log.i("CoinCoin", "backViewOne: "+backViewOne);
-			Log.i("CoinCoin", "backViewTwo: "+backViewTwo);
+			Log.i(Constants.LOG_COINCOIN, "backViewOne: "+backViewOne);
+			Log.i(Constants.LOG_COINCOIN, "backViewTwo: "+backViewTwo);
 			
 			Object tagOne = backViewOne.getTag();
 			Object tagTwo = backViewTwo.getTag();
 			final int firstNumber = tagOne == null ? -1 : (Integer) tagOne;
 			final int secondNumber = tagTwo == null ? -1 : (Integer) tagTwo;
 			
-			// Checks if the values of the two cards adds up to the correct value
-			final String[] values = question.getText().toString().split(":");
-			Log.i("CoinCoin", "string value: "+(String) values[1]);
+			// Find and format the value of the question given 
+			String[] values = question.getText().toString().split(STRING_COLON);			
+			final String qnGiven = (String) values[1].replace(TAG_CENTS, "").trim();
+			
+			Log.i(Constants.LOG_COINCOIN, "Formatted String: " + qnGiven);
 			
 			Handler handler = new Handler(); 
 			
 			// Sleep 2 seconds
 		    handler.postDelayed(new Runnable() { 
 		         public void run() { 
-		        	 if (Integer.valueOf((String) values[1]) == (firstNumber + secondNumber)) {
-		 				backViewOne.startAnimation(fade);
-		 				backViewTwo.startAnimation(fade);
+		        	// Checks if the values of the two cards adds up to the correct value
+		        	 if (Integer.valueOf(qnGiven) == (firstNumber + secondNumber)) {
+		        		 
+		        		fadeOut.setAnimationListener(new AnimationListener() {
+
+							@Override
+							public void onAnimationStart(Animation animation) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void onAnimationEnd(Animation animation) {
+								// TODO Auto-generated method stub
+								// Hide the two back-views upon animation ended
+								backViewOne.setVisibility(View.INVISIBLE);
+								backViewTwo.setVisibility(View.INVISIBLE);
+							}
+
+							@Override
+							public void onAnimationRepeat(Animation animation) {
+								// TODO Auto-generated method stub
+								
+							}
+		        		});
+		        		
+		 				backViewOne.startAnimation(fadeOut);
+		 				backViewTwo.startAnimation(fadeOut);
 		 				
 		 				questionIndex++;
 		 				
 		 				// Call score-sheet pop-up since the last question is answered
 		 				if (questionIndex > 6) {
-		 					callScoreSheetPopUp();
+		 					callScoreSheetPopUp(R.drawable.coincoin_congrats);
 		 				} else {
 		 					// Populate the next question
-		 					question.setText(TAG_QUESTION+questionList.get(questionIndex));
+		 					question.setText(TAG_QUESTION + 
+		 							questionList.get(questionIndex) + TAG_CENTS);
 		 				}
 		 			} else {
 		 				onBackViewClick(backViewOne);
 		 				onBackViewClick(backViewTwo);
-		 				callScoreSheetPopUp();
+		 				callScoreSheetPopUp(R.drawable.coincoin_congrats);
 		 			} 
 		         } 
-		    }, 1500);
+		    }, 1000);
 			
 			// Resets flips selected
 			flipList.clear();
@@ -156,33 +307,47 @@ public class CoinCoin extends Activity {
 		CoinCoinValues values = new CoinCoinValues();
 		Random rand = new Random();
 		
-		int randomVal = 0;
 	    while (true) {
+	    	int actualValue = 0;
+			int firstNumber = 0;
+			int secondNumber = 0;
+	    	
+	    	// Random generate a value between 1 - 200
+	    	int randomVal = rand.nextInt(200) + 1;
+			
 	    	// Ensures that randomVal will not be 0 or less than 5
-	    	if (randomVal == 0 || randomVal < 5) {
-	    		// Random generate a value between 1 - 200
-	    		randomVal = rand.nextInt(200) + 1;
-	    	} else {
+	    	if (randomVal >= 10) {
+	    		Log.i(Constants.LOG_COINCOIN, "randomVal1:" +randomVal);
+	    		while (true) {    			
+	    			// Round the generated value to be a multiple of 5
+	    			actualValue = 5 * (Math.round(randomVal / 5));
+	    			
+	    			// Ensure that actualValue will not be 0
+	    			if (actualValue != 0) {
+	    				Log.i(Constants.LOG_COINCOIN, "actualValue:" +actualValue); 				
+	    				while (true) {
+	    					randomVal = rand.nextInt(actualValue) + 1;
+	    					firstNumber = 5 * (Math.round(randomVal / 5));
+	    					if (firstNumber == 5 || firstNumber > 10) {
+	    						Log.i(Constants.LOG_COINCOIN, "firstNumber:" + firstNumber);
+	    						
+		    					secondNumber = actualValue - firstNumber;
+
+		    					Log.i(Constants.LOG_COINCOIN, "firstNumber: " + firstNumber +
+		    							" secondNumber: " + secondNumber);
+		    					values.setActualValue(actualValue);
+		    				    values.setFirstNumber(firstNumber);
+		    				    values.setSecondNumber(secondNumber);
+		    					break;
+		    				}	
+	    				}
+	    				break;
+	    			}	    			
+	    		}
 	    		break;
-	    	}
+	    	}  	
 	    }
-	    Log.i("CoinCoin", "randomVal: " +randomVal);
-	    
-		// Round the generated value to be a multiple of 5	    
-		int actualValue = 5 * (Math.round(randomVal / 5));
-		randomVal = rand.nextInt(actualValue) + 1;
-		
-		// Random generate 2 values that adds up to actualValue
-		int firstNumber = 5 * (Math.round(randomVal / 5));
-		int secondNumber = actualValue - firstNumber;
-		
-		Log.i("CoinCoin", "actualValue: "+actualValue+" firstNumber: "+firstNumber+
-				" secondNumber: "+secondNumber);
-		
-		values.setActualValue(actualValue);
-		values.setFirstNumber(firstNumber);
-		values.setSecondNumber(secondNumber);
-		return values;
+	    return values;
 	}
 	
 	// On-click handler for frontViews
@@ -202,76 +367,81 @@ public class CoinCoin extends Activity {
 		flip_left_in.start();
 	}
 	
-	private void callScoreSheetPopUp() {
+	private void callScoreSheetPopUp(int imageToAnimate) {
 		
 		// Stops the timer first
 		timeSwapBuff += timeInMilliseconds;
 		customHandler.removeCallbacks(updateTimerThread);
 		
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService
-				(Context.LAYOUT_INFLATER_SERVICE);
+		RelativeLayout.LayoutParams paramsImage = new RelativeLayout.LayoutParams
+				(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        paramsImage.addRule(RelativeLayout.CENTER_IN_PARENT);
 		
-		View layout = inflater.inflate(R.layout.coincoin_scoresheet, 
-				(ViewGroup) findViewById(R.id.coincoin_scoresheet));
+        final ImageView timesUp = new ImageView(this);
+		timesUp.setImageResource(imageToAnimate);
+		timesUp.setLayoutParams(paramsImage);
 		
-		scoreSheetPopUp = new PopupWindow(layout, 600, 450, true);
-		scoreSheetPopUp.setAnimationStyle(R.style.Animation_Bounce);
+		coincoin_layout.addView(timesUp);
+		setContentView(coincoin_layout);
 		
-		// Initialize the widgets
-		score_timetaken = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_timetaken);
-		score_nooftries = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_nooftries);
-		tryAgainBtn = (Button) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_tryagain);
-		giveUpBtn = (Button) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_giveup);
+		Animation bounceRotate = AnimationUtils.loadAnimation(context, R.anim.bounce_rotate);
+		final Animation fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);
 		
-		// Display results
-		String timeResult = timeTaken.getText().toString();
-		score_timetaken.setText(timeResult.substring(timeResult.indexOf(":") + 1).trim());
-		score_nooftries.setText(String.valueOf(flipTries));
+		bounceRotate.setAnimationListener(new AnimationListener() {
 
-		tryAgainBtn.setOnTouchListener(new View.OnTouchListener() {
-				
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public void onAnimationStart(Animation animation) {
 				// TODO Auto-generated method stub
-				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN :
-						break;
-					case MotionEvent.ACTION_UP : {
-						// User selected try again, reloads this activity
-						Intent intent = getIntent();
-						scoreSheetPopUp.dismiss();
-						finish();
-						startActivity(intent);
-					}
+				// Stop the background music just before times-up animation starts
+				if (bkgrdMusic.isPlaying() == true) {
+					bkgrdMusic.reset();
+					bkgrdMusic.release();
 				}
-				return true;
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				// TODO Auto-generated method stub
+				timesUp.startAnimation(fadeOut);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		fadeOut.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				 new ManageGameResults(user.getApp_user_id(),
+						 user.getSchool_id(), flipTries).execute();
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
-				
-		giveUpBtn.setOnTouchListener(new View.OnTouchListener() {
-					
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN :
-						break;
-					case MotionEvent.ACTION_UP : {
-						// User gives up, returns to previous activity
-						scoreSheetPopUp.dismiss();
-						finish();
-					}
-				}
-				return true;
-			}
-		});
-		scoreSheetPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		
+		timesUp.startAnimation(bounceRotate);
 	}
 	
-	private void callStoryPopUpWindow() {
+	private void callStoryPopUpWindow(final int selectedCardResId, final ArrayList<ImageView> frontViewList) {
+		
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService
 				(Context.LAYOUT_INFLATER_SERVICE);
-	
+		
 		View layout = inflater.inflate(R.layout.coincoin_storyboard, 
 				(ViewGroup) findViewById(R.id.coincoin_popup));
 	
@@ -287,14 +457,37 @@ public class CoinCoin extends Activity {
 					case MotionEvent.ACTION_DOWN :
 						break;
 					case MotionEvent.ACTION_UP : {
+						
 						// Set the first question
-						question.setText(TAG_QUESTION+questionList.get(questionIndex));			
+						question.setText(TAG_QUESTION + 
+								questionList.get(questionIndex) + TAG_CENTS);			
+						
 						questionIndex++;
+						
+						// Set activity screen to fully opaque
+						coincoin_bkgrd.setAlpha(255);
+						coincoin_layout.setBackground(coincoin_bkgrd);
+						setContentView(coincoin_layout);
+						
+						ImageView currentView = null;
+						
+						// Set visibility and image resource for each front view
+						for (int i = 0; i < frontViewList.size(); i++) {
+							currentView = (ImageView) frontViewList.get(i);
+							currentView.setImageResource(selectedCardResId);
+							currentView.setVisibility(View.VISIBLE);
+						}						
+						
 						storyPopUp.dismiss();
-				
+						
+						// Start background music
+						bkgrdMusic = MediaPlayer.create(CoinCoin.this, R.raw.irishtavern);
+						bkgrdMusic.start(); 
+						
 						// Start the timer
 						startTime = SystemClock.uptimeMillis();
-						customHandler.postDelayed(updateTimerThread, 0);
+						customHandler.postDelayed(updateTimerThread, 0);						
+						isGameStarted = true;
 					}
 				}
 				return true;
@@ -324,7 +517,348 @@ public class CoinCoin extends Activity {
 			customHandler.postDelayed(this, 0);
 		}
 	};
+	
+	private void initMain() {
+		coincoin_layout = (RelativeLayout) findViewById(R.id.coincoin_main);
+		
+		frontViewOne = (ImageView) findViewById(R.id.frontViewOne);
+		backViewOne = (ImageView) findViewById(R.id.backViewOne);
+		frontViewTwo = (ImageView) findViewById(R.id.frontViewTwo);
+		backViewTwo = (ImageView) findViewById(R.id.backViewTwo);		
+		frontViewThree = (ImageView) findViewById(R.id.frontViewThree);
+		backViewThree = (ImageView) findViewById(R.id.backViewThree);
+		frontViewFour = (ImageView) findViewById(R.id.frontViewFour);
+		backViewFour = (ImageView) findViewById(R.id.backViewFour);		
+		frontViewFive = (ImageView) findViewById(R.id.frontViewFive);
+		backViewFive = (ImageView) findViewById(R.id.backViewFive);		
+		frontViewSix = (ImageView) findViewById(R.id.frontViewSix);
+		backViewSix = (ImageView) findViewById(R.id.backViewSix);		
+		frontViewSeven = (ImageView) findViewById(R.id.frontViewSeven);
+		backViewSeven = (ImageView) findViewById(R.id.backViewSeven);	
+		frontViewEight = (ImageView) findViewById(R.id.frontViewEight);
+		backViewEight = (ImageView) findViewById(R.id.backViewEight);	
+		frontViewNine = (ImageView) findViewById(R.id.frontViewNine);
+		backViewNine = (ImageView) findViewById(R.id.backViewNine);	
+		frontViewTen = (ImageView) findViewById(R.id.frontViewTen);
+		backViewTen = (ImageView) findViewById(R.id.backViewTen);		
+		frontViewEleven = (ImageView) findViewById(R.id.frontViewEleven);
+		backViewEleven = (ImageView) findViewById(R.id.backViewEleven);
+		frontViewTwelve = (ImageView) findViewById(R.id.frontViewTwelve);
+		backViewTwelve = (ImageView) findViewById(R.id.backViewTwelve);
+		
+		question = (TextView) findViewById(R.id.coincoin_qn);
+		timeTaken = (TextView) findViewById(R.id.coincoin_timer);
+	}
+	
+	class CustomAnimationListener implements AnimatorListener {
+		
+		private int flipDirection;
+		private ImageView frontView;
+		private ImageView backView;
+		
+		public CustomAnimationListener(int flipDirection, ImageView frontView, ImageView backView) {
+			this.flipDirection = flipDirection;
+			this.frontView = frontView;
+			this.backView = backView;
+		}
 
+		@Override
+		public void onAnimationStart(Animator animation) {
+			// TODO Auto-generated method stub	
+		}
+
+		@Override
+		public void onAnimationEnd(Animator animation) {
+			// TODO Auto-generated method stub
+			// Base on the flip direction, decide whether to hide front or back card
+			switch (flipDirection) {
+				case 1: {
+					Log.i(Constants.LOG_COINCOIN, "Flipdirection case 1!");
+					backView.setVisibility(View.VISIBLE);
+					frontView.setVisibility(View.INVISIBLE);
+					flip_right_in.removeAllListeners();
+					
+					// Process flip only when front-View is flip
+					processFlip(backView);
+					break;
+				}
+				case 2: {
+					Log.i(Constants.LOG_COINCOIN, "Flipdirection case 2!");
+					frontView.setVisibility(View.VISIBLE);
+					backView.setVisibility(View.INVISIBLE);		
+					flip_left_in.removeAllListeners();
+					break;
+				}
+			}
+		}
+
+		@Override
+		public void onAnimationCancel(Animator animation) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onAnimationRepeat(Animator animation) {
+			// TODO Auto-generated method stub		
+		}
+	}
+	
+	class ManageGameResults extends AsyncTask<String, String, String> {
+
+		private int userId;
+		private int schoolId;
+		private int score;
+		private int success;
+		private RankingResult rankResult;
+		private ProgressDialog pDialog;
+			
+		// Static Flag result_type of CoinCoin Game
+		private static final int resultType = 3;
+		
+		public ManageGameResults() {
+			// Denotes guest
+			userId = 0;	
+		}
+		
+		public ManageGameResults(int userId, int schoolId, int score) {
+			this.userId = userId;
+			this.schoolId = schoolId;
+			this.score = score;
+		}
+		
+		@Override
+        protected void onPreExecute() {
+			super.onPreExecute();
+            pDialog = new ProgressDialog(CoinCoin.this);
+            pDialog.setTitle(Constants.TITLE_GEN_SCORE);
+            pDialog.setMessage(Constants.MESSAGE_PLEASE_WAIT);
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			JSONParser jsonParser = new JSONParser();
+			
+			// Parameters for the POST request
+			List<NameValuePair> params = new ArrayList<NameValuePair>();	
+			params.add(new BasicNameValuePair("userid", String.valueOf(userId)));
+			params.add(new BasicNameValuePair("type", String.valueOf(resultType)));
+			params.add(new BasicNameValuePair("score", String.valueOf(score)));
+            params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
+            
+            JSONObject json = jsonParser.makeHttpRequest(
+            		Constants.URL_MANAGE_GAME_RESULT, Constants.HTTP_POST, params);
+            
+            rankResult = new RankingResult();
+            
+            try{
+				success = json.getInt(Constants.JSON_SUCCESS);
+            } catch (JSONException e) {
+				Log.i(Constants.LOG_COINCOIN, e.toString());
+            }
+            
+            // Retrieve CoinCoin rank results
+            // Remove score parameter to suit the retrieve operation
+            params.remove(2);
+            
+            json = jsonParser.makeHttpRequest(Constants.URL_GAME_RESULT,
+            		Constants.HTTP_GET, params);
+            
+            rankResult.getRankingResults(json);
+            
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String file_url) {
+			pDialog.dismiss();
+			
+			LayoutInflater inflater = (LayoutInflater) CoinCoin.this
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			View layout = inflater.inflate(R.layout.coincoin_scoresheet, 
+					(ViewGroup) findViewById(R.id.coincoin_scoresheet));
+			
+			scoreSheetPopUp = new PopupWindow(layout, 1100, 600, true);
+			scoreSheetPopUp.setAnimationStyle(R.style.Animation_Bounce);
+			
+			// Initialize the widgets
+			rankTable = (TableLayout) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_rank_tablelayout);
+			score_timeTaken = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_timetaken);
+			score_noofflips = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_noofflips);
+			tryAgainBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_tryagain);
+			giveUpBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_giveup);			
+						
+			String spacing = " ";
+			Resources resource = getResources();
+			String timeResult = timeTaken.getText().toString();
+			timeResult = timeResult.substring(timeResult.indexOf(":") + 1).trim();
+			
+			// Display results
+			score_timeTaken.setText(resource.getString(R.string.coincoin_timetaken) + spacing +
+					timeResult);
+			score_noofflips.setText(resource.getString(R.string.coincoin_nooftries) + spacing +
+					String.valueOf(flipTries));
+			
+			// No results
+			if (rankResult.getSuccess() == 0) {
+				
+			} else {
+				rankResult.setRankTableResults(rankTable);
+			}
+			
+			// If success = 1 (New entry), = 2 (Better score update)
+			if (success == 1 || success == 2) {
+				// Display new high score image
+				coincoin_highscore = (ImageView) scoreSheetPopUp.getContentView().findViewById(R.id.coincoin_highscore);
+				coincoin_highscore.setVisibility(View.VISIBLE);
+			}
+
+			tryAgainBtn.setOnTouchListener(new View.OnTouchListener() {
+					
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN :
+							break;
+						case MotionEvent.ACTION_UP : {
+							// User selected try again, reloads this activity
+							Intent intent = getIntent();
+							scoreSheetPopUp.dismiss();
+							finish();
+							startActivity(intent);
+						}
+					}
+					return true;
+				}
+			});
+					
+			giveUpBtn.setOnTouchListener(new View.OnTouchListener() {
+						
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN :
+							break;
+						case MotionEvent.ACTION_UP : {
+							// User gives up, returns to previous activity
+							scoreSheetPopUp.dismiss();
+							finish();
+						}
+					}
+					return true;
+				}
+			});
+			scoreSheetPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		}
+	}
+	
+	class LoadGameData extends AsyncTask<String, String, String> {
+		
+		private int selectedCardResId;
+		private ArrayList<ImageView> frontViewList;
+		private ArrayList<ImageView> backViewList;
+		private ProgressDialog pDialog;
+		
+		@Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(CoinCoin.this);
+            pDialog.setTitle(Constants.TITLE_GAME_LOADING);
+            pDialog.setMessage(Constants.MESSAGE_PLEASE_WAIT);
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+		
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			
+			frontViewList = new ArrayList<ImageView>();
+			backViewList = new ArrayList<ImageView>();
+			valueList = new ArrayList<Integer>();
+			questionList = new ArrayList<Integer>();
+			CoinCoinValues values = null;
+			
+			// Generate 6 set of values needed by 12 cards
+			for (int i = 0; i < 6; i++) {
+				values = generateGameValues();
+				questionList.add(values.getActualValue());
+				valueList.add(values.getFirstNumber());
+				valueList.add(values.getSecondNumber());
+			}
+			
+			frontViewList.add(frontViewOne);
+			frontViewList.add(frontViewTwo);
+			frontViewList.add(frontViewThree);
+			frontViewList.add(frontViewFour);
+			frontViewList.add(frontViewFive);
+			frontViewList.add(frontViewSix);
+			frontViewList.add(frontViewSeven);
+			frontViewList.add(frontViewEight);
+			frontViewList.add(frontViewNine);
+			frontViewList.add(frontViewTen);
+			frontViewList.add(frontViewEleven);
+			frontViewList.add(frontViewTwelve);			
+			
+			backViewList.add(backViewOne);
+			backViewList.add(backViewTwo);
+			backViewList.add(backViewThree);
+			backViewList.add(backViewFour);
+			backViewList.add(backViewFive);
+			backViewList.add(backViewSix);
+			backViewList.add(backViewSeven);
+			backViewList.add(backViewEight);
+			backViewList.add(backViewNine);
+			backViewList.add(backViewTen);
+			backViewList.add(backViewEleven);
+			backViewList.add(backViewTwelve);
+			
+			// Randomize and choose a card front
+			Random random = new Random();
+			int randomVal = random.nextInt(2) + 1;
+			selectedCardResId = cardFrontList[randomVal];
+			
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String file_url) {
+			// Dim the activity screen
+			coincoin_bkgrd.setAlpha(150);
+			coincoin_layout.setBackground(coincoin_bkgrd);
+			setContentView(coincoin_layout);
+			
+			int index = 12;
+			int randomValue = 0;
+			int selectedValue = 0;
+			Random rand = new Random();
+			ImageView currentView = null;
+			
+			// Randomize the positions of the values among the 12 cards
+			for (int i = 0; i < backViewList.size(); i++) {
+				currentView = (ImageView) backViewList.get(i);
+				randomValue = rand.nextInt(index);
+				selectedValue = (Integer) valueList.get(randomValue);
+				currentView.setImageResource(findResourceId(selectedValue));
+				currentView.setTag(selectedValue);
+				
+				// Remove the value after assigning it to the view
+				valueList.remove(randomValue);
+				index--;
+			}		
+			
+			pDialog.dismiss();
+			callStoryPopUpWindow(selectedCardResId, frontViewList);
+		}	
+	}
+	
 	// Find the backView or frontView
 	private ImageView findCorrespondingView(View input) {
 		ImageView view = null;
@@ -403,164 +937,6 @@ public class CoinCoin extends Activity {
 				break;
 		}
 		return view;
-	}
-	
-	private void initMain() {
-		backViewList = new ArrayList<ImageView>();
-		// Front and back views of each cards
-		frontViewOne = (ImageView) findViewById(R.id.frontViewOne);
-		backViewOne = (ImageView) findViewById(R.id.backViewOne);
-		frontViewTwo = (ImageView) findViewById(R.id.frontViewTwo);
-		backViewTwo = (ImageView) findViewById(R.id.backViewTwo);		
-		frontViewThree = (ImageView) findViewById(R.id.frontViewThree);
-		backViewThree = (ImageView) findViewById(R.id.backViewThree);
-		frontViewFour = (ImageView) findViewById(R.id.frontViewFour);
-		backViewFour = (ImageView) findViewById(R.id.backViewFour);		
-		frontViewFive = (ImageView) findViewById(R.id.frontViewFive);
-		backViewFive = (ImageView) findViewById(R.id.backViewFive);		
-		frontViewSix = (ImageView) findViewById(R.id.frontViewSix);
-		backViewSix = (ImageView) findViewById(R.id.backViewSix);		
-		frontViewSeven = (ImageView) findViewById(R.id.frontViewSeven);
-		backViewSeven = (ImageView) findViewById(R.id.backViewSeven);	
-		frontViewEight = (ImageView) findViewById(R.id.frontViewEight);
-		backViewEight = (ImageView) findViewById(R.id.backViewEight);	
-		frontViewNine = (ImageView) findViewById(R.id.frontViewNine);
-		backViewNine = (ImageView) findViewById(R.id.backViewNine);	
-		frontViewTen = (ImageView) findViewById(R.id.frontViewTen);
-		backViewTen = (ImageView) findViewById(R.id.backViewTen);		
-		frontViewEleven = (ImageView) findViewById(R.id.frontViewEleven);
-		backViewEleven = (ImageView) findViewById(R.id.backViewEleven);
-		frontViewTwelve = (ImageView) findViewById(R.id.frontViewTwelve);
-		backViewTwelve = (ImageView) findViewById(R.id.backViewTwelve);
-		
-		backViewList.add(backViewOne);
-		backViewList.add(backViewTwo);
-		backViewList.add(backViewThree);
-		backViewList.add(backViewFour);
-		backViewList.add(backViewFive);
-		backViewList.add(backViewSix);
-		backViewList.add(backViewSeven);
-		backViewList.add(backViewEight);
-		backViewList.add(backViewNine);
-		backViewList.add(backViewTen);
-		backViewList.add(backViewEleven);
-		backViewList.add(backViewTwelve);
-		
-		question = (TextView) findViewById(R.id.coincoin_qn);
-		timeTaken = (TextView) findViewById(R.id.coincoin_timer);
-	}
-	
-	class CustomAnimationListener implements AnimatorListener {
-		
-		private int flipDirection;
-		private ImageView frontView;
-		private ImageView backView;
-		
-		public CustomAnimationListener(int flipDirection, ImageView frontView, ImageView backView) {
-			this.flipDirection = flipDirection;
-			this.frontView = frontView;
-			this.backView = backView;
-		}
-
-		@Override
-		public void onAnimationStart(Animator animation) {
-			// TODO Auto-generated method stub	
-		}
-
-		@Override
-		public void onAnimationEnd(Animator animation) {
-			// TODO Auto-generated method stub
-			// Base on the flip direction, decide whether to hide front or back card
-			switch (flipDirection) {
-				case 1: {
-					Log.i("CoinCoin", "Flipdirection case 1!");
-					backView.setVisibility(View.VISIBLE);
-					frontView.setVisibility(View.INVISIBLE);
-					flip_right_in.removeAllListeners();
-					
-					// Process flip only when front-View is flip
-					processFlip(backView);
-					break;
-				}
-				case 2: {
-					Log.i("CoinCoin", "Flipdirection case 2!");
-					frontView.setVisibility(View.VISIBLE);
-					backView.setVisibility(View.INVISIBLE);		
-					flip_left_in.removeAllListeners();
-					break;
-				}
-			}
-		}
-
-		@Override
-		public void onAnimationCancel(Animator animation) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		public void onAnimationRepeat(Animator animation) {
-			// TODO Auto-generated method stub		
-		}
-	}
-	
-	class LoadGameData extends AsyncTask<String, String, String> {
-
-		private ProgressDialog pDialog;
-		
-		@Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(CoinCoin.this);
-            pDialog.setTitle(Constants.DIALOG_TITLE);
-            pDialog.setMessage(Constants.DIALOG_MESSAGE);
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-		
-		@Override
-		protected String doInBackground(String... params) {
-			// TODO Auto-generated method stub
-			
-			valueList = new ArrayList<Integer>();
-			questionList = new ArrayList<Integer>();
-			CoinCoinValues values = null;
-			
-			// Generate 6 set of values needed by 12 cards
-			for (int i = 0; i < 6; i++) {
-				values = generateGameValues();
-				questionList.add(values.getActualValue());
-				valueList.add(values.getFirstNumber());
-				valueList.add(values.getSecondNumber());
-			}
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(String file_url) {
-			int index = 12;
-			int randomValue = 0;
-			int selectedValue = 0;
-			Random rand = new Random();
-			ImageView currentView = null;
-			
-			// Randomize the positions of the values among the 12 cards
-			for (int i = 0; i < backViewList.size(); i++) {
-				currentView = (ImageView) backViewList.get(i);
-				randomValue = rand.nextInt(index);
-				selectedValue = (Integer) valueList.get(randomValue);
-				currentView.setImageResource(findResourceId(selectedValue));
-				currentView.setTag(selectedValue);
-				
-				// Remove the value after assigning it to the view
-				valueList.remove(randomValue);
-				index--;
-			}
-			
-			// Populate the first value on question view
-			pDialog.dismiss();
-			callStoryPopUpWindow();
-		}	
 	}
 	
 	// Method to find image resource id of each value
@@ -688,7 +1064,7 @@ public class CoinCoin extends Activity {
 			resourceId = R.drawable.cents_200;
 			break;
 		default:
-			Log.i("CoinCoin", "Image not found! value:" + selectedValue);
+			Log.i(Constants.LOG_COINCOIN, "Image not found! value:" + selectedValue);
 			resourceId = R.drawable.cardfront;
 			break;
 		}

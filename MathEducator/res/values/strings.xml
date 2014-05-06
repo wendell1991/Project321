@@ -4,6 +4,14 @@
     
     <!-- Loading -->
     <string name="start">Start</string>
+    <string name="ok">OK</string>
+    <string name="noInternetTitle">NO INTERNET CONNECTION!</string>
+    
+    <string name="noInternetMsg">
+        Internet connection is required for gameplay! 
+        Please ensure that you have Internet connectivity 
+        and restart the game.
+    </string>
     
     <!-- Credits -->
     <string name="tapReturn">TAP HERE TO RETURN</string>
@@ -26,30 +34,32 @@
     
     <!-- XGame -->
     <string name="timeLeft">Time Left: 00:00</string>
-    <string name="qnsAttempted">Questions Attempted:</string>
     <string name="qnsCorrect">Questions Correct:</string>
     <string name="qnsWrong">Questions Wrong:</string>
     <string name="totalScore">Total Score:</string>
-    <string name="scoreResult">00</string>
-    <string name="resume">Resume</string>
-    <string name="quit">Quit</string>
     
     <!-- Ranking -->
-    <string name="quiz">Quiz</string>
-    <string name="quiz_prompt">Select a quiz</string>
-    <string name="topic_prompt">Select a topic</string>
-    <string name="topic">Topic</string>
     <string name="name">Name</string>
     <string name="rank">Rank</string>
     <string name="result">Result</string>
     <string name="noResult">No Result</string>
     
-    <string-array name="topic_arrays">
+    <string-array name="class_topic_arrays">
         <item>-- Select a topic --</item>
         <item>Arithmetic</item>
-        <item>Time</item>
         <item>Fraction</item>
-        <item>Money</item>
+        <item>Measurement</item>
+        <item>Other Topics</item>
+    </string-array>
+    
+    <string-array name="school_topic_arrays">
+        <item>-- Select a topic --</item>
+        <item>Arithmetic</item>
+        <item>Fraction</item>
+        <item>Measurement</item>
+        <item>Other Topics</item>
+        <item>XGame</item>
+        <item>Coin Coin</item>
     </string-array>
     
     <!-- CoinCoin -->
@@ -62,13 +72,21 @@
     
     <string name="timeTaken">TIME TAKEN:</string>
     <string name="tapStart">TAP HERE TO START THE GAME</string>
-    <string name="tryAgain">Try Again</string>
-    <string name="giveUp">Give Up</string>
     <string name="coincoin_qn">YOUR MUM WANTS YOU TO FIND: ?</string>
     <string name="coincoin_timesup">SORRY!! TIMES UP!!!</string>
-    <string name="coincoin_timetaken">Time taken:</string>
-    <string name="coincoin_nooftries">Number of tries:</string>
+    <string name="coincoin_timetaken">Time Taken:</string>
+    <string name="coincoin_nooftries">Number of Flips:</string>
     
+    <!-- Resume Game Dialog -->
+    <string name="resume">Resume</string>
+    <string name="exit">Exit</string>
+    <string name="resumeGameTitle">Resuming Game</string>
+    
+    <string name="resumeGameMsg">
+        Game is resumed from previous gameplay.
+        Do you wish to carry on from previous
+        checkpoint or exit to sub-topic screen?
+    </string>
     
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -78,6 +96,4 @@
     <string name="Hard">Hard</string>
     <string name="obtainablestars">Obtainable Stars:</string>
     <string name="previousscore">Previous best score:</string>
-    <string name="selectquiz">Select Quiz</string>
-    <string name="finish">Finish</string>
 </resources>

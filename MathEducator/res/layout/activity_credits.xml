@@ -12,8 +12,9 @@
         android:id="@+id/creditsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" >
+        android:layout_marginTop="59dp" >
 
         <LinearLayout
             android:id="@+id/creditsLayout"
@@ -34,9 +35,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/creditsView"
-        android:layout_below="@+id/creditsView"
-        android:layout_marginLeft="36dp"
-        android:layout_marginTop="36dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="92dp"
+        android:layout_marginLeft="28dp"
+        android:textStyle="bold"
         android:text="@string/tapReturn" />
 
 </RelativeLayout>

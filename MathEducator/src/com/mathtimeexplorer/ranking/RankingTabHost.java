@@ -1,14 +1,14 @@
 package com.mathtimeexplorer.ranking;
 
-import com.example.matheducator.R;
-import com.mathtimeexplorer.utils.Constants;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
+
+import com.example.matheducator.R;
+import com.mathtimeexplorer.main.User;
+import com.mathtimeexplorer.utils.Constants;
 
 @SuppressWarnings("deprecation")
 public class RankingTabHost extends TabActivity {
@@ -17,6 +17,14 @@ public class RankingTabHost extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ranking_tabhost);
+		
+		User user = null;
+		Bundle extras = getIntent().getExtras();
+		
+		if (extras != null) {
+		   user = (User) extras.getParcelable(Constants.USER);
+		   //Log.i("OptionActivity", "User id:" + user.getApp_user_id());
+		}
 		
 		// create the TabHost that will contain the Tabs
 	    TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
@@ -44,11 +52,13 @@ public class RankingTabHost extends TabActivity {
         classTab.setIndicator(Constants.TAB_CLASS);
         Intent classIntent = new Intent(this, RankingTab.class);
         classIntent.putExtra(Constants.TAB_CHOICE, Constants.TAB_CLASS);
+        classIntent.putExtra(Constants.USER, user);
         classTab.setContent(classIntent);
         
         schoolTab.setIndicator(Constants.TAB_SCHOOL);
         Intent schoolIntent = new Intent(this, RankingTab.class);
         schoolIntent.putExtra(Constants.TAB_CHOICE, Constants.TAB_SCHOOL);
+        schoolIntent.putExtra(Constants.USER, user);
         schoolTab.setContent(schoolIntent);
         
         // Add the tabs  to the TabHost to display

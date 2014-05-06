@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.mathtimeexplorer.main.User;
-import com.mathtimeexplorer.misc.Constants;
+import com.mathtimeexplorer.utils.Constants;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -127,13 +127,6 @@ public class DBAdapter extends SQLiteOpenHelper{
 					new String[] { "_id", "question", "a","b","c","d","answer","explanation","mark",
 					"image_path","quiz_id","sub_topic_id"},		 
 					null, null, null, null, null);		 
-			return cursor;
-		}
-		
-		public Cursor getQuiz() {		 
-			Cursor cursor = getReadableDatabase().query("Quiz",		 
-					new String[] { "quiz_id", "quiz_name", "pass_mark","total_score","time_limit","creation_date","quiz_type","sub_topic_id","school_id"},		 
-					"sub_topic_id='1' OR sub_topic_id='2' OR sub_topic_id='3'", null, null, null, null);		 
 			return cursor;
 		}
 		

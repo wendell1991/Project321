@@ -12,11 +12,22 @@ public final class Constants {
 	public static final String LOGIN = "login";
 	public static final String LOGOUT = "logout";
 	
-	// JSON Response node for success tag
+	// JSON Response node for common tags
 	public static final String JSON_SUCCESS = "success";
+	public static final String JSON_RESULTS = "results";
 	
 	// URLS
 	public static final String URL_LOGIN = "http://10.0.2.2/TimeExplorer/login.php";
+	
+	public static final String URL_CLASS_RESULT = "http://10.0.2.2/TimeExplorer/ranking_class_result.php";
+	public static final String URL_SCHOOL_RESULT = "http://10.0.2.2/TimeExplorer/ranking_school_result.php";
+	public static final String URL_QUIZ_NAMES = "http://10.0.2.2/TimeExplorer/ranking_quiz.php";
+	
+	public static final String URL_MANAGE_GAME_RESULT = "http://10.0.2.2/TimeExplorer/games_manage_result.php";
+	public static final String URL_GAME_RESULT = "http://10.0.2.2/TimeExplorer/ranking_game_result.php";
+	
+	public static final String HTTP_POST = "POST";
+	public static final String HTTP_GET = "GET";
 	
 	// JSON Response node names for login
 	public static final String LOGIN_USER = "user";
@@ -39,8 +50,10 @@ public final class Constants {
 	public static final String TAB_SCHOOL = "School";
 	
 	// Progress dialog values
-	public static final String DIALOG_TITLE = "Game Loading...";
-	public static final String DIALOG_MESSAGE = "Please wait.";
+	public static final String TITLE_GAME_LOADING = "Game Loading...";
+	public static final String TITLE_GEN_SCORE = "Generating Score...";
+	
+	public static final String MESSAGE_PLEASE_WAIT = "Please wait.";
 	
 	// All the Logging tags
 	public static final String LOG_LOADAPP = "LoadAppActivity";
@@ -48,6 +61,7 @@ public final class Constants {
 	public static final String LOG_JSONPARSER = "JSONParser";
 	public static final String LOG_DBADAPTER = "DBAdapter";
 	public static final String LOG_RANKING = "RankingTab";
+	public static final String LOG_COINCOIN = "CoinCoin";
 		
 	private Constants(){
 		//this prevents even the native class from calling

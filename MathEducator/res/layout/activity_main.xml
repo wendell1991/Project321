@@ -5,35 +5,6 @@
     android:background="@drawable/mainscreen"
     tools:context=".MainActivity" >
 
-    <ImageView
-        android:id="@+id/profileView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/setBtn"
-        android:layout_marginRight="124dp"
-        android:src="@drawable/guestprofile" />
-
-    <ImageButton
-        android:id="@+id/setBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/profileView"
-        android:layout_alignTop="@+id/loginPopUp"
-        android:layout_marginLeft="39dp"
-        android:background="@null"
-        android:src="@drawable/setbutton" />
-
-    <ImageButton
-        android:id="@+id/loginPopUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="17dp"
-        android:layout_toRightOf="@+id/setBtn"
-        android:background="@null"
-        android:src="@drawable/loginbutton" />
-
     <ImageSwitcher
         android:id="@+id/topicSwitcher"
         android:layout_width="wrap_content"
@@ -43,5 +14,33 @@
         android:layout_marginLeft="113dp"
         android:layout_marginTop="31dp" >
     </ImageSwitcher>
+
+    <ImageButton
+        android:id="@+id/setBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/loginPopUp"
+        android:layout_alignLeft="@+id/profileView"
+        android:layout_marginLeft="40dp"
+        android:background="@null"
+        android:src="@drawable/setbutton" />
+
+    <ImageView
+        android:id="@+id/profileView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/setBtn"
+        android:layout_marginRight="147dp"
+        android:src="@drawable/guestprofile" />
+
+    <ImageButton
+        android:id="@+id/loginPopUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/setBtn"
+        android:background="@null"
+        android:src="@drawable/loginbutton" />
 
 </RelativeLayout>

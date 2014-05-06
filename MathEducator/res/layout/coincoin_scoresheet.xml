@@ -1,76 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/coincoin_scoresheet"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@drawable/coincoin_score_bkgrd">
+    android:layout_height="match_parent"
+    android:background="@drawable/coincoin_score_bkgrd" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:src="@drawable/coincoin_score" />
+
+    <ImageButton
+        android:id="@+id/coincoin_tryagain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/imageView1"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="66dp"
+        android:background="@null"
+        android:src="@drawable/coincoin_tryagain" />
+
+    <ImageButton
+        android:id="@+id/coincoin_giveup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView1"
+        android:layout_alignTop="@+id/coincoin_tryagain"
+        android:layout_marginLeft="59dp"
+        android:background="@null"
+        android:src="@drawable/coincoin_quit" />
+
+   <TableLayout
+        android:id="@+id/coincoin_rank_tablelayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/coincoin_giveup"
+        android:layout_below="@+id/imageView1"
+        android:layout_marginLeft="49dp"
+        android:layout_marginTop="19dp" >
+
+        <TableRow
+            android:id="@+id/coincoin_row1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/coincoin_textbkgrd" >
+
+            <TextView
+                android:id="@+id/coincoin_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="@string/rank" />
+
+            <TextView
+                android:id="@+id/coincoin_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/name" />
+
+            <TextView
+                android:id="@+id/coincoin_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/result" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/coincoin_row2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/coincoin_textbkgrd" >
+
+            <TextView
+                android:id="@+id/coincoin_row1_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row1_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row1_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/coincoin_row3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/coincoin_textbkgrd" >
+
+            <TextView
+                android:id="@+id/coincoin_row2_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row2_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row2_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/coincoin_row4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/coincoin_textbkgrd" >
+
+            <TextView
+                android:id="@+id/coincoin_row3_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row3_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row3_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/coincoin_row5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/coincoin_textbkgrd" >
+
+            <TextView
+                android:id="@+id/coincoin_row4_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row4_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row4_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/coincoin_row6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/coincoin_textbkgrd" >
+
+            <TextView
+                android:id="@+id/coincoin_row5_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row5_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coincoin_row5_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/coincoin_noofflips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/coincoin_rank_tablelayout"
+        android:layout_toLeftOf="@+id/imageView1"
+        android:background="@drawable/coincoin_textbkgrd"
+        android:text="@string/coincoin_nooftries" />
 
     <TextView
         android:id="@+id/coincoin_timetaken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@+id/coincoin_noofflips"
+        android:layout_below="@+id/coincoin_noofflips"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/coincoin_textbkgrd"
+        android:text="@string/coincoin_timetaken" />
+
+    <ImageView
+        android:id="@+id/coincoin_highscore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/imageView1"
         android:layout_centerVertical="true"
-        android:text="@string/scoreResult" />
-
-    <TextView
-        android:id="@+id/coincoin_nooftries"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/coincoin_timetaken_textview"
-        android:layout_alignLeft="@+id/coincoin_timetaken"
-        android:layout_marginBottom="29dp"
-        android:text="@string/scoreResult" />
-
-    <TextView
-        android:id="@+id/coincoin_timesup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="@string/coincoin_timesup"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/coincoin_nooftries_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/coincoin_timesup"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:text="@string/coincoin_nooftries"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/coincoin_timetaken_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/coincoin_timetaken"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="18dp"
-        android:text="@string/coincoin_timetaken"
-        android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/coincoin_tryagain"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/coincoin_giveup"
-        android:layout_alignBottom="@+id/coincoin_giveup"
-        android:layout_toLeftOf="@+id/coincoin_timetaken"
-        android:text="@string/tryAgain" />
-
-    <Button
-        android:id="@+id/coincoin_giveup"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="24dp"
-        android:layout_toRightOf="@+id/coincoin_timetaken"
-        android:text="@string/giveUp" />
+        android:layout_marginRight="14dp"
+        android:visibility="invisible"
+        android:src="@drawable/coincoin_highscore" />
 
 </RelativeLayout>

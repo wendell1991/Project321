@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.mathtimeexplorer.utils.CustomTextView
+    <com.mathtimeexplorer.utils.RobotoTextView
         android:id="@+id/coincoin_storyboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="114dp"
-        android:background="@drawable/coincoin_textbkgrd"
+        android:background="@drawable/coincoin_storytext_bkgrd"
         android:text="@string/coincoin_storyboard" />
 
     <TextView

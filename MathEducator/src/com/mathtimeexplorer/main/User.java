@@ -13,6 +13,14 @@ public class User implements Parcelable{
 	private int class_id;
 	private int eduLevel;
 	
+	public User() {
+		
+	}
+	
+	public User(Parcel in) { 
+		readFromParcel(in);
+	}
+	
 	public int getApp_user_id() {
 		return app_user_id;
 	}
@@ -78,5 +86,31 @@ public class User implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub
+		dest.writeInt(app_user_id);
+		dest.writeString(first_name);
+		dest.writeString(last_name);
+		dest.writeString(gender);
+		dest.writeInt(school_id);
+		dest.writeInt(class_id);
+		dest.writeInt(eduLevel);
 	}
+	
+	private void readFromParcel(Parcel in) {
+		app_user_id = in.readInt();
+		first_name = in.readString();
+		last_name = in.readString();
+		gender = in.readString();
+		school_id = in.readInt();
+		class_id = in.readInt();
+		eduLevel = in.readInt();
+	}
+	
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+		public User createFromParcel(Parcel in) {
+			return new User(in); 
+		}   
+		public User[] newArray(int size) {
+			return new User[size]; 
+		}
+	};
 }

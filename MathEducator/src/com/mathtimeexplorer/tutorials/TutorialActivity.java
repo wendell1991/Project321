@@ -3,11 +3,6 @@ package com.mathtimeexplorer.tutorials;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.aphidmobile.flip.FlipViewController;
-import com.aphidmobile.utils.UI;
-import com.example.matheducator.R;
-import com.mathtimeexplorer.utils.Constants;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -20,7 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import com.aphidmobile.flip.FlipViewController;
+import com.aphidmobile.utils.UI;
+import com.example.matheducator.R;
+import com.mathtimeexplorer.utils.Constants;
 
 public class TutorialActivity extends Activity {
 
@@ -99,36 +98,46 @@ public class TutorialActivity extends Activity {
 		    UI
 		      .<ImageView>findViewById(layout, R.id.lessonView)
 		      .setImageBitmap(decodeSampledBitmapFromResource
-		    		  (inflater.getContext().getResources(), image, layout.getWidth(), layout.getHeight()));
+		    		  (inflater.getContext().getResources(), image, 600, 600));
 		    
 			return layout;
 		}
 		
-		private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-
+		public static int calculateInSampleSize(BitmapFactory.Options options,
+				int reqWidth, int reqHeight) {
+			
+			// Raw height and width of image
 			final int height = options.outHeight;
-			final int width = options.outWidth;
-			int inSampleSize = 1;
+	    	final int width = options.outWidth;
+	    	int inSampleSize = 1;
 
-			if (height > reqHeight || width > reqWidth) {
+	    	if (height > reqHeight || width > reqWidth) {
+	        	
+	    		final int halfHeight = height / 2;
+	        	final int halfWidth = width / 2;
 
-				final int heightRatio = Math.round((float) height / (float) reqHeight);
-				final int widthRatio = Math.round((float) width / (float) reqWidth);
-
-				inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-			}
-			return inSampleSize;
+	        	// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+	        	// height and width larger than the requested height and width.
+	        	while ((halfHeight / inSampleSize) > reqHeight
+	        			&& (halfWidth / inSampleSize) > reqWidth) {
+	            	inSampleSize *= 2;
+	        	}
+	    	}
+	    	return inSampleSize;
 		}
 		
-		private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+		public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
 		        int reqWidth, int reqHeight) {
 
+		    // First decode with inJustDecodeBounds=true to check dimensions
 		    final BitmapFactory.Options options = new BitmapFactory.Options();
 		    options.inJustDecodeBounds = true;
 		    BitmapFactory.decodeResource(res, resId, options);
 
+		    // Calculate inSampleSize
 		    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
+		    // Decode bitmap with inSampleSize set
 		    options.inJustDecodeBounds = false;
 		    return BitmapFactory.decodeResource(res, resId, options);
 		}

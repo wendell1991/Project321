@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.SQLException;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,7 +51,9 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private ImageSwitcher topicSwitch;
 	private GestureDetector gesturedetector;
 	private ImageButton settingsPopUp, loginPopUp;
-	private int[] imageIndex = {R.drawable.arithmetic, R.drawable.fraction, R.drawable.ranking};
+	
+	private int[] imageIndex = {R.drawable.arithmetic, R.drawable.fraction, 
+			R.drawable.measurement, R.drawable.ranking};
 	
 	// Login Dialog
 	private Dialog loginDialog;
@@ -65,7 +68,9 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private AudioManager am;
 	private int musicVol = 0;
 	
+	private User user;
 	private Context context = this;
+	private MediaPlayer bkgrdMusic = null;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -73,10 +78,13 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		// Store user information, value = null if user = guest
-		User user = initMain();
+		// Start background music
+		startBkGrdMusic();
 		
-		gesturedetector = new GestureDetector(new MyGestureListener(user));
+		// Store user information, value = null if user = guest
+	    initMain();
+		
+		gesturedetector = new GestureDetector(new MyGestureListener());
 		topicSwitch.setFactory(this);
 		topicSwitch.setImageResource(imageIndex[0]);
 		topicSwitch.setOnTouchListener(new OnTouchListener() {
@@ -133,6 +141,42 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 				return true;
 			}
 		});
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (bkgrdMusic != null) {
+			bkgrdMusic.start();
+		} else {
+			startBkGrdMusic();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Back button is pressed
+		if (this.isFinishing()) {
+			if (bkgrdMusic != null) {
+				bkgrdMusic.release();
+				bkgrdMusic = null;
+			}
+		} 
+		// User exits the application
+		else {
+			if (bkgrdMusic != null) {
+				bkgrdMusic.pause();
+			}
+		}
+	}
+	
+	private void startBkGrdMusic() {
+		bkgrdMusic = MediaPlayer.create(MainActivity.this, 
+				R.raw.jewelbeat_journey_through_time);
+		
+	    bkgrdMusic.setLooping(true);
+		bkgrdMusic.start();
 	}
 	
 	private void callLoginDialog() {
@@ -270,7 +314,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	}
 	
 	// Initialize Main Screen UIs
-	private User initMain () {
+	private void initMain () {
 		profileView = (ImageView) findViewById(R.id.profileView);
 		topicSwitch = (ImageSwitcher) findViewById(R.id.topicSwitcher);
 		loginPopUp = (ImageButton) findViewById(R.id.loginPopUp);
@@ -278,7 +322,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		
 		// Retrieve and check whether use exists in database
 		DBAdapter database = openDatabaseConnection();
-		User user = database.isUserExists();
+	    user = database.isUserExists();
 		
 		// Return value will be null if user does not exists
 		if (user != null) {
@@ -287,7 +331,6 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		} else {
 			setLoginPopUpImage(Constants.LOGIN); 
 		}
-		return user;
 	}
 	
 	// Initialize Login Dialog UIs
@@ -372,27 +415,33 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		@Override
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
+			JSONParser jsonParser = new JSONParser();
+			
 			// Parameters for the POST request
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			JSONParser jsonParser = new JSONParser();
 			params.add(new BasicNameValuePair("username", name));
             params.add(new BasicNameValuePair("password", password));
             
-		    json = jsonParser.makeHttpRequest(Constants.URL_LOGIN, "POST", params);
+		    json = jsonParser.makeHttpRequest(Constants.URL_LOGIN,
+		    		Constants.HTTP_POST, params);
+		    
 		    try {
 		    	success = json.getInt(Constants.JSON_SUCCESS);
 			} catch (JSONException e) {
 				Log.i(Constants.LOG_MAIN, e.toString());
 			}
+		    
+		    
 		    return null;
 		}
 		
 		@Override
-		protected void onPostExecute(String file_url) {
-            // If success = 1, user is authenticated with the server successfully
-			final User user = new User();
-            if (success == 1) {
-            	try {
+		protected void onPostExecute(String file_url) {      
+			if (success == 1) {
+				try {
+					// If success = 1, user is authenticated with the server successfully
+        		    user = new User();
+        		    
             		// Retrieve the user object from JSON and save it to class user
 					JSONObject obj = json.getJSONObject(Constants.LOGIN_USER);
 					
@@ -448,17 +497,11 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		private int currentIndex = 0;
 		private int imgTracker = imageIndex.length - 1;
 		
-		private User user;
-		
 		// Load Animations
 		private Animation slide_out_right = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_right);
 		private Animation slide_in_right = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
 		private Animation slide_out_left = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
 		private Animation slide_in_left = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
-		
-		public MyGestureListener(User user) {
-			this.user = user;
-		}
 		
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -492,13 +535,14 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		}
 		
 		@Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-			
+        public boolean onSingleTapConfirmed(MotionEvent e) {	
 			// Pass user to next activity
 			Intent intent = new Intent();
-			Bundle bundle = new Bundle();
-			bundle.putParcelable(Constants.USER, user);
-			intent.putExtras(bundle);
+			intent.putExtra(Constants.USER, user);
+			
+			// Stops the background music
+			bkgrdMusic.release();
+			bkgrdMusic = null;
 			
 			if (imageIndex[currentIndex] == R.drawable.ranking){
 				intent.setClass(context, RankingTabHost.class);

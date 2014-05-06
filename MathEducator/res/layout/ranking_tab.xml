@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/ranking_bkgrd" >
 
     <Spinner
         android:id="@+id/topicSpinner"
@@ -112,8 +113,7 @@
             <TextView
                 android:id="@+id/rankThreeName"
                 android:layout_width="150dp"
-                android:layout_height="20dp"
-                android:text="@string/noResult" />
+                android:layout_height="20dp" />
 
             <TextView
                 android:id="@+id/thirdResult"
@@ -145,7 +145,7 @@
                 android:layout_height="20dp"
                 android:visibility="invisible" />
         </TableRow>
-
+        
         <TableRow
             android:id="@+id/tableRow6"
             android:layout_width="wrap_content"
@@ -154,19 +154,19 @@
             <TextView
                 android:id="@+id/rankFive"
                 android:layout_width="80dp"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/rankFiveName"
                 android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/fifthResult"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:visibility="invisible" />
         </TableRow>
     </TableLayout>

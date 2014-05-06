@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/xgame_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/xgamebkgrd" >
@@ -23,7 +24,7 @@
         android:layout_below="@+id/timerText"
         android:layout_marginRight="110dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/xgame0" />
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/correctCover"
@@ -59,7 +60,8 @@
         android:layout_alignLeft="@+id/optionOne"
         android:layout_below="@+id/optionOne"
         android:onClick="checkAnswer"
-        android:src="@drawable/xgame0" />
+        android:clickable="false"
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/valAnswer"
@@ -68,7 +70,7 @@
         android:layout_alignTop="@+id/valueTwo"
         android:layout_marginLeft="11dp"
         android:layout_toRightOf="@+id/xgame_equal"
-        android:src="@drawable/xgame0" />
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/xgame_equal"
@@ -84,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/correctCover"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/xgame0" />
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/xgame_multi"
@@ -103,8 +105,9 @@
         android:layout_alignRight="@+id/xgame_multi"
         android:layout_marginBottom="17dp"
         android:layout_marginRight="15dp"
+        android:clickable="false"
         android:onClick="checkAnswer"
-        android:src="@drawable/xgame0" />
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/optionThree"
@@ -113,7 +116,8 @@
         android:layout_alignTop="@+id/optionTwo"
         android:layout_toRightOf="@+id/xgame_equal"
         android:onClick="checkAnswer"
-        android:src="@drawable/xgame0" />
+        android:clickable="false"
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/optionTwo"
@@ -122,7 +126,8 @@
         android:layout_alignTop="@+id/optionOne"
         android:layout_toLeftOf="@+id/xgame_equal"
         android:onClick="checkAnswer"
-        android:src="@drawable/xgame0" />
+        android:clickable="false"
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/optionFive"
@@ -131,7 +136,8 @@
         android:layout_alignTop="@+id/optionFour"
         android:layout_toLeftOf="@+id/xgame_equal"
         android:onClick="checkAnswer"
-        android:src="@drawable/xgame0" />
+        android:clickable="false"
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/optionSix"
@@ -140,7 +146,8 @@
         android:layout_alignLeft="@+id/optionThree"
         android:layout_below="@+id/wrongCover"
         android:onClick="checkAnswer"
-        android:src="@drawable/xgame0" />
+        android:clickable="false"
+        android:src="@drawable/xgame_qnmark" />
 
     <ImageView
         android:id="@+id/wrongRed"

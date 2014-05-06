@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,6 +19,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -21,6 +27,8 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,19 +37,25 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.example.matheducator.R;
-import com.mathtimeexplorer.main.MainActivity;
+import com.mathtimeexplorer.database.JSONParser;
+import com.mathtimeexplorer.main.User;
+import com.mathtimeexplorer.ranking.RankingResult;
 import com.mathtimeexplorer.utils.Constants;
 
 public class XGame extends Activity {
 	
+	private TableLayout rankTable;
 	private Dialog countDownDialog;
 	private PopupWindow scoreSheetPopUp;
 	
@@ -49,20 +63,25 @@ public class XGame extends Activity {
 					  optionFour, optionFive, optionSix, correctGreen, wrongRed, countDownView;
 	
 	private ImageButton tryAgainBtn, giveUpBtn;
-	private TextView timerText, totalQns, numCorrect, numWrong, totalMarks;
+	private TextView timerText, numCorrect, numWrong, totalMarks;
 	
 	// Count-down configuration
 	private long COUNTDOWN_DURATION = 6000, COUNTDOWN_INTERVAL = 1000;
 	// Timer configuration
 	private long TIMER_DURATION = 30000, TIMER_INTERVAL = 10;
 	
+	// Blink duration for correct / wrong
+	private long animBlinkDuration = 2000;
+	
 	private int sixty = 60;
 	private static int INDEX_ZERO = 0;
 	private static int OPTION_CORRECT = 1; 
 	private static int OPTION_WRONG = 2;
 	
+	private User user;
+	private CountDown count = null;
+	private GameStartTimer gst = null;
 	private Context context = this;
-	private CountDown count;
 	private MediaPlayer bkgrdMusic = null;
 	private ArrayList<ImageView> optionArrayList;
 	private ArrayList<XGameNumbers> numList = new ArrayList<XGameNumbers>();
@@ -73,11 +92,17 @@ public class XGame extends Activity {
 	
 	// Check the state of the game
 	private boolean isGameStarted = false;
+	private boolean isCountDownFinished = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.xgame_main);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			user = extras.getParcelable(Constants.USER);
+		}
 		
 		// Initialize UIs (Only once)
 		init();
@@ -93,12 +118,13 @@ public class XGame extends Activity {
 			
 			builder
 				.setCancelable(false)
-				.setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
+				.setTitle(R.string.resumeGameTitle)
+				.setMessage(R.string.resumeGameMsg)
+				.setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						
+						// TODO Auto-generated method stub					
 						// User quits the game, returns to previous activity
 						dialog.cancel();
 						finish();						
@@ -110,12 +136,32 @@ public class XGame extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
+						long timeLeft;
 						
-						// Resumes the count-down & background music
-						long timeLeft = count.getTimeLeft();
-						count = new CountDown(timeLeft, TIMER_INTERVAL);
-						count.start();
-						bkgrdMusic.start();
+						// If count-down is not finished, resume the count-down
+						if (isCountDownFinished == true) {
+							// Resumes the count-down & background music
+							timeLeft = count.getTimeLeft();
+							count = new CountDown(timeLeft, TIMER_INTERVAL);
+							count.start();
+							bkgrdMusic.start();
+						
+							// Populate the next question
+							if (numList.size() > 0) {
+								numList.remove(INDEX_ZERO);
+								XGameNumbers nextNh = numList.get(INDEX_ZERO);
+								genGameContent(nextNh);
+							} else {
+								// If exceeds the number of questions generated, reloads the game
+								Intent intent = getIntent();
+								finish();
+								startActivity(intent);
+							}
+						} else {
+							timeLeft = gst.getTimeLeft();
+							gst = new GameStartTimer(timeLeft, COUNTDOWN_INTERVAL);
+							gst.start();
+						}
 					}
 				});
 			
@@ -131,18 +177,24 @@ public class XGame extends Activity {
 		// Back button is pressed
 		if (this.isFinishing()) {
 			if (bkgrdMusic != null) {
-				//bkgrdMusic.reset();
 				bkgrdMusic.release();
+				bkgrdMusic = null;
 			}
-			count.cancel();
-			count = null;
 		}
-		// User exits the app
+		// User exits the application
 		else {
+			// Pause background music if started
 			if (bkgrdMusic != null) {
 				bkgrdMusic.pause();
 			}
-			count.cancel();
+			// Pause count-downs if started
+			if (count != null) {
+				count.cancel();
+			}
+			if (gst != null) {
+				countDownDialog.dismiss();
+				gst.cancel();
+			}
 		}
 	}
 	
@@ -153,7 +205,7 @@ public class XGame extends Activity {
 		
 		XGameNumbers nh = numList.get(INDEX_ZERO);
 		
-		// Remove the current nh to get nextNh
+		// Remove the current item to get nextNh
 		numList.remove(INDEX_ZERO);
 		XGameNumbers nextNh = numList.get(INDEX_ZERO);
 		
@@ -174,17 +226,15 @@ public class XGame extends Activity {
 		
 		if (option == 1) {
 			// Correct
-			wrongRed.clearAnimation();
-			wrongRed.setVisibility(View.INVISIBLE);
 			correctGreen.setVisibility(View.VISIBLE);
 			correctGreen.startAnimation(blink);
+			delayStopAnimation(correctGreen);
 			soundEff = MediaPlayer.create(XGame.this, R.raw.xgamecorrect);
 		} else {
 			// Wrong
-			correctGreen.clearAnimation();
-			correctGreen.setVisibility(View.INVISIBLE);
 			wrongRed.setVisibility(View.VISIBLE);
 			wrongRed.startAnimation(blink);
+			delayStopAnimation(wrongRed);
 			soundEff = MediaPlayer.create(XGame.this, R.raw.xgamewrong);
 		}
 		
@@ -200,73 +250,87 @@ public class XGame extends Activity {
 		soundEff.start();
 	}
 	
-	private void callScoreSheetDialog(){
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService
-				(Context.LAYOUT_INFLATER_SERVICE);
+	// Wait for a duration before stopping the blink animation
+	private void delayStopAnimation(final ImageView view) {
+		Handler handler = new Handler(); 
 		
-		View layout = inflater.inflate(R.layout.xgame_scoresheet, 
-				(ViewGroup) findViewById(R.id.xgame_scoresheet));
-		
-		scoreSheetPopUp = new PopupWindow(layout, 1200, 650, true);
-		scoreSheetPopUp.setAnimationStyle(R.style.Animation_Bounce);
-		
-		// Initialize the widgets
-		totalQns = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsAttempted);
-		numCorrect = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsCorrect);
-		numWrong = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsWrong);
-		totalMarks = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTotalScore);
-		tryAgainBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTryAgain);
-		giveUpBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameGiveUp);
-		 
-		// Display results
-		totalQns.setText(String.valueOf(correct + wrong));
-		numCorrect.setText(String.valueOf(correct));
-		numWrong.setText(String.valueOf(wrong));
+	    handler.postDelayed(new Runnable() { 
+	         public void run() { 
+	        	 view.clearAnimation();
+	        	 view.setVisibility(View.INVISIBLE);
+	         } 
+	    }, animBlinkDuration);
+	}
 	
-		if (correct == 0 || correct < wrong) {
-			totalMarks.setText(String.valueOf(0));
-		} else {
-			totalMarks.setText(String.valueOf(correct - wrong));
-		}
+	private void callScoreSheetDialog(){
 		
-		tryAgainBtn.setOnTouchListener(new View.OnTouchListener() {
-			
+		RelativeLayout xgame_main = (RelativeLayout) findViewById(R.id.xgame_main);
+        
+		RelativeLayout.LayoutParams paramsImage = new RelativeLayout.LayoutParams
+				(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        paramsImage.addRule(RelativeLayout.CENTER_IN_PARENT);
+		
+        final ImageView timesUp = new ImageView(this);
+		timesUp.setImageResource(R.drawable.game_timesup);
+		timesUp.setLayoutParams(paramsImage);
+		
+		xgame_main.addView(timesUp);
+		setContentView(xgame_main);
+		
+		Animation bounceRotate = AnimationUtils.loadAnimation(context, R.anim.bounce_rotate);
+		final Animation fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+		
+		bounceRotate.setAnimationListener(new AnimationListener() {
+
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public void onAnimationStart(Animation animation) {
 				// TODO Auto-generated method stub
-				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN :
-						break;
-					case MotionEvent.ACTION_UP : {
-						// User selected try again, reloads this activity
-						Intent intent = getIntent();
-						scoreSheetPopUp.dismiss();
-						finish();
-						startActivity(intent);
-					}
+				
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				// TODO Auto-generated method stub
+				timesUp.startAnimation(fadeOut);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		fadeOut.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				// TODO Auto-generated method stub
+				int totalScore = 0;
+				
+				// Find total Score
+				if (correct != 0 || correct > wrong) {
+					totalScore = correct - wrong;
 				}
-				return true;
+				new ManageGameResults(user.getApp_user_id(),
+						 user.getSchool_id(), totalScore).execute();
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
-		giveUpBtn.setOnTouchListener(new View.OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN :
-						break;
-					case MotionEvent.ACTION_UP : {
-						// User gives up, returns to previous activity
-						scoreSheetPopUp.dismiss();
-						finish();
-					}
-				}
-				return true;
-			}
-		});
-		scoreSheetPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		timesUp.startAnimation(bounceRotate);
 	}
 
 	private void genGameContent(XGameNumbers nh){
@@ -437,6 +501,152 @@ public class XGame extends Activity {
 		optionArrayList.add(optionSix);
 	}
 	
+	class ManageGameResults extends AsyncTask<String, String, String> {
+
+		private int userId;
+		private int schoolId;
+		private int score;
+		private int success;
+		private RankingResult rankResult;
+		private ProgressDialog pDialog;
+			
+		// Static Flag result_type of XGame Game
+		private static final int resultType = 2;
+		
+		public ManageGameResults(int userId, int schoolId, int score) {
+			this.userId = userId;
+			this.schoolId = schoolId;
+			this.score = score;
+		}
+		
+		@Override
+        protected void onPreExecute() {
+			super.onPreExecute();
+            pDialog = new ProgressDialog(XGame.this);
+            pDialog.setTitle(Constants.TITLE_GEN_SCORE);
+            pDialog.setMessage(Constants.MESSAGE_PLEASE_WAIT);
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			JSONParser jsonParser = new JSONParser();
+			
+			// Parameters for the POST request
+			List<NameValuePair> params = new ArrayList<NameValuePair>();	
+			params.add(new BasicNameValuePair("userid", String.valueOf(userId)));
+			params.add(new BasicNameValuePair("type", String.valueOf(resultType)));
+			params.add(new BasicNameValuePair("score", String.valueOf(score)));
+            params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
+            
+            JSONObject json = jsonParser.makeHttpRequest(
+            		Constants.URL_MANAGE_GAME_RESULT, Constants.HTTP_POST, params);
+            
+            rankResult = new RankingResult();
+            
+            try{
+				success = json.getInt(Constants.JSON_SUCCESS);
+            } catch (JSONException e) {
+				Log.i(Constants.LOG_COINCOIN, e.toString());
+            }
+            
+            // Retrieve XGame rank results
+            // Remove score parameter to suit the retrieve operation
+            params.remove(2);
+            
+            json = jsonParser.makeHttpRequest(Constants.URL_GAME_RESULT, 
+            		Constants.HTTP_GET, params);
+            
+            rankResult.getRankingResults(json);
+            
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String file_url) {
+			pDialog.dismiss();
+			
+			LayoutInflater inflater = (LayoutInflater) XGame.this.
+					getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			View layout = inflater.inflate(R.layout.xgame_scoresheet, 
+					(ViewGroup) findViewById(R.id.xgame_scoresheet));
+			
+			scoreSheetPopUp = new PopupWindow(layout, 1100, 650, true);
+			scoreSheetPopUp.setAnimationStyle(R.style.Animation_Bounce);
+			
+			// Initialize the widgets
+			numCorrect = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsCorrect);
+			numWrong = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsWrong);
+			totalMarks = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTotalScore);
+			tryAgainBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTryAgain);
+			giveUpBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameGiveUp);
+			rankTable = (TableLayout) scoreSheetPopUp.getContentView().findViewById(R.id.xgame_rank_tablelayout);
+			 
+			String spacing = " ";
+			Resources resource = getResources();
+			
+			// Display results
+			numCorrect.setText(resource.getString(R.string.qnsCorrect) + spacing + correct);
+			numWrong.setText(resource.getString(R.string.qnsWrong) + spacing + wrong);
+			totalMarks.setText(resource.getString(R.string.totalScore) + spacing + score);
+			
+			// No results
+			if (rankResult.getSuccess() == 0) {
+							
+			} else {
+				rankResult.setRankTableResults(rankTable);
+			}
+						
+			// If success = 1 (New entry), = 2 (Better score update)
+			if (success == 1 || success == 2) {
+				// Display new high score
+			}
+			
+			tryAgainBtn.setOnTouchListener(new View.OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN :
+							break;
+						case MotionEvent.ACTION_UP : {
+							// User selected try again, reloads this activity
+							Intent intent = getIntent();
+							scoreSheetPopUp.dismiss();
+							finish();
+							startActivity(intent);
+						}
+					}
+					return true;
+				}
+			});
+			
+			giveUpBtn.setOnTouchListener(new View.OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN :
+							break;
+						case MotionEvent.ACTION_UP : {
+							// User gives up, returns to previous activity
+							scoreSheetPopUp.dismiss();
+							finish();
+						}
+					}
+					return true;
+				}
+			});
+			scoreSheetPopUp.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		}
+	}
+	
 	class LoadGameData extends AsyncTask<String, String, String> {
 		
 		private ProgressDialog pDialog;
@@ -445,8 +655,8 @@ public class XGame extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(XGame.this);
-            pDialog.setTitle(Constants.DIALOG_TITLE);
-            pDialog.setMessage(Constants.DIALOG_MESSAGE);
+            pDialog.setTitle(Constants.TITLE_GAME_LOADING);
+            pDialog.setMessage(Constants.MESSAGE_PLEASE_WAIT);
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -468,26 +678,40 @@ public class XGame extends Activity {
 			// Pull the first question out create the contents
 			genGameContent(numList.get(INDEX_ZERO));
 			pDialog.dismiss();
-			GameStartTimer gst = new GameStartTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL);
+			
+			ImageView curView;
+			
+			// Disables all the option buttons first until count-down finishes
+			for (int i = 0; i < optionArrayList.size(); i++) {
+				curView = (ImageView) optionArrayList.get(i);
+				curView.setEnabled(false);
+			}
+		
+			isGameStarted = true;
+			gst = new GameStartTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL);
 			gst.start();
 		}
 	}
 	
 	class GameStartTimer extends CountDownTimer {
+		
+		private long timeLeft = 0;
 
 		public GameStartTimer(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
 			// TODO Auto-generated constructor stub
 			countDownDialog = new Dialog(context);	
 			countDownDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			countDownDialog.setCancelable(false);
 			countDownDialog.setContentView(R.layout.dialog_timer);
-			
+				
 			// Makes the count-down dialog-box transparent
 		    final Window window = countDownDialog.getWindow();
 		    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		    
-			countDownView = (ImageView) countDownDialog.findViewById(R.id.optionsBkGrd);
+			countDownView = (ImageView) countDownDialog.findViewById(R.id.optionsBkGrd); 
+			countDownView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
 			countDownDialog.show();
 		}
 
@@ -495,7 +719,6 @@ public class XGame extends Activity {
 		public void onTick(long millisUntilFinished) {
 			// TODO Auto-generated method stub
 			long seconds = (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)) % sixty;
-			countDownView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
 			if (seconds == 4) {
 				countDownView.setImageResource(R.drawable.countdown_3);
 			} else if (seconds == 3) {
@@ -505,6 +728,7 @@ public class XGame extends Activity {
 			} else if (seconds == 1) {
 				countDownView.setImageResource(R.drawable.xgame_start);
 			}
+			setTimeLeft(millisUntilFinished);
 		}
 
 		@Override
@@ -513,14 +737,30 @@ public class XGame extends Activity {
 			countDownView.setVisibility(View.GONE);
 			countDownDialog.dismiss();
 			
+			ImageView curView;
+			
+			// Enable all the buttons upon count-down finish
+			for (int i = 0; i < optionArrayList.size(); i++) {
+				curView = (ImageView) optionArrayList.get(i);
+				curView.setEnabled(true);
+			}
+			
 			// Start background music
 			bkgrdMusic = MediaPlayer.create(XGame.this, R.raw.xgamemusic);
 			bkgrdMusic.start();
 			
 			// Create a 30 seconds count-down timer 
 			count = new CountDown(TIMER_DURATION, TIMER_INTERVAL);
-			count.start();
-			isGameStarted = true;
+			count.start();		
+			isCountDownFinished = true;
+		}
+		
+		public long getTimeLeft() {
+			return timeLeft;
+		}
+
+		public void setTimeLeft(long timeLeft) {
+			this.timeLeft = timeLeft;
 		}
 	}
 	
@@ -539,8 +779,7 @@ public class XGame extends Activity {
 		@Override
         public void onFinish() {
 			timerText.setText(TIME_LEFT+TIME_FINISH);
-			if (bkgrdMusic.isPlaying() == true) {
-				bkgrdMusic.reset();
+			if (bkgrdMusic != null) {
 				bkgrdMusic.release();
 			}
 			callScoreSheetDialog();

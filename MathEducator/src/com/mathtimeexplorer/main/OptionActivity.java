@@ -1,22 +1,13 @@
 package com.mathtimeexplorer.main;
 
-import com.example.matheducator.R;
-import com.mathtimeexplorer.coincoin.CoinCoin;
-import com.mathtimeexplorer.misc.Constants;
-import com.mathtimeexplorer.tutorials.TutorialActivity;
-import com.mathtimeexplorer.worksheets.QuizActivity;
-import com.mathtimeexplorer.worksheets.SelectQuizActivity;
-import com.mathtimeexplorer.xgame.XGame;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -24,10 +15,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
+
+import com.example.matheducator.R;
+import com.mathtimeexplorer.coincoin.CoinCoin;
+import com.mathtimeexplorer.tutorials.TutorialActivity;
+import com.mathtimeexplorer.utils.Constants;
+import com.mathtimeexplorer.worksheets.QuizActivity;
+import com.mathtimeexplorer.xgame.XGame;
 
 public class OptionActivity extends Activity implements OnTouchListener {
-
+	
+	private ImageView img, img2;
+	
+	private User user;
+	private MediaPlayer bkgrdMusic = null;
+	
 	int topic = 0;
 
 	@Override
@@ -35,27 +37,76 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_option);
 		Bundle extras = getIntent().getExtras();
+		
 		if (extras != null) {
-			topic = extras.getInt(Constants.TOPIC);
-			Log.e("topic",Integer.toString(topic));
+		   topic = extras.getInt(Constants.TOPIC);
+		   user = (User) extras.getParcelable(Constants.USER);
+		   Log.i("OptionActivity", "User id:" + user.getApp_user_id());
 		}
-		ImageView img = (ImageView) findViewById (R.id.optionsBkGrd);
-		ImageView img2 = (ImageView) findViewById (R.id.optionsHotSpot);
+		
+		img = (ImageView) findViewById (R.id.optionsBkGrd);
+		img2 = (ImageView) findViewById (R.id.optionsHotSpot);
 		img.setOnTouchListener(this);
+		
+		// Check topic and start background music
+		checkTopic();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (bkgrdMusic != null) {
+			bkgrdMusic.start();
+		} else{
+			checkTopic();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Back button is pressed
+		if (this.isFinishing()) {
+			if (bkgrdMusic != null) {
+				bkgrdMusic.release();
+				bkgrdMusic = null;
+			}
+		} 
+		// User exits the application
+		else {
+			if (bkgrdMusic != null) {
+				bkgrdMusic.pause();
+			}
+		}
+	}
+	
+	private void checkTopic() {
 		if(topic == R.drawable.arithmetic){
+			startBkGrdMusic(R.raw.jewelbeat_jungle);
+			
 			img.setImageResource(R.drawable.arithmetictopic);
 			img2.setImageResource(R.drawable.arithmetictopicmask);
 			img.setTag(R.drawable.arithmetictopic);
 			img2.setTag(R.drawable.arithmetictopicmask);
 		}
 		else if(topic == R.drawable.fraction){
+			startBkGrdMusic(R.raw.jewelbeat_getting_the_right_groove);
+			
 			img.setImageResource(R.drawable.fractiontopic);
 			img2.setImageResource(R.drawable.fractiontopicmask);
 			img.setTag(R.drawable.fractiontopic);
 			img2.setTag(R.drawable.fractiontopicmask);
+		} 
+		else if (topic == R.drawable.measurement) {
+			startBkGrdMusic(R.raw.jewelbeat_working_at_the_countryside);
 		}
 	}
-
+	
+	private void startBkGrdMusic(int musicResId) {
+		bkgrdMusic = MediaPlayer.create(OptionActivity.this, musicResId);
+		bkgrdMusic.start();
+	}
+	
 	@Override
 	public boolean onTouch(View v, MotionEvent ev) {
 		final Context context = this;
@@ -82,7 +133,6 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		img.setDrawingCacheEnabled(true); 
 		Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache()); 
 		img.setDrawingCacheEnabled(false);
-		Log.e("test",Integer.toString(hotspots.getPixel(x, y)));
 		return hotspots.getPixel(x, y);
 	}
 
@@ -95,6 +145,10 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		int quiz = -16711936;
 		int game = -52480;
 
+		// Stops the background music
+		bkgrdMusic.release();
+		bkgrdMusic = null;
+				
 		if(touchColor==tutorial1){
 			Intent intent = new Intent(context, TutorialActivity.class);
 			intent.putExtra(Constants.TOPIC, topic);
@@ -121,19 +175,16 @@ public class OptionActivity extends Activity implements OnTouchListener {
 			callProgressWindow(context, intent, evX, evY);
 		}
 		if(touchColor==quiz){
-			Intent intent = new Intent(context, SelectQuizActivity.class);
-			Bundle extras = getIntent().getExtras();
-			//User user  = extras.getParcelable(Constants.USER);
-			//Log.e("Edulevel",Integer.toString(user.getEduLevel()));
-			intent.putExtras(extras);
+			Intent intent = new Intent(context, QuizActivity.class);
 			startActivity(intent);
 		}
 		if(touchColor==game){
 			Intent intent = new Intent(context, XGame.class);
+			intent.putExtra(Constants.USER, user);
 			startActivity(intent);
 		}
 	}
-
+	
 	private void fractionLayout(int touchColor, int evX, int evY, Context context){
 		int tutorial1 = -16711681;
 		int tutorial2 = -65281;
@@ -142,6 +193,10 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		int quiz = -10092544;
 		int game = -52480;
 
+		// Stops the background music
+		bkgrdMusic.release();
+		bkgrdMusic = null;
+					
 		if(touchColor==tutorial1){
 			Intent intent = new Intent(context, TutorialActivity.class);
 			intent.putExtra(Constants.TOPIC, topic);
@@ -168,10 +223,11 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		}
 		if(touchColor==game){
 			Intent intent = new Intent(context, CoinCoin.class);
+			intent.putExtra(Constants.USER, user);
 			startActivity(intent);
 		}
 	}
-
+	
 	private void callProgressWindow(Context cx, Intent in, int evX, int evY) {
 
 		final Intent intent = in;
@@ -206,7 +262,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		practiceBtn.setTextSize(8);
 		practiceBtn.setLayoutParams(new LinearLayout.LayoutParams(200,50));
 		tutorialBtn.setLayoutParams(new LinearLayout.LayoutParams(200,50));
-
+		
 		practiceBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -216,7 +272,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent2);
 			}
 		});
-
+		
 		tutorialBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -224,8 +280,8 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent);
 			}
 		});
-
-
+		
+		
 		ll2.addView(ll);
 		ll2.addView(tutorialBtn);
 		ll2.addView(practiceBtn);
@@ -245,7 +301,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 		progressWindow.setHeight(200);
 		progressWindow.setFocusable(true);
 		progressWindow.showAtLocation(ll, Gravity.NO_GRAVITY, evX+40, evY+100);
-
+		
 		/*practiceBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -262,7 +318,7 @@ public class OptionActivity extends Activity implements OnTouchListener {
 				startActivity(intent);
 			}
 		});
-		 */
+		*/
 	}
 
 }

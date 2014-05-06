@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coincoin_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/coincoinbkgrd" >
@@ -112,6 +113,7 @@
         android:layout_alignTop="@+id/backViewOne"
         android:layout_toLeftOf="@+id/backViewTwo"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -121,6 +123,7 @@
         android:layout_below="@+id/backViewEight"
         android:layout_toLeftOf="@+id/backViewThree"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -130,6 +133,7 @@
         android:layout_below="@+id/backViewNine"
         android:layout_toLeftOf="@+id/backViewFour"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -139,6 +143,7 @@
         android:layout_below="@+id/backViewTen"
         android:layout_toLeftOf="@+id/backViewEleven"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -148,6 +153,7 @@
         android:layout_alignTop="@+id/backViewFive"
         android:layout_toLeftOf="@+id/backViewSix"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -157,6 +163,7 @@
         android:layout_alignLeft="@+id/backViewSix"
         android:layout_alignTop="@+id/backViewSix"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -166,6 +173,7 @@
         android:layout_above="@+id/backViewOne"
         android:layout_toLeftOf="@+id/backViewTwo"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -175,6 +183,7 @@
         android:layout_above="@+id/backViewTwo"
         android:layout_toLeftOf="@+id/backViewThree"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -184,6 +193,7 @@
         android:layout_alignLeft="@+id/backViewNine"
         android:layout_alignTop="@+id/backViewNine"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -193,6 +203,7 @@
         android:layout_above="@+id/backViewFour"
         android:layout_toLeftOf="@+id/backViewEleven"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -202,6 +213,7 @@
         android:layout_above="@+id/backViewFive"
         android:layout_toLeftOf="@+id/backViewSix"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <ImageView
@@ -220,6 +232,7 @@
         android:layout_above="@+id/backViewSix"
         android:layout_alignLeft="@+id/backViewSix"
         android:onClick="onFrontViewClick"
+        android:visibility="invisible"
         android:src="@drawable/cardfront" />
 
     <TextView

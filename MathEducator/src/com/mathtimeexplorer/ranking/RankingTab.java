@@ -19,7 +19,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.matheducator.R;
@@ -36,42 +35,28 @@ public class RankingTab extends Activity {
 	private static String TAG_QUIZ = "quiz";
 	private static String TAG_QUIZ_ID = "quiz_id";
 	private static String TAG_QUIZ_NAME = "quiz_name";
-	private static String TAG_SUCCESS = "success";
-	private static String URL_QUIZZES = "http://10.0.2.2/TimeExplorer/ranking_quiz.php";
-	
-	// Node names for retrieving results
-	private static String TAG_RESULTS = "results";
-	private static String TAG_RANK = "rank";
-	private static String TAG_FIRST_NAME = "first_name";
-	private static String TAG_LAST_NAME = "last_name";
-	private static String TAG_RESULT = "result";
-	
-	private static String URL_CLASS_RESULT = "http://10.0.2.2/TimeExplorer/ranking_class_result.php";
-	private static String URL_SCHOOL_RESULT = "http://10.0.2.2/TimeExplorer/ranking_school_result.php";
 	
 	private JSONParser jsonParser = new JSONParser();
-	private JSONArray resultList = null;
-	
 	private ArrayAdapter<String> quizAdapter;
 	private ArrayList<Quiz> quizList = new ArrayList<Quiz>();
 	private List<String> quizNames = new ArrayList<String>();
 	
 	private String whichTab;
 	private static final String tmpTopic = "-- Select a topic --";
-	private static final String tmpQuizName = "<-- Select a quiz -->";
+	private static final String tmpQuizName = "-- Select a quiz --";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ranking_tab);
-		
-		// Initialize the UIs
-		init();
-		
+			
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			whichTab = extras.getString(Constants.TAB_CHOICE);
 		}
+		
+		// Initialize the UIs
+		init();
 		
 		Log.i(Constants.LOG_RANKING, "TAB SELECTED: " + whichTab);
 		
@@ -113,7 +98,7 @@ public class RankingTab extends Activity {
 						}
 					}
 					new RetrieveResults(Integer.valueOf(1), Integer.valueOf(1), 
-							Integer.valueOf(2), Integer.valueOf(1)).execute();
+							Integer.valueOf(2), Integer.valueOf(38)).execute();
 				}
 			}
 
@@ -130,8 +115,7 @@ public class RankingTab extends Activity {
 		private int classId;
 		private int schoolId;
 		private int quizId;
-		private int success;
-		private ArrayList<Ranking> rankingList;
+		private RankingResult rankResult;
 		
 		public RetrieveResults(int userId, int classId, int schoolId, int quizId) {
 			this.userId = userId;
@@ -149,94 +133,32 @@ public class RankingTab extends Activity {
             params.add(new BasicNameValuePair("quizid", String.valueOf(quizId)));
             
             JSONObject json = null;
+            rankResult = new RankingResult();
             
             // POST request depending on which tab is selected
             if (whichTab.equals(Constants.TAB_CLASS)) {
             	params.add(new BasicNameValuePair("classid", String.valueOf(classId)));
-            	json = jsonParser.makeHttpRequest(URL_CLASS_RESULT, "POST", params);
+            	json = jsonParser.makeHttpRequest(Constants.URL_CLASS_RESULT, 
+            			Constants.HTTP_GET, params);
             } else {
             	params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
-            	json = jsonParser.makeHttpRequest(URL_SCHOOL_RESULT, "POST", params);
+            	json = jsonParser.makeHttpRequest(Constants.URL_SCHOOL_RESULT, 
+            			Constants.HTTP_GET, params);
             }
+            rankResult.getRankingResults(json);
             
-            try{
-				// Get success tag and checks whether it is 1
-				success = json.getInt(TAG_SUCCESS);
-				if (success == 1) {
-					rankingList = new ArrayList<Ranking>();
-					resultList = json.getJSONArray(TAG_RESULTS);
-					
-					// Log.i(Constants.LOG_RANKING, "RESULT LIST SIZE: " + resultList.length());
-					
-					Ranking rank;
-					JSONObject obj;
-					
-					// Obtains the ranking results and save in the ranking-list
-					for (int i = 0; i < resultList.length(); i++) {
-						obj = resultList.getJSONObject(i);
-						rank = new Ranking();
-						rank.setRank(obj.getInt(TAG_RANK));
-						rank.setFirst_name(obj.getString(TAG_FIRST_NAME));
-						rank.setLast_name(obj.getString(TAG_LAST_NAME));
-						rank.setResult(obj.getInt(TAG_RESULT));
-						rankingList.add(rank);
-					}
-				}
-            } catch (JSONException e) {
-				Log.i(Constants.LOG_RANKING, e.toString());
-            }
 			return null;
 		}
 		
 		@Override
 		protected void onPostExecute(String file_url) {
 			// No results
-			if (success == 0) {
+			if (rankResult.getSuccess() == 0) {
 				TextView resultView = (TextView) findViewById(R.id.rankThreeName);
 				resultView.setText(R.string.noResult);
 			} else {
-				TableRow row;
-				Ranking rank;
-				String spacing = "";
-				int rankIndex = 0;
-					
-				// Static positions of each Views at each rows
-				int rankViewIndex = 0;
-				int nameViewIndex = 1;
-				int resultViewIndex = 2;
-				
-	            // Populates the ranking result on the table
-	            for (int i = 1; i <= 5; i++) {
-	            	row = (TableRow) rankTable.getChildAt(i);              		
-	            	if (rankingList.size() >= rankIndex) {
-	            		rank = (Ranking) rankingList.get(rankIndex);
-	            		
-	            		//Log.i(Constants.LOG_RANKING, "RANK: " + rank.getRank());
-	            		//Log.i(Constants.LOG_RANKING, "FIRST_NAME: " + rank.getFirst_name());
-	            		//Log.i(Constants.LOG_RANKING, "LAST_NAME: " + rank.getLast_name());
-	            		//Log.i(Constants.LOG_RANKING, "RESULT: " + rank.getResult());
-	            		
-	            		configureResultView(String.valueOf(rank.getRank()), 
-	            				(TextView) row.getChildAt(rankViewIndex));
-	            		
-	            		configureResultView(String.valueOf(rank.getFirst_name() + spacing
-	            				+ rank.getLast_name()), (TextView) row.getChildAt(nameViewIndex));
-	            		
-	            		configureResultView(String.valueOf(rank.getResult()), 
-	            				(TextView) row.getChildAt(resultViewIndex));
-	            	} else {
-	            		break;
-	            	}
-	                rankIndex++;
-	           }
+				rankResult.setRankTableResults(rankTable);
 			}		
-		}
-		
-		private void configureResultView(String value, TextView view) {
-			view.setText(value);
-			if (view.getVisibility() == View.INVISIBLE) {
-				view.setVisibility(View.VISIBLE);
-			}			
 		}
 	}
 	
@@ -256,14 +178,18 @@ public class RankingTab extends Activity {
 			params.add(new BasicNameValuePair("topicname", topicSelected));
             params.add(new BasicNameValuePair("edulevel", String.valueOf("1")));  
             
-			JSONObject json = jsonParser.makeHttpRequest(URL_QUIZZES, "POST", params);
+			JSONObject json = jsonParser.makeHttpRequest(
+					Constants.URL_QUIZ_NAMES, Constants.HTTP_GET, params);
+			
+			JSONArray resultList = null;
+			
 			try{
 				// Create a new set of Quiz names				
 				quizNames = new ArrayList<String>(); 
 				quizNames.add(tmpQuizName);
 				
 				// Get success tag and checks whether it is 1
-				int success = json.getInt(TAG_SUCCESS);
+				int success = json.getInt(Constants.JSON_SUCCESS);
 				if (success == 1) {			
 					Quiz quiz;
 					JSONObject obj;
@@ -312,10 +238,16 @@ public class RankingTab extends Activity {
 		quizSpinner = (Spinner) findViewById(R.id.quizSpinner);
 		rankTable = (TableLayout) findViewById(R.id.rankTable);
 		
-		ArrayAdapter<CharSequence> topicAdapter = ArrayAdapter.createFromResource(this, R.array.topic_arrays,
-				android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<CharSequence> topicAdapter = null;
+		
+		if (whichTab.equals(Constants.TAB_CLASS)) {
+			topicAdapter = ArrayAdapter.createFromResource(this, R.array.class_topic_arrays, 
+					android.R.layout.simple_spinner_dropdown_item);
+		} else {
+			topicAdapter = ArrayAdapter.createFromResource(this, R.array.school_topic_arrays, 
+					android.R.layout.simple_spinner_dropdown_item);
+		}
 		topicAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		topicSpinner.setPromptId(R.string.topic_prompt);
 		topicSpinner.setAdapter(topicAdapter);
 	}
 }

@@ -21,10 +21,6 @@
     
     <style name="Animation_Bounce">
         <item name="android:windowEnterAnimation">@anim/bounce</item>
-    </style>    
-    
-    <style name="XGameScoreTextStyle">
-        <item name="android:textStyle">italic</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
+    
 </resources>

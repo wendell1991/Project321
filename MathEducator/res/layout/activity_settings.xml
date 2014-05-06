@@ -6,20 +6,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/login_settings_bkgrd"
     tools:context=".SettingsActivity" >
-
-    <Switch
-        android:id="@+id/musicSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/music" />
-
-    <SeekBar
-        android:id="@+id/musicSb"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/musicSwitch"
-        android:layout_below="@+id/musicSwitch" />
 
     <Button
         android:id="@+id/doneBtn"
@@ -39,13 +27,31 @@
         android:layout_alignRight="@+id/musicSb"
         android:text="@string/cancel" />
 
+    <Switch
+        android:id="@+id/musicSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="55dp"
+        android:text="@string/music" />
+
+    <SeekBar
+        android:id="@+id/musicSb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/musicSwitch"
+        android:layout_below="@+id/musicSwitch"
+        android:layout_marginTop="20dp" />
+
     <Button
         android:id="@+id/creditsBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/musicSb"
         android:layout_below="@+id/musicSb"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="14dp"
         android:text="@string/credits" />
 
 </RelativeLayout>

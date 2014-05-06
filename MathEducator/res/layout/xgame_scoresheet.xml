@@ -1,120 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/xgame_scoresheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/xgamebkgrd" >
-
-    <TextView
-        android:id="@+id/xgame_qns_correct"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/xgame_qns_attempted"
-        android:layout_below="@+id/xgame_qns_attempted"
-        android:layout_marginTop="14dp"
-        android:text="@string/qnsCorrect"
-        style="@style/XGameScoreTextStyle"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgame_qns_wrong"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/xgame_qns_correct"
-        android:layout_below="@+id/xgame_qns_correct"
-        android:layout_marginTop="18dp"
-        android:text="@string/qnsWrong"
-        style="@style/XGameScoreTextStyle"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgame_totalscore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/xgame_qns_wrong"
-        android:layout_below="@+id/xgame_qns_wrong"
-        android:layout_marginTop="14dp"
-        android:text="@string/totalScore"
-        style="@style/XGameScoreTextStyle"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgameQnsAttempted"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/xgame_qns_attempted"
-        android:layout_toRightOf="@+id/xgame_qns_attempted"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgameQnsCorrect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/xgame_qns_correct"
-        android:layout_toRightOf="@+id/xgame_qns_attempted"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgameQnsWrong"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/xgame_qns_wrong"
-        android:layout_alignLeft="@+id/xgameQnsCorrect"
-        android:text="@string/scoreResult"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+    android:background="@drawable/xgame_score_bkgrd" >
 
     <ImageButton
         android:id="@+id/xgameGiveUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/xgame_timesup"
+        android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/xgameTryAgain"
-        android:layout_marginLeft="117dp"
+        android:layout_marginRight="118dp"
         android:background="@null"
         android:src="@drawable/xgame_quit" />
-
-    <TextView
-        android:id="@+id/xgame_qns_attempted"
-        style="@style/XGameScoreTextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/xgameTryAgain"
-        android:layout_below="@+id/xgame_timesup"
-        android:layout_marginRight="19dp"
-        android:layout_marginTop="33dp"
-        android:text="@string/qnsAttempted"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/xgameTotalScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/xgame_totalscore"
-        android:layout_alignBottom="@+id/xgame_totalscore"
-        android:layout_toRightOf="@+id/xgameTryAgain"
-        android:text="@string/scoreResult" />
 
     <ImageButton
         android:id="@+id/xgameTryAgain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/xgame_totalscore"
-        android:layout_marginLeft="143dp"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/xgameTotalScore"
+        android:layout_marginLeft="104dp"
+        android:layout_marginTop="43dp"
         android:background="@null"
         android:src="@drawable/xgame_try_again" />
 
-    <ImageView
-        android:id="@+id/xgame_timesup"
+    <com.mathtimeexplorer.utils.CopperTextView
+        android:id="@+id/xgameTotalScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/xgame_qns_wrong"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="46dp"
-        android:src="@drawable/xgame_timesup" />
+        android:layout_alignLeft="@+id/xgameQnsWrong"
+        android:layout_below="@+id/xgameQnsWrong"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/xgame_text_bkgrd"
+        android:text="@string/totalScore" />
+
+    <com.mathtimeexplorer.utils.CopperTextView
+        android:id="@+id/xgameQnsWrong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/xgameQnsCorrect"
+        android:layout_centerVertical="true"
+        android:background="@drawable/xgame_text_bkgrd"
+        android:text="@string/qnsWrong"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <com.mathtimeexplorer.utils.CopperTextView
+        android:id="@+id/xgameQnsCorrect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/xgameQnsWrong"
+        android:layout_marginBottom="14dp"
+        android:layout_marginRight="42dp"
+        android:layout_toLeftOf="@+id/xgameGiveUp"
+        android:background="@drawable/xgame_text_bkgrd"
+        android:text="@string/qnsCorrect"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+    <TableLayout
+        android:id="@+id/xgame_rank_tablelayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/xgameGiveUp"
+        android:layout_alignLeft="@+id/xgameGiveUp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp" >
+
+        <TableRow
+            android:id="@+id/xgame_row1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/xgame_text_bkgrd" >
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="@string/rank" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="@string/name" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/result" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/xgame_row2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/xgame_text_bkgrd" >
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row1_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row1_name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row1_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/xgame_row3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/xgame_text_bkgrd" >
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row2_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row2_name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row2_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+
+        <TableRow
+            android:id="@+id/xgame_row4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/xgame_text_bkgrd" >
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row3_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row3_name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row3_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/xgame_row5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/xgame_text_bkgrd" >
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row4_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row4_name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row4_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/xgame_row6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/xgame_text_bkgrd" >
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row5_rank"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row5_name"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
+            <com.mathtimeexplorer.utils.CopperTextView
+                android:id="@+id/xgame_row5_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+        
+    </TableLayout>
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/xgameQnsCorrect"
+        android:layout_alignRight="@+id/xgameTotalScore"
+        android:layout_marginBottom="23dp"
+        android:src="@drawable/xgame_score" />
 
 </RelativeLayout>
