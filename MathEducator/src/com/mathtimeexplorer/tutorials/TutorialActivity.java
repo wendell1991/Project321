@@ -42,6 +42,7 @@ public class TutorialActivity extends Activity {
 	private int userid;
 	private int schoolId;
 	private int eduLevel;
+	private int loadImgResId = 0;
 	
 	private User user = null;
 	private Context context = this;
@@ -58,6 +59,14 @@ public class TutorialActivity extends Activity {
 			topic = extras.getString("topicname");
 			sub_topic = extras.getString(Constants.SUB_TOPIC);
 			user = extras.getParcelable(Constants.USER);
+			
+			if (topic.equals(Constants.TOPIC_ARITH)) {
+				loadImgResId = R.drawable.tut_arith_load;
+			} else if (topic.equals(Constants.TOPIC_FRACTION)) {
+				loadImgResId = R.drawable.tut_frac_load;
+			} else {
+				loadImgResId = R.drawable.tut_mes_load;
+			}
 		}
 		
 		if (user == null) {
@@ -70,7 +79,8 @@ public class TutorialActivity extends Activity {
 			eduLevel = user.getEduLevel();
 		}
 		
-		Log.i(Constants.LOG_TUTORIAL, "Sub Topic: " +sub_topic);
+		Log.i(Constants.LOG_TUTORIAL, "Topic: " + topic);
+		Log.i(Constants.LOG_TUTORIAL, "Sub Topic: " + sub_topic);
 		
 		new RetrieveImageUrls().execute();
 		
@@ -262,11 +272,9 @@ public class TutorialActivity extends Activity {
 		    imgLoader.DisplayImage(urlList.get(position % urlList.size()), R.drawable.ic_launcher, 
 		    		UI.<ImageView>findViewById(layout, R.id.lessonView));
 		    
-		    ProgressBar tutBar = UI.<ProgressBar>findViewById(layout, R.id.tut_progbar);
+		    ProgressBar tutBar = UI.<ProgressBar>findViewById(layout, loadImgResId);
 		    tutBar.setMax(totalCount);
 		    tutBar.setProgress(position + 1);
-		    
-		    Log.i(Constants.LOG_TUTORIAL, "ProgressBar Bug output: " + tutBar.getProgress());
 	        
 		    UI.<TextView>findViewById(layout, R.id.tut_progtext).setText(position + 1
 		    		+ "/" + totalCount);
@@ -281,7 +289,6 @@ public class TutorialActivity extends Activity {
 					if (user == null) {
 						finish();
 					} else {
-						Log.i(Constants.LOG_TUTORIAL, "EXECUTING UPDATE...");
 						new UpdateProgress(position + 1).execute();
 					}
 				}
