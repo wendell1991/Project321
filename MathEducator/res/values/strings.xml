@@ -62,6 +62,12 @@
         <item>Coin Coin</item>
     </string-array>
     
+    <string name="noResultFoundTitle">No Result Found</string>
+    
+    <string name="noResultFoundMsg">
+        No Result was found! Please try again later. 
+    </string>
+    
     <!-- CoinCoin -->
     <string name="coincoin_storyboard">
         Your Mum hides the pocket money of different values under a set of cards. \n
@@ -88,6 +94,15 @@
         checkpoint or exit to sub-topic screen?
     </string>
     
+    <!-- Tutorial -->
+    <string name="tutorialEnd">End Tutorial</string>
+    <string name="noTutFoundTitle">No Tutorials Found!</string>  
+    <string name="noTutFoundMsg">No tutorials found, please inform your tutor.</string>
+    <string name="saveProgSucTitle">Progress saved successfully!</string>
+    <string name="saveProgFailTitle">Failed to save progress!</string>
+    <string name="saveProgFailMsg">Failed to save progress, please inform your tutor.</string>
+    
+    <!-- Quiz & Practice Set -->
     <string name="next">Next</string>
     <string name="previous">Previous</string>
      <string name="Back">Back</string>
@@ -95,5 +110,8 @@
     <string name="Normal">Normal</string>
     <string name="Hard">Hard</string>
     <string name="obtainablestars">Obtainable Stars:</string>
-    <string name="previousscore">Previous best score:</string>
+    <string name="currentstar">Current Stars:</string>
+    <string name="selectquiz">Select Quiz</string>
+    <string name="finish">Finish</string>
+    <string name="selecttopic">Select Topic</string>
 </resources>

@@ -37,6 +37,7 @@ public class RankingResult {
 		try{
 			// Get success tag and checks whether it is 1
 			success = json.getInt(Constants.JSON_SUCCESS);
+			
 			if (success == 1) {
 				resultList = json.getJSONArray(Constants.JSON_RESULTS);
 				// Log.i(Constants.LOG_RANKING, "RESULT LIST SIZE: " + resultList.length());

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,15 +15,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.SQLException;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,6 +41,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
+import android.widget.TextSwitcher;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher.ViewFactory;
 
@@ -48,12 +56,10 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	
 	// Main Page
 	private ImageView profileView;
+	private TextSwitcher newsSwitch;
 	private ImageSwitcher topicSwitch;
 	private GestureDetector gesturedetector;
 	private ImageButton settingsPopUp, loginPopUp;
-	
-	private int[] imageIndex = {R.drawable.arithmetic, R.drawable.fraction, 
-			R.drawable.measurement, R.drawable.ranking};
 	
 	// Login Dialog
 	private Dialog loginDialog;
@@ -71,30 +77,36 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	private User user;
 	private Context context = this;
 	private MediaPlayer bkgrdMusic = null;
-
-	@SuppressWarnings("deprecation")
+	private ArrayList<News> newsList = null;
+	private ArrayList<Integer> topicList;
+	private ArrayList<String> topicNameList;
+	
+	private Animation slide_out_right;
+	private Animation slide_in_right;
+	private Animation slide_out_left; 
+	private Animation slide_in_left; 
+	
+	// Tracks news index
+	private int curNewsIndex = 0;
+	private int newsTracker;
+	
+	private static final String NEWS_UPDATE = "News Update: ";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		// Start background music
-		startBkGrdMusic();
+		topicList = new ArrayList<Integer>();
+		topicNameList = new ArrayList<String>();
 		
-		// Store user information, value = null if user = guest
-	    initMain();
+		// Load Animations
+		slide_out_right = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_right);
+		slide_in_right = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
+		slide_out_left = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
+		slide_in_left = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
 		
-		gesturedetector = new GestureDetector(new MyGestureListener());
-		topicSwitch.setFactory(this);
-		topicSwitch.setImageResource(imageIndex[0]);
-		topicSwitch.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				gesturedetector.onTouchEvent(event);
-				return true;
-			}
-		});
+		initMain();
 		
 		// Upon clicking, calls the login dialog box
 		loginPopUp.setOnTouchListener(new View.OnTouchListener() {
@@ -116,6 +128,15 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 							// Logs out the user
 							DBAdapter database = openDatabaseConnection();
 							database.deleteUser();
+							
+							// CLear all Image resource in topic list and current views
+							topicList.clear();
+							topicSwitch.removeAllViews();
+							
+							// If guest account, only entitled to access arithmetic
+							topicList.add(R.drawable.arithmetic);						
+							initTopicList();
+
 							setLoginPopUpImage(Constants.LOGIN);
 							setProfileImage(Constants.GENDER_GUEST);
 						}
@@ -183,6 +204,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		
 		// Calls the login dialog box
 	    loginDialog = new Dialog(context);
+	    loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		loginDialog.setContentView(R.layout.activity_login);
 		loginDialog.setCancelable(false);
 		
@@ -222,6 +244,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		
 		// Calls the settings dialog box
 		settingsDialog = new Dialog(context);
+		settingsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		settingsDialog.setContentView(R.layout.activity_settings);
 		settingsDialog.setCancelable(false);
 		
@@ -314,23 +337,47 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 	}
 	
 	// Initialize Main Screen UIs
-	private void initMain () {
+	private void initMain() {
 		profileView = (ImageView) findViewById(R.id.profileView);
 		topicSwitch = (ImageSwitcher) findViewById(R.id.topicSwitcher);
 		loginPopUp = (ImageButton) findViewById(R.id.loginPopUp);
 		settingsPopUp = (ImageButton) findViewById(R.id.setBtn);
+		newsSwitch = (TextSwitcher) findViewById(R.id.news_textswitcher);
+			
+		initNewsSwitcher();
 		
 		// Retrieve and check whether use exists in database
 		DBAdapter database = openDatabaseConnection();
 	    user = database.isUserExists();
-		
-		// Return value will be null if user does not exists
+	    
 		if (user != null) {
-	    	setProfileImage(user.getGender());
-	    	setLoginPopUpImage(Constants.LOGOUT);
-		} else {
-			setLoginPopUpImage(Constants.LOGIN); 
+			new RetrieveTopics().execute();
+		} else {				
+			// If guest account, only entitled to access arithmetic
+			topicList.add(R.drawable.arithmetic);
+			topicSwitch.removeAllViews();
+			initTopicList();
+			setLoginPopUpImage(Constants.LOGIN);
 		}
+		
+		// Start background music and retrieve list of news
+		startBkGrdMusic();
+		new RetrieveNews().execute();
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void initTopicList() {
+		gesturedetector = new GestureDetector(new MyGestureListener());
+		topicSwitch.setFactory(MainActivity.this);
+		topicSwitch.setImageResource(topicList.get(0));
+		topicSwitch.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				gesturedetector.onTouchEvent(event);
+				return true;
+			}
+		});
 	}
 	
 	// Initialize Login Dialog UIs
@@ -383,17 +430,210 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		return database;
 	}
 	
+	private void initNewsSwitcher() {
+		// Set the ViewFactory of the Switcher that will create TextView
+		newsSwitch.setFactory(new ViewFactory() {
+
+			@Override
+			public View makeView() {
+				// TODO Auto-generated method stub
+				TextView view = new TextView(MainActivity.this);
+				view.setMovementMethod(LinkMovementMethod.getInstance());
+				view.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL);
+				view.setPadding(0, 20, 0, 0);
+				view.setTypeface(null, Typeface.BOLD);
+				view.setTextSize(15);
+				return view;
+			}
+		});
+	}
+	
+	// On-click handler for news-switch next button
+	public void onNewsNextBtnClick(View view) {
+		if (newsList != null) {		
+			newsSwitch.setOutAnimation(slide_out_left);
+			newsSwitch.setInAnimation(slide_in_left);
+			newsSwitch.setText(Html.fromHtml(formatNewsSwitcherText(1)));
+		}	
+	}
+	
+	// On-click handler for news-switch previous button
+	public void onNewsPrevBtnClick(View view) {
+		if (newsList != null) {
+			newsSwitch.setOutAnimation(slide_out_right);
+			newsSwitch.setInAnimation(slide_in_right);
+			newsSwitch.setText(Html.fromHtml(formatNewsSwitcherText(-1)));
+		}	
+	}
+	
+	private String formatNewsSwitcherText(Integer indexToMove) {
+		curNewsIndex += indexToMove;
+		Log.i(Constants.LOG_MAIN, "indexToMove: " + indexToMove 
+				+ " curNewsIndex: " + curNewsIndex);
+		if (curNewsIndex != 0) {
+			if (curNewsIndex < 0) {
+				curNewsIndex = newsTracker;
+			} else if (curNewsIndex > newsTracker) {
+				curNewsIndex = 0;
+			}
+		}
+		News news = (News) newsList.get(curNewsIndex);
+		
+		String newsText = NEWS_UPDATE + (curNewsIndex + 1) + ". <a href='" + Constants.URL_VIEW_NEWS +
+				news.getNew_id() + "'>" + news.getNews_title() + "</a> " + news.getNews_postdate();
+		
+		Log.i(Constants.LOG_MAIN, "newsText: " + newsText);
+		
+		return newsText;
+	}
+	
+	class RetrieveNews extends AsyncTask<String, String, String> {
+
+		private int success;
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			JSONParser jsonParser = new JSONParser();
+			
+			// Parameters for the GET request
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			
+			// If user = null, set education level as 1. static flag for guest users
+			if (user == null) {
+				params.add(new BasicNameValuePair("schoolid", String.valueOf(1)));
+			} else {
+				params.add(new BasicNameValuePair("schoolid", String.valueOf(user.getEduLevel())));
+			}
+			
+			JSONObject json = jsonParser.makeHttpRequest(Constants.URL_RETRIEVE_NEWS, 
+					Constants.HTTP_GET, params);
+			
+			try {				
+				success = json.getInt(Constants.JSON_SUCCESS);				
+		    	if (success == 1) {		
+		    		newsList = new ArrayList<News>();
+		    		JSONArray resultList = json.getJSONArray(Constants.TAG_NEWS);
+		    		
+		    		Log.i(Constants.LOG_MAIN, "resultList size:" + resultList.length());
+		    		
+		    		JSONObject obj;
+		    		News news;
+		    		
+		    		for (int i = 0; i < resultList.length(); i++) {
+		    			news = new News();
+		    			obj = resultList.getJSONObject(i);
+		    			news.setNew_id(obj.getInt(Constants.NEWS_ID));
+		    			news.setNews_title(obj.getString(Constants.NEWS_TITLE));
+		    			news.setNews_postdate(obj.getString(Constants.NEWS_POST_DATE));
+		    			
+		    			Log.i(Constants.LOG_MAIN, "NEWS_ID: " + news.getNew_id());
+		    			Log.i(Constants.LOG_MAIN, "NEWS_TITLE: " + news.getNews_title());
+		    			Log.i(Constants.LOG_MAIN, "NEWS_POST_DATE: " + news.getNews_postdate());
+		    			
+		    			newsList.add(news);
+		    		}
+		    	}
+			} catch (JSONException e) {
+				Log.i(Constants.LOG_MAIN, e.toString());
+			}	
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String file_url) {
+			if (success == 1) {				
+				if (newsList.size() > 0) {				
+					newsTracker = newsList.size() - 1;					
+					newsSwitch.removeAllViews();
+					initNewsSwitcher();
+					
+					newsSwitch.setOutAnimation(slide_out_right);
+					newsSwitch.setInAnimation(slide_in_left);					
+					newsSwitch.setText(Html.fromHtml(formatNewsSwitcherText(0)));		
+				}
+			}
+			
+		}
+	}
+	
+	class RetrieveTopics extends AsyncTask<String, String, String> {
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			JSONParser jsonParser = new JSONParser();
+			
+			// Parameters for the GET request
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("edulevel", String.valueOf(user.getEduLevel())));
+			params.add(new BasicNameValuePair("schoolid", String.valueOf(user.getSchool_id())));
+
+			JSONObject json = jsonParser.makeHttpRequest(Constants.URL_RETRIEVE_TOPICS, 
+					Constants.HTTP_GET, params);
+			
+			// Clear topic List
+			topicList.clear();
+			topicNameList.clear();
+			
+			try {
+				int success = json.getInt(Constants.JSON_SUCCESS);
+		    	if (success == 1) {
+		    		
+		    		JSONObject obj;
+		    		String topicName;
+		    		boolean hasOtherTopics = false;
+		    		
+		    		JSONArray resultList = json.getJSONArray(Constants.TAG_TOPIC);
+		    		
+		    		Log.i(Constants.LOG_MAIN, "resultList size:" + resultList.length());
+		    		
+		    		for (int i = 0; i < resultList.length(); i++) {
+		    			obj = resultList.getJSONObject(i);
+		    			topicName = obj.getString(Constants.TOPIC_NAME);
+		    			topicNameList.add(topicName);
+		    			Log.i(Constants.LOG_MAIN, "topicName:" + topicName);
+		    			
+		    			// Check if contain arithmetic, fraction, measurement or other topics
+		    			if (topicName.equals(Constants.TOPIC_ARITH)) {
+		    				topicList.add(R.drawable.arithmetic);
+		    			} else if (topicName.equals(Constants.TOPIC_FRACTION)) {
+		    				topicList.add(R.drawable.fraction);
+		    			} else if (topicName.equals(Constants.TOPIC_MEASURE)) {
+		    				topicList.add(R.drawable.measurement);
+		    			} else {				
+		    				if (hasOtherTopics == false) { 					
+		    					topicList.add(R.drawable.othertopic);
+		    					hasOtherTopics = true;
+		    				}
+		    			}
+		    		}
+		    	}
+			} catch (JSONException e) {
+				Log.i(Constants.LOG_MAIN, e.toString());
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String file_url) {
+			// Any valid users should have access to ranking
+			topicList.add(R.drawable.ranking);
+			topicSwitch.removeAllViews();
+			initTopicList();
+
+			setProfileImage(user.getGender());
+	    	setLoginPopUpImage(Constants.LOGOUT);
+		}
+	}
+	
 	
 	class AuthenticateUser extends AsyncTask<String, String, String> {
 		
 		private String name;
 		private String password;
 		private int success = 0;
-		
 		private ProgressDialog pDialog;
-		private static final String DIALOG_LOGIN_TITLE = "Verifying user...";
-		private static final String DIALOG_LOGIN_MESSAGE = "Please wait.";
-		
 		private JSONObject json = null;
 		
 		public AuthenticateUser (String name, String password) {
@@ -405,8 +645,8 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setTitle(DIALOG_LOGIN_TITLE);
-            pDialog.setMessage(DIALOG_LOGIN_MESSAGE);
+            pDialog.setTitle(Constants.TITLE_VERIFY_USER);
+            pDialog.setMessage(Constants.MESSAGE_PLEASE_WAIT);
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -429,9 +669,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		    	success = json.getInt(Constants.JSON_SUCCESS);
 			} catch (JSONException e) {
 				Log.i(Constants.LOG_MAIN, e.toString());
-			}
-		    
-		    
+			}   
 		    return null;
 		}
 		
@@ -468,11 +706,9 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
                         		user.getFirst_name()+user.getLast_name()+"!", Toast.LENGTH_SHORT).show();
                     }
                 });
-	        	// Change loginPopUp image
-	        	setLoginPopUpImage(Constants.LOGOUT);
 	        	
-	        	// Change profile image
-	        	setProfileImage(user.getGender());
+	        	new RetrieveTopics().execute();
+	        	new RetrieveNews().execute();
 	        	loginDialog.dismiss();
 			} else {
 				MainActivity.this.runOnUiThread(new Runnable() {
@@ -495,19 +731,13 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		
 		// Values to keep track of imageIndex
 		private int currentIndex = 0;
-		private int imgTracker = imageIndex.length - 1;
-		
-		// Load Animations
-		private Animation slide_out_right = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_right);
-		private Animation slide_in_right = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
-		private Animation slide_out_left = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
-		private Animation slide_in_left = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
+		private int imgTracker = topicList.size() - 1;
 		
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			float dX = e2.getX()-e1.getX();
 			float dY = e1.getY()-e2.getY();
-
+			
 			if (Math.abs(dY) < Constants.SWIPE_MAX_OFF_PATH && Math.abs(velocityX) >= 
 					Constants.SWIPE_THRESHOLD_VELOCITY && Math.abs(dX) >= Constants.SWIPE_MIN_DISTANCE ) {
 				if (dX>0) {
@@ -517,7 +747,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
  					}
  					topicSwitch.setOutAnimation(slide_out_right);
  					topicSwitch.setInAnimation(slide_in_right);
- 					topicImageId = imageIndex[currentIndex];
+ 					topicImageId = topicList.get(currentIndex);
  					topicSwitch.setImageResource(topicImageId);
 
 				} else {
@@ -527,7 +757,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
  					}
  					topicSwitch.setOutAnimation(slide_out_left);
  					topicSwitch.setInAnimation(slide_in_left);
- 					topicImageId = imageIndex[currentIndex];
+ 					topicImageId = topicList.get(currentIndex);
  					topicSwitch.setImageResource(topicImageId);
 				}
 			} 
@@ -535,7 +765,10 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 		}
 		
 		@Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {	
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+			
+			topicImageId = topicList.get(currentIndex);
+			
 			// Pass user to next activity
 			Intent intent = new Intent();
 			intent.putExtra(Constants.USER, user);
@@ -544,8 +777,12 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 			bkgrdMusic.release();
 			bkgrdMusic = null;
 			
-			if (imageIndex[currentIndex] == R.drawable.ranking){
+			if (topicImageId == R.drawable.ranking){
 				intent.setClass(context, RankingTabHost.class);
+				intent.putStringArrayListExtra(Constants.TOPIC, topicNameList);
+				startActivity(intent);
+			} else if (topicImageId == R.drawable.othertopic){
+				intent.setClass(context,OtherTopicActivity.class);
 				startActivity(intent);
 			} else {
 				intent.setClass(context, OptionActivity.class);

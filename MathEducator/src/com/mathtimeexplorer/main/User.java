@@ -1,5 +1,7 @@
 package com.mathtimeexplorer.main;
 
+import com.mathtimeexplorer.worksheets.Question;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,14 +14,6 @@ public class User implements Parcelable{
 	private int school_id;
 	private int class_id;
 	private int eduLevel;
-	
-	public User() {
-		
-	}
-	
-	public User(Parcel in) { 
-		readFromParcel(in);
-	}
 	
 	public int getApp_user_id() {
 		return app_user_id;
@@ -84,33 +78,39 @@ public class User implements Parcelable{
 	}
 
 	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
-		dest.writeInt(app_user_id);
-		dest.writeString(first_name);
-		dest.writeString(last_name);
-		dest.writeString(gender);
-		dest.writeInt(school_id);
-		dest.writeInt(class_id);
-		dest.writeInt(eduLevel);
+	public void writeToParcel(Parcel parcel, int flags) {
+		parcel.writeInt(app_user_id);
+		parcel.writeString(first_name);
+		parcel.writeString(last_name);
+		parcel.writeString(gender);
+		parcel.writeInt(school_id);
+		parcel.writeInt(class_id);
+		parcel.writeInt(eduLevel);
 	}
 	
-	private void readFromParcel(Parcel in) {
-		app_user_id = in.readInt();
-		first_name = in.readString();
-		last_name = in.readString();
-		gender = in.readString();
-		school_id = in.readInt();
-		class_id = in.readInt();
-		eduLevel = in.readInt();
-	}
-	
-	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+	public static final Parcelable.Creator<User> CREATOR = new
+			Parcelable.Creator<User>() {
 		public User createFromParcel(Parcel in) {
-			return new User(in); 
-		}   
+			return new User(in);
+		}
+
 		public User[] newArray(int size) {
-			return new User[size]; 
+			return new User[size];
 		}
 	};
+	
+	public User(){
+		
+	}
+
+	private User(Parcel parcel) {
+		app_user_id = parcel.readInt();
+		first_name = parcel.readString();
+		last_name = parcel.readString();
+		gender = parcel.readString();
+		school_id = parcel.readInt();
+		class_id = parcel.readInt();
+		eduLevel = parcel.readInt();
+	}
+
 }

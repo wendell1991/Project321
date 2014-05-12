@@ -37,6 +37,11 @@
         
         <activity android:name="com.mathtimeexplorer.xgame.XGame"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.coincoin.CoinCoin"  android:screenOrientation="landscape"/>
+        <activity android:name="com.mathtimeexplorer.worksheets.SelectQuizActivity"  android:screenOrientation="landscape"/>
+        <activity android:name="com.mathtimeexplorer.main.SelectPracticeSetActivity"  android:screenOrientation="landscape"/>
+        <activity android:name="com.mathtimeexplorer.main.PracticeSetActivity"  android:screenOrientation="landscape"/> 
+        <activity android:name="com.mathtimeexplorer.main.OtherTopicActivity"  android:screenOrientation="landscape"/>
+        
     </application>
     
 </manifest>

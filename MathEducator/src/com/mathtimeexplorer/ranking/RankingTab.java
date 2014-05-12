@@ -10,6 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,10 +22,10 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-import android.widget.TextView;
 
 import com.example.matheducator.R;
 import com.mathtimeexplorer.database.JSONParser;
+import com.mathtimeexplorer.main.User;
 import com.mathtimeexplorer.utils.Constants;
 import com.mathtimeexplorer.worksheets.Quiz;
 
@@ -30,14 +33,12 @@ public class RankingTab extends Activity {
 	
 	private TableLayout rankTable;
 	private Spinner topicSpinner, quizSpinner;
-		
-	// Node names for retrieving quizzes
-	private static String TAG_QUIZ = "quiz";
-	private static String TAG_QUIZ_ID = "quiz_id";
-	private static String TAG_QUIZ_NAME = "quiz_name";
 	
+	private User user = null;
+	private Context context = this;
 	private JSONParser jsonParser = new JSONParser();
 	private ArrayAdapter<String> quizAdapter;
+	private ArrayList<String> topicNameList = new ArrayList<String>();
 	private ArrayList<Quiz> quizList = new ArrayList<Quiz>();
 	private List<String> quizNames = new ArrayList<String>();
 	
@@ -51,15 +52,25 @@ public class RankingTab extends Activity {
 		setContentView(R.layout.ranking_tab);
 			
 		Bundle extras = getIntent().getExtras();
+		
+		topicNameList = getIntent().getStringArrayListExtra(Constants.TOPIC);
+		
+		for (int i = 0; i < topicNameList.size(); i++) {
+			Log.i(Constants.LOG_RANKING, "TOPIC NAME: " + (String) topicNameList.get(i));
+		}
+		
 		if (extras != null) {
 			whichTab = extras.getString(Constants.TAB_CHOICE);
+	
+			user = (User) extras.getParcelable(Constants.USER);
+			if (user != null) {
+				Log.i(Constants.LOG_RANKING, "ID:" + user.getApp_user_id());
+			}
 		}
 		
 		// Initialize the UIs
 		init();
-		
-		Log.i(Constants.LOG_RANKING, "TAB SELECTED: " + whichTab);
-		
+
 		topicSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -67,8 +78,24 @@ public class RankingTab extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				String item = parent.getItemAtPosition(position).toString();
+				
+				Log.i(Constants.LOG_RANKING, "ITEM SELECTED: " + item);
+				
 				if (!item.equals(tmpTopic)) {
-					new RetrieveQuizNames(item).execute();
+					if (item.equals(Constants.TOPIC_XGAME)) {
+						Log.i(Constants.LOG_RANKING, "RETRIEVING RESULTS FOR XGAME");
+						new RetrieveResults(user.getApp_user_id(), user.getClass_id(), 
+								user.getSchool_id(), Constants.TOPIC_XGAME).execute();			
+					} 
+					else if (item.equals(Constants.TOPIC_COINCOIN)) {
+						Log.i(Constants.LOG_RANKING, "RETRIEVING RESULTS FOR COINCOIN ");
+						new RetrieveResults(user.getApp_user_id(), user.getClass_id(), 
+								user.getSchool_id(), Constants.TOPIC_COINCOIN).execute();
+					} 
+					else {
+						new RetrieveQuizNames(item, user.getSchool_id(), 
+								user.getEduLevel()).execute();
+					}
 				}
 			}
 
@@ -97,8 +124,8 @@ public class RankingTab extends Activity {
 							quizId = quiz.getQuizId();
 						}
 					}
-					new RetrieveResults(Integer.valueOf(1), Integer.valueOf(1), 
-							Integer.valueOf(2), Integer.valueOf(38)).execute();
+					new RetrieveResults(user.getApp_user_id(), user.getClass_id(), 
+							user.getSchool_id(), quizId).execute();
 				}
 			}
 
@@ -114,8 +141,18 @@ public class RankingTab extends Activity {
 		private int userId;
 		private int classId;
 		private int schoolId;
-		private int quizId;
+		private int quizId = -1;
+		private String resultType = "";
 		private RankingResult rankResult;
+		
+		public RetrieveResults(int userId, int classId, int schoolId, String resultType) {
+			this.userId = userId;
+			this.classId = classId;
+			this.schoolId = schoolId;
+			this.resultType = resultType;
+			
+			quizSpinner.setVisibility(View.INVISIBLE);
+		}
 		
 		public RetrieveResults(int userId, int classId, int schoolId, int quizId) {
 			this.userId = userId;
@@ -127,23 +164,37 @@ public class RankingTab extends Activity {
 		@Override
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
-			// Parameters for the POST request
+			// Parameters for the GET request
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("userid", String.valueOf(userId)));
-            params.add(new BasicNameValuePair("quizid", String.valueOf(quizId)));
+			
+			if (quizId != -1) {				
+				params.add(new BasicNameValuePair("quizid", String.valueOf(quizId)));
+			}
             
             JSONObject json = null;
             rankResult = new RankingResult();
             
-            // POST request depending on which tab is selected
+            // GET request depending on which tab is selected
             if (whichTab.equals(Constants.TAB_CLASS)) {
             	params.add(new BasicNameValuePair("classid", String.valueOf(classId)));
             	json = jsonParser.makeHttpRequest(Constants.URL_CLASS_RESULT, 
             			Constants.HTTP_GET, params);
             } else {
-            	params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
-            	json = jsonParser.makeHttpRequest(Constants.URL_SCHOOL_RESULT, 
-            			Constants.HTTP_GET, params);
+            	if (resultType.isEmpty() == false) {
+            		if (resultType.equals(Constants.TOPIC_XGAME)) {
+            			params.add(new BasicNameValuePair("type", Constants.XGAME_TYPE));
+            		} else {
+            			params.add(new BasicNameValuePair("type", Constants.COINCOIN_TYPE));
+            		}
+            		params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
+            		json = jsonParser.makeHttpRequest(Constants.URL_GAME_RESULT,
+                    		Constants.HTTP_GET, params);
+            	} else {
+            		params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
+                	json = jsonParser.makeHttpRequest(Constants.URL_SCHOOL_RESULT, 
+                			Constants.HTTP_GET, params);
+            	}	
             }
             rankResult.getRankingResults(json);
             
@@ -154,8 +205,27 @@ public class RankingTab extends Activity {
 		protected void onPostExecute(String file_url) {
 			// No results
 			if (rankResult.getSuccess() == 0) {
-				TextView resultView = (TextView) findViewById(R.id.rankThreeName);
-				resultView.setText(R.string.noResult);
+				// Display no result found alert dialog box
+				AlertDialog.Builder builder = new AlertDialog.Builder(context);
+				
+				builder
+				.setCancelable(false)
+				.setTitle(R.string.noResultFoundTitle)
+				.setMessage(R.string.noResultFoundMsg)
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub					
+						// User quits the game, returns to previous activity
+						dialog.cancel();					
+					}
+				});
+			
+			// Creates the dialog
+			AlertDialog dialog = builder.create();
+			dialog.show();
+			
 			} else {
 				rankResult.setRankTableResults(rankTable);
 			}		
@@ -165,23 +235,26 @@ public class RankingTab extends Activity {
 	class RetrieveQuizNames extends AsyncTask<String, String, String> {
 		
 		private String topicSelected;
+		private int school_id;
+		private int eduLevel;
 		
-		public RetrieveQuizNames (String topicSelected) {
+		public RetrieveQuizNames (String topicSelected, int school_id, int eduLevel) {
 			this.topicSelected = topicSelected;
+			this.school_id = school_id;
+			this.eduLevel = eduLevel;
 		}
 		
 		@Override
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
-			// Parameters for the POST request
+			// Parameters for the GET request
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("topicname", topicSelected));
-            params.add(new BasicNameValuePair("edulevel", String.valueOf("1")));  
+			params.add(new BasicNameValuePair("schoolid", String.valueOf(school_id)));
+            params.add(new BasicNameValuePair("edulevel", String.valueOf(eduLevel)));  
             
 			JSONObject json = jsonParser.makeHttpRequest(
 					Constants.URL_QUIZ_NAMES, Constants.HTTP_GET, params);
-			
-			JSONArray resultList = null;
 			
 			try{
 				// Create a new set of Quiz names				
@@ -196,14 +269,14 @@ public class RankingTab extends Activity {
 					String quizName = "";
 					
 					quizList = new ArrayList<Quiz>();
-					resultList = json.getJSONArray(TAG_QUIZ);
+					JSONArray resultList = json.getJSONArray(Constants.TAG_QUIZ);
 					
 					// Loops the results and saves the result into Quiz class 
 					for (int i = 0; i < resultList.length(); i++) {
 						obj = resultList.getJSONObject(i);
 						quiz = new Quiz();
-						quizName = obj.getString(TAG_QUIZ_NAME);
-						quiz.setQuizId(obj.getInt(TAG_QUIZ_ID));
+						quizName = obj.getString(Constants.QUIZ_NAME);
+						quiz.setQuizId(obj.getInt(Constants.QUIZ_ID));
 						quiz.setQuizName(quizName);
 						quizNames.add(quizName);
 						quizList.add(quiz);
@@ -231,6 +304,7 @@ public class RankingTab extends Activity {
 		quizAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, quizNames);
 		quizAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     	quizSpinner.setAdapter(quizAdapter);
+    	quizSpinner.setVisibility(View.VISIBLE);
 	}
 	
 	private void init() { 
@@ -238,15 +312,15 @@ public class RankingTab extends Activity {
 		quizSpinner = (Spinner) findViewById(R.id.quizSpinner);
 		rankTable = (TableLayout) findViewById(R.id.rankTable);
 		
-		ArrayAdapter<CharSequence> topicAdapter = null;
+		ArrayAdapter<String> topicAdapter = null;
 		
-		if (whichTab.equals(Constants.TAB_CLASS)) {
-			topicAdapter = ArrayAdapter.createFromResource(this, R.array.class_topic_arrays, 
-					android.R.layout.simple_spinner_dropdown_item);
-		} else {
-			topicAdapter = ArrayAdapter.createFromResource(this, R.array.school_topic_arrays, 
-					android.R.layout.simple_spinner_dropdown_item);
-		}
+		if (whichTab.equals(Constants.TAB_SCHOOL)) {
+			topicNameList.add(Constants.TOPIC_XGAME);
+			topicNameList.add(Constants.TOPIC_COINCOIN);
+		} 
+		
+	    topicAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, topicNameList);
+		
 		topicAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		topicSpinner.setAdapter(topicAdapter);
 	}

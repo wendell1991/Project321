@@ -60,7 +60,8 @@ public class XGame extends Activity {
 	private PopupWindow scoreSheetPopUp;
 	
 	private ImageView valueOne, valueTwo, valAnswer, optionOne, optionTwo, optionThree, 
-					  optionFour, optionFive, optionSix, correctGreen, wrongRed, countDownView;
+					  optionFour, optionFive, optionSix, correctGreen, wrongRed, countDownView,
+					  xgame_highscore;
 	
 	private ImageButton tryAgainBtn, giveUpBtn;
 	private TextView timerText, numCorrect, numWrong, totalMarks;
@@ -71,7 +72,7 @@ public class XGame extends Activity {
 	private long TIMER_DURATION = 30000, TIMER_INTERVAL = 10;
 	
 	// Blink duration for correct / wrong
-	private long animBlinkDuration = 2000;
+	private long animBlinkDuration = 1000;
 	
 	private int sixty = 60;
 	private static int INDEX_ZERO = 0;
@@ -319,8 +320,14 @@ public class XGame extends Activity {
 				if (correct != 0 || correct > wrong) {
 					totalScore = correct - wrong;
 				}
-				new ManageGameResults(user.getApp_user_id(),
-						 user.getSchool_id(), totalScore).execute();
+				
+				// Guest user is playing the game if user = null
+				if (user == null) {
+					new ManageGameResults().execute();
+				} else {
+					new ManageGameResults(user.getApp_user_id(),
+							 user.getSchool_id(), totalScore).execute();
+				}
 			}
 
 			@Override
@@ -509,9 +516,11 @@ public class XGame extends Activity {
 		private int success;
 		private RankingResult rankResult;
 		private ProgressDialog pDialog;
-			
-		// Static Flag result_type of XGame Game
-		private static final int resultType = 2;
+		
+		public ManageGameResults() {
+			// Indicate that guest user is playing the game 
+			this.userId = -1;
+		}
 		
 		public ManageGameResults(int userId, int schoolId, int score) {
 			this.userId = userId;
@@ -533,35 +542,37 @@ public class XGame extends Activity {
 		@Override
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
-			JSONParser jsonParser = new JSONParser();
-			
-			// Parameters for the POST request
-			List<NameValuePair> params = new ArrayList<NameValuePair>();	
-			params.add(new BasicNameValuePair("userid", String.valueOf(userId)));
-			params.add(new BasicNameValuePair("type", String.valueOf(resultType)));
-			params.add(new BasicNameValuePair("score", String.valueOf(score)));
-            params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
-            
-            JSONObject json = jsonParser.makeHttpRequest(
-            		Constants.URL_MANAGE_GAME_RESULT, Constants.HTTP_POST, params);
-            
-            rankResult = new RankingResult();
-            
-            try{
-				success = json.getInt(Constants.JSON_SUCCESS);
-            } catch (JSONException e) {
-				Log.i(Constants.LOG_COINCOIN, e.toString());
-            }
-            
-            // Retrieve XGame rank results
-            // Remove score parameter to suit the retrieve operation
-            params.remove(2);
-            
-            json = jsonParser.makeHttpRequest(Constants.URL_GAME_RESULT, 
-            		Constants.HTTP_GET, params);
-            
-            rankResult.getRankingResults(json);
-            
+			// If its guest user, we do not send any request to server
+			if (userId != -1) {
+				JSONParser jsonParser = new JSONParser();
+				
+				// Parameters for the POST request
+				List<NameValuePair> params = new ArrayList<NameValuePair>();	
+				params.add(new BasicNameValuePair("userid", String.valueOf(userId)));
+				params.add(new BasicNameValuePair("type", Constants.XGAME_TYPE));
+				params.add(new BasicNameValuePair("score", String.valueOf(score)));
+	            params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
+	            
+	            JSONObject json = jsonParser.makeHttpRequest(
+	            		Constants.URL_MANAGE_GAME_RESULT, Constants.HTTP_POST, params);
+	            
+	            rankResult = new RankingResult();
+	            
+	            try{
+					success = json.getInt(Constants.JSON_SUCCESS);
+	            } catch (JSONException e) {
+					Log.i(Constants.LOG_XGAME, e.toString());
+	            }
+	            
+	            // Retrieve XGame rank results
+	            // Remove score parameter to suit the retrieve operation
+	            params.remove(2);
+	            
+	            json = jsonParser.makeHttpRequest(Constants.URL_GAME_RESULT, 
+	            		Constants.HTTP_GET, params);
+	            
+	            rankResult.getRankingResults(json);
+			}
 			return null;
 		}
 		
@@ -582,6 +593,7 @@ public class XGame extends Activity {
 			numCorrect = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsCorrect);
 			numWrong = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameQnsWrong);
 			totalMarks = (TextView) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTotalScore);
+			xgame_highscore = (ImageView) scoreSheetPopUp.getContentView().findViewById(R.id.xgame_highscore);
 			tryAgainBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameTryAgain);
 			giveUpBtn = (ImageButton) scoreSheetPopUp.getContentView().findViewById(R.id.xgameGiveUp);
 			rankTable = (TableLayout) scoreSheetPopUp.getContentView().findViewById(R.id.xgame_rank_tablelayout);
@@ -594,16 +606,20 @@ public class XGame extends Activity {
 			numWrong.setText(resource.getString(R.string.qnsWrong) + spacing + wrong);
 			totalMarks.setText(resource.getString(R.string.totalScore) + spacing + score);
 			
-			// No results
-			if (rankResult.getSuccess() == 0) {
+			// If guest user, we do not display result on rank-table or check high score
+			if (userId != -1) {
+				// No results
+				if (rankResult.getSuccess() == 0) {
+								
+				} else {
+					rankResult.setRankTableResults(rankTable);
+				}
 							
-			} else {
-				rankResult.setRankTableResults(rankTable);
-			}
-						
-			// If success = 1 (New entry), = 2 (Better score update)
-			if (success == 1 || success == 2) {
-				// Display new high score
+				// If success = 1 (New entry), = 2 (Better score update)
+				if (success == 1 || success == 2) {
+					// Display new high score
+					xgame_highscore.setVisibility(View.VISIBLE);
+				}
 			}
 			
 			tryAgainBtn.setOnTouchListener(new View.OnTouchListener() {
@@ -710,7 +726,7 @@ public class XGame extends Activity {
 		    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		    
-			countDownView = (ImageView) countDownDialog.findViewById(R.id.optionsBkGrd); 
+			countDownView = (ImageView) countDownDialog.findViewById(R.id.xgame_countdown_ready); 
 			countDownView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade));
 			countDownDialog.show();
 		}

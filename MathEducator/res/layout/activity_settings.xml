@@ -9,24 +9,6 @@
     android:background="@drawable/login_settings_bkgrd"
     tools:context=".SettingsActivity" >
 
-    <Button
-        android:id="@+id/doneBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/creditsBtn"
-        android:layout_alignBottom="@+id/creditsBtn"
-        android:layout_toLeftOf="@+id/cancelBtn1"
-        android:text="@string/done" />
-
-    <Button
-        android:id="@+id/cancelBtn1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/doneBtn"
-        android:layout_alignBottom="@+id/doneBtn"
-        android:layout_alignRight="@+id/musicSb"
-        android:text="@string/cancel" />
-
     <Switch
         android:id="@+id/musicSwitch"
         android:layout_width="wrap_content"
@@ -46,12 +28,33 @@
         android:layout_marginTop="20dp" />
 
     <Button
-        android:id="@+id/creditsBtn"
+        android:id="@+id/cancelBtn1"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/musicSb"
+        android:layout_alignRight="@+id/musicSb"
         android:layout_below="@+id/musicSb"
-        android:layout_marginTop="14dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/cancel" />
+
+    <Button
+        android:id="@+id/doneBtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/cancelBtn1"
+        android:layout_toLeftOf="@+id/cancelBtn1"
+        android:text="@string/done" />
+
+    <Button
+        android:id="@+id/creditsBtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/doneBtn"
+        android:layout_alignBottom="@+id/doneBtn"
+        android:layout_alignLeft="@+id/musicSb"
         android:text="@string/credits" />
 
 </RelativeLayout>

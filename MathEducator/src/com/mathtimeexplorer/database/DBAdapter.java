@@ -130,6 +130,13 @@ public class DBAdapter extends SQLiteOpenHelper{
 			return cursor;
 		}
 		
+		public Cursor getQuiz() {		 
+			Cursor cursor = getReadableDatabase().query("Quiz",		 
+					new String[] { "quiz_id", "quiz_name", "pass_mark","total_score","time_limit","creation_date","quiz_type","sub_topic_id","school_id"},		 
+					"sub_topic_id='1' OR sub_topic_id='2' OR sub_topic_id='3'", null, null, null, null);		 
+			return cursor;
+		}
+		
 		// Insert user details into User table
 		public void addUser(User user) {
 			myDataBase = getWritableDatabase();

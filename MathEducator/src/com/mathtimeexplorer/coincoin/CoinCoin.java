@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -131,8 +132,7 @@ public class CoinCoin extends Activity {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub				
 			}
 
 			@Override
@@ -151,8 +151,7 @@ public class CoinCoin extends Activity {
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub			
 			}
 		});
 		
@@ -221,19 +220,15 @@ public class CoinCoin extends Activity {
 	}
 	
 	private void processFlip(ImageView backView) {
-		Log.i(Constants.LOG_COINCOIN, "---------------Processing flip------------------");
 		flipList.add(backView);
-		Log.i(Constants.LOG_COINCOIN, "FlipList Size: "+flipList.size());
+
 		if (flipList.size() == 2) {
 			
 			flipTries++;
 			
 			final ImageView backViewOne = (ImageView) flipList.get(0);
 			final ImageView backViewTwo = (ImageView) flipList.get(1);
-			
-			Log.i(Constants.LOG_COINCOIN, "backViewOne: "+backViewOne);
-			Log.i(Constants.LOG_COINCOIN, "backViewTwo: "+backViewTwo);
-			
+
 			Object tagOne = backViewOne.getTag();
 			Object tagTwo = backViewTwo.getTag();
 			final int firstNumber = tagOne == null ? -1 : (Integer) tagOne;
@@ -242,8 +237,6 @@ public class CoinCoin extends Activity {
 			// Find and format the value of the question given 
 			String[] values = question.getText().toString().split(STRING_COLON);			
 			final String qnGiven = (String) values[1].replace(TAG_CENTS, "").trim();
-			
-			Log.i(Constants.LOG_COINCOIN, "Formatted String: " + qnGiven);
 			
 			Handler handler = new Handler(); 
 			
@@ -292,7 +285,7 @@ public class CoinCoin extends Activity {
 		 			} else {
 		 				onBackViewClick(backViewOne);
 		 				onBackViewClick(backViewTwo);
-		 				callScoreSheetPopUp(R.drawable.coincoin_congrats);
+		 				//callScoreSheetPopUp(R.drawable.coincoin_congrats);
 		 			} 
 		         } 
 		    }, 1000);
@@ -317,24 +310,18 @@ public class CoinCoin extends Activity {
 			
 	    	// Ensures that randomVal will not be 0 or less than 5
 	    	if (randomVal >= 10) {
-	    		Log.i(Constants.LOG_COINCOIN, "randomVal1:" +randomVal);
 	    		while (true) {    			
 	    			// Round the generated value to be a multiple of 5
 	    			actualValue = 5 * (Math.round(randomVal / 5));
 	    			
 	    			// Ensure that actualValue will not be 0
-	    			if (actualValue != 0) {
-	    				Log.i(Constants.LOG_COINCOIN, "actualValue:" +actualValue); 				
+	    			if (actualValue != 0) {				
 	    				while (true) {
 	    					randomVal = rand.nextInt(actualValue) + 1;
 	    					firstNumber = 5 * (Math.round(randomVal / 5));
 	    					if (firstNumber == 5 || firstNumber > 10) {
-	    						Log.i(Constants.LOG_COINCOIN, "firstNumber:" + firstNumber);
-	    						
 		    					secondNumber = actualValue - firstNumber;
 
-		    					Log.i(Constants.LOG_COINCOIN, "firstNumber: " + firstNumber +
-		    							" secondNumber: " + secondNumber);
 		    					values.setActualValue(actualValue);
 		    				    values.setFirstNumber(firstNumber);
 		    				    values.setSecondNumber(secondNumber);
@@ -357,6 +344,7 @@ public class CoinCoin extends Activity {
 		flip_right_in.addListener(myListener);
 		flip_right_in.setTarget(v);
 		flip_right_in.start();
+		startFlipSoundEffect();
 	}
 	
 	private void onBackViewClick(View v) {
@@ -365,6 +353,21 @@ public class CoinCoin extends Activity {
 		flip_left_in.addListener(myListener);
 		flip_left_in.setTarget(v);
 		flip_left_in.start();
+		startFlipSoundEffect();
+	}
+	
+	private void startFlipSoundEffect() {
+		final MediaPlayer soundEff = MediaPlayer.create(CoinCoin.this, R.raw.cardflip);
+		soundEff.setOnCompletionListener(new OnCompletionListener() {
+
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				// TODO Auto-generated method stub
+				soundEff.reset();
+				soundEff.release();
+			}
+		});
+		soundEff.start();
 	}
 	
 	private void callScoreSheetPopUp(int imageToAnimate) {
@@ -573,7 +576,6 @@ public class CoinCoin extends Activity {
 			// Base on the flip direction, decide whether to hide front or back card
 			switch (flipDirection) {
 				case 1: {
-					Log.i(Constants.LOG_COINCOIN, "Flipdirection case 1!");
 					backView.setVisibility(View.VISIBLE);
 					frontView.setVisibility(View.INVISIBLE);
 					flip_right_in.removeAllListeners();
@@ -583,7 +585,6 @@ public class CoinCoin extends Activity {
 					break;
 				}
 				case 2: {
-					Log.i(Constants.LOG_COINCOIN, "Flipdirection case 2!");
 					frontView.setVisibility(View.VISIBLE);
 					backView.setVisibility(View.INVISIBLE);		
 					flip_left_in.removeAllListeners();
@@ -611,14 +612,6 @@ public class CoinCoin extends Activity {
 		private int success;
 		private RankingResult rankResult;
 		private ProgressDialog pDialog;
-			
-		// Static Flag result_type of CoinCoin Game
-		private static final int resultType = 3;
-		
-		public ManageGameResults() {
-			// Denotes guest
-			userId = 0;	
-		}
 		
 		public ManageGameResults(int userId, int schoolId, int score) {
 			this.userId = userId;
@@ -641,21 +634,20 @@ public class CoinCoin extends Activity {
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
 			JSONParser jsonParser = new JSONParser();
-			
+
 			// Parameters for the POST request
 			List<NameValuePair> params = new ArrayList<NameValuePair>();	
 			params.add(new BasicNameValuePair("userid", String.valueOf(userId)));
-			params.add(new BasicNameValuePair("type", String.valueOf(resultType)));
+			params.add(new BasicNameValuePair("type", Constants.COINCOIN_TYPE));
 			params.add(new BasicNameValuePair("score", String.valueOf(score)));
             params.add(new BasicNameValuePair("schoolid", String.valueOf(schoolId)));
             
             JSONObject json = jsonParser.makeHttpRequest(
             		Constants.URL_MANAGE_GAME_RESULT, Constants.HTTP_POST, params);
-            
-            rankResult = new RankingResult();
-            
+               
             try{
 				success = json.getInt(Constants.JSON_SUCCESS);
+				
             } catch (JSONException e) {
 				Log.i(Constants.LOG_COINCOIN, e.toString());
             }
@@ -663,10 +655,11 @@ public class CoinCoin extends Activity {
             // Retrieve CoinCoin rank results
             // Remove score parameter to suit the retrieve operation
             params.remove(2);
-            
+
             json = jsonParser.makeHttpRequest(Constants.URL_GAME_RESULT,
             		Constants.HTTP_GET, params);
             
+            rankResult = new RankingResult();
             rankResult.getRankingResults(json);
             
 			return null;
@@ -1062,10 +1055,6 @@ public class CoinCoin extends Activity {
 			break;
 		case 200:
 			resourceId = R.drawable.cents_200;
-			break;
-		default:
-			Log.i(Constants.LOG_COINCOIN, "Image not found! value:" + selectedValue);
-			resourceId = R.drawable.cardfront;
 			break;
 		}
 		return resourceId;

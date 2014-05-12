@@ -30,19 +30,20 @@
 
     <Button
         android:id="@+id/cancelBtn"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/loginBtn"
-        android:layout_alignBottom="@+id/loginBtn"
-        android:layout_alignRight="@+id/usrTxtField"
+        android:layout_alignRight="@+id/pwdTxtField"
+        android:layout_below="@+id/pwdTxtField"
         android:text="@string/cancel" />
 
     <Button
         android:id="@+id/loginBtn"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/pwdTxtField"
-        android:layout_marginRight="18dp"
+        android:layout_alignBaseline="@+id/cancelBtn"
+        android:layout_alignBottom="@+id/cancelBtn"
         android:layout_toLeftOf="@+id/cancelBtn"
         android:text="@string/login" />
 

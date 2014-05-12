@@ -206,12 +206,22 @@
     </TableLayout>
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/xgame_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/xgameQnsCorrect"
         android:layout_alignRight="@+id/xgameTotalScore"
         android:layout_marginBottom="23dp"
         android:src="@drawable/xgame_score" />
+
+    <ImageView
+        android:id="@+id/xgame_highscore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/xgameTotalScore"
+        android:layout_marginRight="25dp"
+        android:layout_toLeftOf="@+id/xgame_rank_tablelayout"
+        android:visibility="invisible"
+        android:src="@drawable/xgame_highscore" />
 
 </RelativeLayout>

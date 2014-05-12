@@ -1,15 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/quizbackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".QuizActivity" >
-	
-    <fragment
-        android:name="com.mathtimeexplorer.worksheets.QuizFragment"
-        android:id="@+id/fragment_quiz_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
+    <FrameLayout
+    android:id="@+id/fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    </FrameLayout>
+    
     <Button
         android:id="@+id/prevQnBtn"
         android:layout_width="wrap_content"
@@ -28,5 +30,26 @@
         android:layout_marginLeft="22dp"
         android:layout_toRightOf="@+id/prevQnBtn"
         android:text="@string/next" />
+    
+     <Button
+        android:id="@+id/finishQnBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/prevQnBtn"
+        android:layout_marginLeft="250dp"
+        android:layout_toRightOf="@+id/nxtQnBtn"
+        android:text="@string/finish" />
+     
+      <TextView
+          android:id="@+id/quizTimer"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          android:layout_alignParentTop="true"
+          android:layout_marginRight="20dp"
+          android:layout_marginTop="20dp"
+          android:background="@color/gray"
+          android:text="@string/timeLeft"
+          android:textColor="@color/red" />
 
 </RelativeLayout>

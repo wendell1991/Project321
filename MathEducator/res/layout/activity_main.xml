@@ -43,4 +43,32 @@
         android:background="@null"
         android:src="@drawable/loginbutton" />
 
+    <TextSwitcher
+        android:id="@+id/news_textswitcher"
+        android:layout_width="450dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/setBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/news_tab" >
+    </TextSwitcher>
+
+    <ImageView
+        android:id="@+id/news_prevbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/news_textswitcher"
+        android:layout_toLeftOf="@+id/news_textswitcher"
+        android:onClick="onNewsPrevBtnClick"
+        android:src="@drawable/news_prev" />
+
+    <ImageView
+        android:id="@+id/news_nextbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/news_textswitcher"
+        android:layout_toRightOf="@+id/news_textswitcher"
+        android:onClick="onNewsNextBtnClick"
+        android:src="@drawable/news_next" />
+
 </RelativeLayout>
