@@ -114,4 +114,7 @@
     <string name="selectquiz">Select Quiz</string>
     <string name="finish">Finish</string>
     <string name="selecttopic">Select Topic</string>
+    
+    <!--  Fraction Game -->
+    <string name="fractiongame_text">Mr. Eskimo has to serve:</string>
 </resources>

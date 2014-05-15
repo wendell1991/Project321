@@ -14,6 +14,7 @@ public class User implements Parcelable{
 	private int school_id;
 	private int class_id;
 	private int eduLevel;
+	private String username;
 	
 	public int getApp_user_id() {
 		return app_user_id;
@@ -69,6 +70,14 @@ public class User implements Parcelable{
 	
 	public void setEduLevel(int eduLevel) {
 		this.eduLevel = eduLevel;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Override

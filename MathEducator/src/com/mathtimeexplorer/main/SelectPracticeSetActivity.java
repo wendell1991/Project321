@@ -33,13 +33,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SelectPracticeSetActivity extends Activity{
-	
-	
+
+
 	int topic = 0;
 	User user;
 	String subtopic;
 	int difficulty;
-	
+	int stars;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,10 +53,11 @@ public class SelectPracticeSetActivity extends Activity{
 			topic = extras.getInt(Constants.TOPIC);
 			user = extras.getParcelable(Constants.USER);
 			subtopic = extras.getString("subtopic");
+			stars = extras.getInt("stars");
 			Log.e("topic",Integer.toString(topic));
 		}
 		tv.setText(subtopic);
-		
+
 		RelativeLayout layout = (RelativeLayout) findViewById (R.id.selectpracticesetbackground);
 		if(topic == R.drawable.arithmetic){
 			layout.setBackgroundResource(R.drawable.arithmeticbackground);
@@ -73,8 +75,7 @@ public class SelectPracticeSetActivity extends Activity{
 		}
 		LinearLayout currentstarlayout = (LinearLayout) findViewById(R.id.currentstarslayout);
 		LinearLayout obtainablestarlayout = (LinearLayout) findViewById(R.id.obtainablestarslayout);
-		int stars = 0;
-		
+
 		for(int i=0;i<stars;i++){
 			ImageView star = new ImageView(this);
 			star.setImageResource(R.drawable.yellowstar);
@@ -87,7 +88,7 @@ public class SelectPracticeSetActivity extends Activity{
 			star2.setLayoutParams(new LinearLayout.LayoutParams(50,50));
 			currentstarlayout.addView(star2);
 		}
-		
+
 		for(int i=0;i<1;i++){
 			ImageView star2 = new ImageView(this);
 			star2.setImageResource(R.drawable.yellowstar);
@@ -100,11 +101,11 @@ public class SelectPracticeSetActivity extends Activity{
 			star2.setLayoutParams(new LinearLayout.LayoutParams(50,50));
 			obtainablestarlayout.addView(star2);
 		}
-		
+
 		RadioButton easyBtn = (RadioButton) findViewById(R.id.radioeasy);
 		RadioButton normalBtn = (RadioButton) findViewById(R.id.radionormal);
 		RadioButton hardBtn = (RadioButton) findViewById(R.id.radiohard);
-		
+
 		easyBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -125,7 +126,7 @@ public class SelectPracticeSetActivity extends Activity{
 				}
 			}
 		});
-		
+
 		normalBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -146,7 +147,7 @@ public class SelectPracticeSetActivity extends Activity{
 				}
 			}
 		});
-		
+
 		hardBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -161,7 +162,7 @@ public class SelectPracticeSetActivity extends Activity{
 				}
 			}
 		});
-		
+
 		Button practiceback = (Button) findViewById(R.id.practiceback);
 		Button practicestart = (Button) findViewById(R.id.practicestart);
 
@@ -196,12 +197,15 @@ public class SelectPracticeSetActivity extends Activity{
 					difficulty = 3;
 					extras.putInt("Difficulty", 3);
 				}
-				new GetQuestions(subtopic,user.getEduLevel(),difficulty).execute();
+				if(user!=null)
+					new GetQuestions(subtopic,user.getEduLevel(),difficulty).execute();
+				else
+					new GetQuestions(subtopic,1,difficulty).execute();
 			}
 		});
 	}
-	
-	
+
+
 	class GetQuestions extends AsyncTask<String, String, String> {
 
 		private String subTopicName;
@@ -263,12 +267,12 @@ public class SelectPracticeSetActivity extends Activity{
 				try {
 					// Retrieve the user object from JSON and save it to class user
 					Log.e("Before Array","test");
-					
+
 					JSONArray quiz = json.getJSONArray("quiz");
 					JSONObject quiz2 = quiz.getJSONObject(0);
 					timeLimit = quiz2.getInt("time_limit");
 					Log.e("Time",Integer.toString(timeLimit));
-					
+
 					JSONArray obj = json.getJSONArray("questions");
 					Log.e("test","questions array");
 					for(int i=0;i<obj.length();i++){
@@ -299,20 +303,26 @@ public class SelectPracticeSetActivity extends Activity{
 					// TODO Auto-generated catch block
 					Log.i(Constants.LOG_MAIN, e.toString());
 				}
-				
-				Intent intent = new Intent(getBaseContext(),PracticeSetActivity.class);
-				Bundle extras = getIntent().getExtras();
-				extras.putInt("time_limit", timeLimit);
-				extras.putParcelableArrayList("questions", questionsList);
-				Log.e("after parcelable","test");
-				intent.putExtras(extras);
-				startActivity(intent);
-				
+				if(success!=1 || questionsList.size()==0){
+					Toast.makeText(getApplicationContext(), "Unable to retrieve Practice Set.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else{
+					Intent intent = new Intent(getBaseContext(),PracticeSetActivity.class);
+					Bundle extras = getIntent().getExtras();
+					extras.putInt("time_limit", timeLimit);
+					extras.putParcelableArrayList("questions", questionsList);
+					extras.putInt("difficulty", difficulty);
+					Log.e("after parcelable","test");
+					intent.putExtras(extras);
+					startActivity(intent);
+				}
+
 			} else {
 				SelectPracticeSetActivity.this.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Toast.makeText(getApplicationContext(),"Login denied, either username or password is wrong!",
+						Toast.makeText(getApplicationContext(),"Couldn't retrieve questions.",
 								Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -320,8 +330,8 @@ public class SelectPracticeSetActivity extends Activity{
 			// dismiss the dialog once done
 			pDialog.dismiss();
 		}
-		
-		
+
+
 	}
 }
 

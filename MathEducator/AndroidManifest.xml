@@ -41,6 +41,8 @@
         <activity android:name="com.mathtimeexplorer.main.SelectPracticeSetActivity"  android:screenOrientation="landscape"/>
         <activity android:name="com.mathtimeexplorer.main.PracticeSetActivity"  android:screenOrientation="landscape"/> 
         <activity android:name="com.mathtimeexplorer.main.OtherTopicActivity"  android:screenOrientation="landscape"/>
+        <activity android:name="com.mathtimeexplorer.fractiongame.FractionGameActivity"  android:screenOrientation="landscape"/>
+        
         
     </application>
     

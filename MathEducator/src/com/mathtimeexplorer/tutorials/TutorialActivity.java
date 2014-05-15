@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.UI;
 import com.example.matheducator.R;
 import com.mathtimeexplorer.database.JSONParser;
+import com.mathtimeexplorer.main.OptionActivity;
 import com.mathtimeexplorer.main.User;
 import com.mathtimeexplorer.utils.Constants;
 import com.mathtimeexplorer.utils.ImageLoader;
@@ -98,7 +100,10 @@ public class TutorialActivity extends Activity {
 		super.onPause();
 		// Back button is pressed
 		if (this.isFinishing()) {
-			finish();
+			Intent intent = new Intent(context, OptionActivity.class);
+			Bundle extras = getIntent().getExtras();
+			intent.putExtras(extras);
+			startActivity(intent);
 		} else {
 			flipView.onPause();
 		}
@@ -269,10 +274,10 @@ public class TutorialActivity extends Activity {
 		    Log.i(Constants.LOG_TUTORIAL, "position: " + position); 
 		    
 		    totalCount = getCount();
-		    imgLoader.DisplayImage(urlList.get(position % urlList.size()), R.drawable.ic_launcher, 
+		    imgLoader.DisplayImage(urlList.get(position % urlList.size()), loadImgResId, 
 		    		UI.<ImageView>findViewById(layout, R.id.lessonView));
 		    
-		    ProgressBar tutBar = UI.<ProgressBar>findViewById(layout, loadImgResId);
+		    ProgressBar tutBar = UI.<ProgressBar>findViewById(layout, R.id.tut_progbar);
 		    tutBar.setMax(totalCount);
 		    tutBar.setProgress(position + 1);
 	        
@@ -365,7 +370,10 @@ public class TutorialActivity extends Activity {
 						// TODO Auto-generated method stub					
 						// Returns to sub-topic selection screen
 						dialog.cancel();
-						finish();						
+						Intent intent = new Intent(context, OptionActivity.class);
+						Bundle extras = getIntent().getExtras();
+						intent.putExtras(extras);
+						startActivity(intent);						
 					}
 				});
 				

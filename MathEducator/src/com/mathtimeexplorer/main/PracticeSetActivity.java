@@ -4,20 +4,32 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,12 +37,14 @@ import android.widget.Toast;
 
 import com.example.matheducator.R;
 import com.mathtimeexplorer.database.DBAdapter;
+import com.mathtimeexplorer.database.JSONParser;
 import com.mathtimeexplorer.utils.Constants;
 import com.mathtimeexplorer.worksheets.Question;
+import com.mathtimeexplorer.worksheets.QuizActivity;
 import com.mathtimeexplorer.worksheets.QuizFragment;
 
 public class PracticeSetActivity extends Activity {
-	
+
 	Fragment previousFrag;
 	int questionNo = 0;
 	ArrayList<QuizFragment> fragmentList;
@@ -44,7 +58,7 @@ public class PracticeSetActivity extends Activity {
 	long seconds;
 	TextView timerView;
 	int timeLimit;
-	
+
 	int quizId=0;
 	int classId;
 	int schoolId;
@@ -52,9 +66,13 @@ public class PracticeSetActivity extends Activity {
 	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	String date = dateFormat.format(new Date());
 	int score;
-	
+	int difficulty;
+	String topicname;
+	String subtopic;
+	int stars;
+
 	User user;
-	
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +83,19 @@ public class PracticeSetActivity extends Activity {
 		if (extras != null) {
 			topic = extras.getInt(Constants.TOPIC);
 			user = extras.getParcelable(Constants.USER);
+			difficulty = extras.getInt("difficulty");
+			topicname = extras.getString("topicname");
+			subtopic = extras.getString("subtopic");
+			stars = extras.getInt("stars");
 			Log.e("Topic",Integer.toString(extras.getInt(Constants.TOPIC)));
 			Log.e("quiz_id",Integer.toString(extras.getInt("quiz_id")));
 		}
+		if(user!=null){
+			classId = user.getClass_id();
+			schoolId = user.getSchool_id();
+			userId = user.getApp_user_id();
+		}
 
-		classId = user.getClass_id();
-		schoolId = user.getSchool_id();
-		userId = user.getApp_user_id();
-		date = "06/06/2014";
-		
-		
 		RelativeLayout layout = (RelativeLayout) findViewById (R.id.quizbackground);
 		if(topic == R.drawable.arithmetic){
 			layout.setBackgroundResource(R.drawable.arithmeticbackground);
@@ -205,57 +226,13 @@ public class PracticeSetActivity extends Activity {
 				else if(optionD.isChecked())
 					answers[questionNo] = optionD.getText().toString();
 
-				String empty = "";
-				for(int i=0;i<answers.length;i++){
-					Log.e("Answers",answers[i]);
-					if(answers[i]=="")
-						empty+=(i+1)+",";
-				}
-				if(empty.length()>1){
-					empty = empty.subSequence(0, empty.length()-1).toString();
-					Toast.makeText(getApplicationContext(), "You have not completed questions "+empty+".",Toast.LENGTH_LONG).show();
-				}
-				else{
-					submitQuiz();
-				}
+
+				submitPracticeSet();
+
 			}
 		});
 	}
 
-
-
-	private ArrayList<Question> GetQuestions(){
-
-		ArrayList<Question> questionList = new ArrayList<Question>();
-		DBAdapter database = new DBAdapter(getApplicationContext());
-		try {
-			database.openDataBase();
-		}catch(SQLException e){
-			Log.i("Database", e.toString());
-		}
-		Cursor questions = database.getQuestions();
-		questions.moveToFirst();
-		while(!questions.isAfterLast()){
-
-			Question qn = new Question();
-			qn.setQuestionId(questions.getInt(0));
-			qn.setQuestion(questions.getString(1));
-			qn.setA(questions.getString(2));
-			qn.setB(questions.getString(3));
-			qn.setC(questions.getString(4));
-			qn.setD(questions.getString(5));
-			qn.setAnswer(questions.getString(6));
-			qn.setMark(questions.getInt(8));
-			qn.setQuizId(questions.getInt(10));
-			qn.setSubtopicId(questions.getInt(11));
-
-			questionList.add(qn);
-			questions.moveToNext();
-		}
-
-		database.close();
-		return questionList;
-	}
 
 	public String formatTime(long millis) 
 	{
@@ -318,13 +295,13 @@ public class PracticeSetActivity extends Activity {
 				answers[questionNo] = optionD.getText().toString();
 
 
-			submitQuiz();
+			submitPracticeSet();
 
 		}
 
 	}
-	
-	public void submitQuiz(){
+
+	public void submitPracticeSet(){
 		score = 0;
 		for(int i=0;i<questionList.size();i++){
 			String answer = questionList.get(i).getAnswer();
@@ -333,16 +310,239 @@ public class PracticeSetActivity extends Activity {
 				score++;
 		}
 		Log.e("Score", Integer.toString(score));
-		
-		
-		Intent intent = new Intent(getBaseContext(), OptionActivity.class);
-		Bundle extras = getIntent().getExtras();
-		intent.putExtras(extras);
-		startActivity(intent);
+		if(score>(questionList.size()/2)){
+			int star = difficulty;
+			if(star>stars){
+				if(user!=null)
+					new insertPracticeSet(star,topicname,subtopic,userId,user.getEduLevel()).execute();
+				else{
+					PopupWindow progressWindow = new PopupWindow(getApplicationContext());
+					LinearLayout ll2 = new LinearLayout(getApplicationContext());
+					ll2.setOrientation(LinearLayout.VERTICAL);
+					ll2.setPadding(10, 10, 10, 10);
+					ll2.setGravity(Gravity.CENTER);
+					TextView tv = new TextView(getApplicationContext());
+					tv.setText("You scored: "+score);
+					Button ok = new Button(getApplicationContext());
+					ok.setText("OK");
+					ok.setTextSize(8);
+					tv.setTextSize(8);
+					tv.setTextColor(Color.BLACK);
+					ok.setLayoutParams(new LinearLayout.LayoutParams(200,50));
+					tv.setLayoutParams(new LinearLayout.LayoutParams(200,50));
 
+					ok.setOnClickListener(new View.OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							Intent intent = new Intent(getBaseContext(), OptionActivity.class);
+							Bundle extras = getIntent().getExtras();
+							intent.putExtras(extras);
+							startActivity(intent);
+						}
+					});
+
+					ll2.addView(tv);
+					ll2.addView(ok);
+					ll2.setBackgroundResource(R.drawable.cardbackground);
+
+					progressWindow.setContentView(ll2);
+					progressWindow.setWidth(400);
+					progressWindow.setHeight(200);
+					progressWindow.setFocusable(true);
+					progressWindow.showAtLocation(findViewById(R.id.quizbackground), Gravity.CENTER, 0, 0);
+					progressWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+						@Override
+						public void onDismiss() {
+							Intent intent = new Intent(getBaseContext(), OptionActivity.class);
+							Bundle extras = getIntent().getExtras();
+							intent.putExtras(extras);
+							startActivity(intent);
+						}
+					});
+
+				}
+			}
+
+		}
+
+		else{
+			PopupWindow progressWindow = new PopupWindow(getApplicationContext());
+			LinearLayout ll2 = new LinearLayout(getApplicationContext());
+			ll2.setOrientation(LinearLayout.VERTICAL);
+			ll2.setPadding(10, 10, 10, 10);
+			ll2.setGravity(Gravity.CENTER);
+			TextView tv = new TextView(getApplicationContext());
+			tv.setText("You scored: "+score);
+			Button ok = new Button(getApplicationContext());
+			ok.setText("OK");
+			ok.setTextSize(8);
+			tv.setTextSize(8);
+			tv.setTextColor(Color.BLACK);
+			ok.setLayoutParams(new LinearLayout.LayoutParams(200,50));
+			tv.setLayoutParams(new LinearLayout.LayoutParams(200,50));
+
+			ok.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(getBaseContext(), OptionActivity.class);
+					Bundle extras = getIntent().getExtras();
+					intent.putExtras(extras);
+					startActivity(intent);
+				}
+			});
+
+			ll2.addView(tv);
+			ll2.addView(ok);
+			ll2.setBackgroundResource(R.drawable.cardbackground);
+
+			progressWindow.setContentView(ll2);
+			progressWindow.setWidth(400);
+			progressWindow.setHeight(200);
+			progressWindow.setFocusable(true);
+			progressWindow.showAtLocation(findViewById(R.id.quizbackground), Gravity.CENTER, 0, 0);
+			progressWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+				@Override
+				public void onDismiss() {
+					Intent intent = new Intent(getBaseContext(), OptionActivity.class);
+					Bundle extras = getIntent().getExtras();
+					intent.putExtras(extras);
+					startActivity(intent);
+				}
+			});
+		}
 	}
-	
-	
+
+
+	class insertPracticeSet extends AsyncTask<String, String, String> {
+
+		private int star;
+		private int userId;
+		private String subtopic;
+		private String topicname;
+		private int eduLevel;
+
+
+
+		private int success = 0;
+
+		private ProgressDialog pDialog;
+		private static final String DIALOG_LOGIN_TITLE = "Submitting Stars Results...";
+		private static final String DIALOG_LOGIN_MESSAGE = "Please wait.";
+
+		private JSONObject json = null;
+
+		public insertPracticeSet (int star,String topicname,String subtopic,int userId,int eduLevel) {
+			this.userId = userId;
+			this.star = star;
+			this.subtopic = subtopic;
+			this.topicname = topicname;
+			this.eduLevel = eduLevel;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(PracticeSetActivity.this);
+			pDialog.setTitle(DIALOG_LOGIN_TITLE);
+			pDialog.setMessage(DIALOG_LOGIN_MESSAGE);
+			pDialog.setIndeterminate(true);
+			pDialog.setCancelable(false);
+			pDialog.show();
+
+			PopupWindow progressWindow = new PopupWindow(getApplicationContext());
+			LinearLayout ll2 = new LinearLayout(getApplicationContext());
+			ll2.setOrientation(LinearLayout.VERTICAL);
+			ll2.setPadding(10, 10, 10, 10);
+			ll2.setGravity(Gravity.CENTER);
+			TextView tv = new TextView(getApplicationContext());
+			tv.setText("You scored: "+score);
+			Button ok = new Button(getApplicationContext());
+			ok.setText("OK");
+			ok.setTextSize(8);
+			tv.setTextSize(8);
+			tv.setTextColor(Color.BLACK);
+			ok.setLayoutParams(new LinearLayout.LayoutParams(200,50));
+			tv.setLayoutParams(new LinearLayout.LayoutParams(200,50));
+
+			ok.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(getBaseContext(), OptionActivity.class);
+					Bundle extras = getIntent().getExtras();
+					intent.putExtras(extras);
+					startActivity(intent);
+				}
+			});
+
+			ll2.addView(tv);
+			ll2.addView(ok);
+			ll2.setBackgroundResource(R.drawable.cardbackground);
+
+			progressWindow.setContentView(ll2);
+			progressWindow.setWidth(400);
+			progressWindow.setHeight(200);
+			progressWindow.setFocusable(true);
+			progressWindow.showAtLocation(findViewById(R.id.quizbackground), Gravity.CENTER, 0, 0);
+			progressWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+				@Override
+				public void onDismiss() {
+					Intent intent = new Intent(getBaseContext(), OptionActivity.class);
+					Bundle extras = getIntent().getExtras();
+					intent.putExtras(extras);
+					startActivity(intent);
+				}
+			});
+		}
+
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			// Parameters for the POST request
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			JSONParser jsonParser = new JSONParser();
+			params.add(new BasicNameValuePair("star", Integer.toString(star)));
+			params.add(new BasicNameValuePair("topic_name", topicname));
+			params.add(new BasicNameValuePair("sub_topic_name", subtopic));
+			params.add(new BasicNameValuePair("app_user_id", Integer.toString(userId)));
+			params.add(new BasicNameValuePair("eduLevel", Integer.toString(eduLevel)));
+
+			json = jsonParser.makeHttpRequest(Constants.URL_INSERTPRACTICESET, "POST", params);
+			try {
+				success = json.getInt(Constants.JSON_SUCCESS);
+				Log.e("Success for results", Integer.toString(success));
+			} catch (JSONException e) {
+				Log.i(Constants.LOG_MAIN, e.toString());
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String file_url) {
+			// If success = 1, user is authenticated with the server successfully
+			if (success == 1) {
+				Log.e("Insert Success", "test");
+			} else {
+				PracticeSetActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(getApplicationContext(),"Couldn't submit stars result.",
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+			// dismiss the dialog once done
+			pDialog.dismiss();
+		}
+	}
+
+
+
 	@Override
 	public void onDestroy()
 	{

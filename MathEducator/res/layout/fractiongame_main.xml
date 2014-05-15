@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fractiongame_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fraction_background" >
+
+    <LinearLayout
+        android:id="@+id/fractiongame_panel"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/fractiongame_question"
+            android:layout_width="130dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/fractiongame_text" />
+        
+        <TextView
+            android:id="@+id/fractiongame_total"
+            android:layout_width="match_parent"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:gravity="center_horizontal"
+            android:text="15 Dishes" />
+        
+        
+        <ImageView
+            android:id="@+id/fractiongame_cake"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/cake" 
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="10dp"/>
+        
+         <ImageView
+            android:id="@+id/fractiongame_fish"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/fish" 
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="18dp"/>
+         
+         <ImageView
+             android:id="@+id/fractiongame_meat"
+             android:layout_width="50dp"
+             android:layout_height="50dp"
+             android:layout_marginLeft="10dp"
+             android:layout_marginTop="18dp"
+             android:src="@drawable/meat" />
+         
+         <ImageView
+             android:id="@+id/fractiongame_bin"
+             android:layout_width="50dp"
+             android:layout_height="40dp"
+             android:layout_marginLeft="90dp"
+             android:src="@drawable/bin" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/fractiongame_sliders"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/fractiongame_panel" >
+
+        <HorizontalScrollView
+            android:id="@+id/penguin_slider"
+            android:layout_width="330dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="109dp"
+            android:layout_marginLeft="55dp"
+            android:background="@color/black" >
+
+            <LinearLayout
+                android:id="@+id/penguin_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+
+            </LinearLayout>
+        </HorizontalScrollView>
+        
+        <HorizontalScrollView
+            android:id="@+id/eskimo_slider"
+            android:layout_width="330dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/penguin_slider"
+            android:layout_marginTop="27dp" 
+            android:layout_marginLeft="55dp"
+            android:background="@color/black" >
+
+            <LinearLayout
+                android:id="@+id/eskimo_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+
+            </LinearLayout>
+        </HorizontalScrollView>
+        
+        <HorizontalScrollView
+            android:id="@+id/bear_slider"
+            android:layout_width="330dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/eskimo_slider"
+            android:layout_marginTop="26dp" 
+            android:layout_marginLeft="55dp"
+            android:background="@color/black" >
+
+            <LinearLayout
+                android:id="@+id/bear_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/fractiongame_checkanswer"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"/>
+
+        <TextView
+            android:id="@+id/cakeNumerator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="67dp"
+            android:layout_marginTop="19dp"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/gray" />
+
+        <TextView
+            android:id="@+id/cakeDenominator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignLeft="@+id/cakeNumerator"
+            android:layout_below="@+id/cakeNumerator"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="5"
+            android:textColor="@color/gray" />
+        
+        <TextView
+            android:id="@+id/fishNumerator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="205dp"
+            android:layout_marginTop="19dp"
+            android:gravity="center"
+            android:text="2" 
+            android:textColor="@color/gray"/>
+
+        <TextView
+            android:id="@+id/fishDenominator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_below="@+id/fishNumerator"
+            android:layout_marginTop="5dp"
+            android:layout_alignLeft="@+id/fishNumerator"
+            android:gravity="center"
+            android:text="3" 
+            android:textColor="@color/gray"/>
+        
+        <TextView
+            android:id="@+id/meatNumerator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="345dp"
+            android:layout_marginTop="19dp"
+            android:gravity="center"
+            android:text="7" 
+            android:textColor="@color/gray"/>
+
+        <TextView
+            android:id="@+id/meatDenominator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_below="@+id/meatNumerator"
+            android:layout_marginTop="5dp"
+            android:layout_alignLeft="@+id/meatNumerator"
+            android:gravity="center"
+            android:text="15" 
+            android:textColor="@color/gray"/>
+
+        <ImageView
+            android:id="@+id/fractiongame_eskimo"
+            android:layout_width="75dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="130dp"
+            android:layout_toRightOf="@+id/eskimo_slider"
+            android:src="@drawable/eskimo" />
+
+        <ImageView
+            android:id="@+id/fractiongame_penguin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="100dp"
+            android:layout_toLeftOf="@+id/penguin_slider"
+            android:src="@drawable/penguin" />
+
+        <ImageView
+            android:id="@+id/fractiongame_bear"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="240dp"
+            android:layout_toRightOf="@+id/bear_slider"
+            android:src="@drawable/bear" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

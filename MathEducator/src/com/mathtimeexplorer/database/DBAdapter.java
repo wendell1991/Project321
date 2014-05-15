@@ -150,9 +150,10 @@ public class DBAdapter extends SQLiteOpenHelper{
 			values.put(Constants.LOGIN_CLASS_ID, user.getClass_id());
 			values.put(Constants.LOGIN_SCHOOL_ID, user.getSchool_id());
 			values.put(Constants.LOGIN_EDULEVEL, user.getEduLevel());
+			values.put(Constants.LOGIN_USERNAME, user.getUsername());
 			
 			// Insert the contents into the database
-			myDataBase.insert(Constants.LOGIN_USER, null, values);
+			Log.e("test",Long.toString(myDataBase.insert(Constants.LOGIN_USER, null, values)));
 			myDataBase.close();
 		}
 		
@@ -174,6 +175,7 @@ public class DBAdapter extends SQLiteOpenHelper{
 				user.setClass_id(cursor.getInt(4));
 				user.setSchool_id(cursor.getInt(5));
 				user.setEduLevel(cursor.getInt(6));
+				user.setUsername(cursor.getString(7));
 			} 
 			cursor.close();
 			myDataBase.close();

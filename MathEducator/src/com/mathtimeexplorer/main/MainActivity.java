@@ -128,7 +128,7 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 							// Logs out the user
 							DBAdapter database = openDatabaseConnection();
 							database.deleteUser();
-							
+							getIntent().getExtras().remove("user");
 							// CLear all Image resource in topic list and current views
 							topicList.clear();
 							topicSwitch.removeAllViews();
@@ -478,12 +478,23 @@ public class MainActivity extends Activity implements ViewFactory, OnSeekBarChan
 			}
 		}
 		News news = (News) newsList.get(curNewsIndex);
+		String newsText = "";
+		if(user!=null){
+			Log.e("User","true");
+			Log.e("User",user.getFirst_name());
 		
-		String newsText = NEWS_UPDATE + (curNewsIndex + 1) + ". <a href='" + Constants.URL_VIEW_NEWS +
-				news.getNew_id() + "'>" + news.getNews_title() + "</a> " + news.getNews_postdate();
+		
+		 newsText = NEWS_UPDATE + (curNewsIndex + 1) + ". <a href='" + Constants.URL_VIEW_NEWS +
+				news.getNew_id() + "&username="+user.getUsername()+"&school_id="+user.getSchool_id()+"'>" + news.getNews_title() + "</a> " + news.getNews_postdate();
 		
 		Log.i(Constants.LOG_MAIN, "newsText: " + newsText);
-		
+		}
+		else{
+			newsText = NEWS_UPDATE + (curNewsIndex + 1) + ". <a href='" + Constants.URL_VIEW_NEWS +
+					news.getNew_id()+"'>" + news.getNews_title() + "</a> " + news.getNews_postdate();
+			
+			Log.i(Constants.LOG_MAIN, "newsText: " + newsText);
+		}
 		return newsText;
 	}
 	

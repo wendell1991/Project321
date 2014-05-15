@@ -34,9 +34,12 @@ public final class Constants {
 	
 	public static final String URL_GETQUIZ = "http://10.0.2.2/TimeExplorer/getquizzes.php";
 	public static final String URL_GETQUESTION = "http://10.0.2.2/TimeExplorer/getquizquestions.php";
+	public static final String URL_GETSTAR = "http://10.0.2.2/TimeExplorer/getstar.php";
 	public static final String URL_INSERTQUIZRESULT = "http://10.0.2.2/TimeExplorer/insertquizresults.php";
 	public static final String URL_GETPRACTICESETQUESTION = "http://10.0.2.2/TimeExplorer/getpracticesetquestions.php";
 	public static final String URL_GETOTHERTOPIC = "http://10.0.2.2/TimeExplorer/getothertopics.php";
+	public static final String URL_INSERTPRACTICESET = "http://10.0.2.2/TimeExplorer/insertpracticeset.php";
+
 	
 	public static final String URL_MANAGE_GAME_RESULT = "http://10.0.2.2/TimeExplorer/games_manage_result.php";
 	public static final String URL_GAME_RESULT = "http://10.0.2.2/TimeExplorer/ranking_game_result.php";
@@ -57,6 +60,8 @@ public final class Constants {
 	public static final String LOGIN_SCHOOL_ID = "school_id";
 	public static final String LOGIN_CLASS_ID = "class_id";
 	public static final String LOGIN_EDULEVEL = "eduLevel";
+	public static final String LOGIN_USERNAME = "username";
+
 	
 	// JSON Response node names for retrieving quiz names
 	public static final String TAG_QUIZ = "quiz";
